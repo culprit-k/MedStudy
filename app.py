@@ -221,26 +221,6 @@ def render_image_library_card(image, key_prefix):
 
 
 
-def render_3d_anatomy_viewer(selected_system="Heart & circulation", height=820):
-    """Embed a detailed third-party anatomical atlas instead of synthesising anatomy from primitive shapes."""
-    st.markdown("### Real 3D anatomy atlas")
-    st.caption(
-        "Explore a detailed human anatomy model with individually selectable structures. "
-        "Drag with one finger to rotate, pinch to zoom, tap a structure for information, "
-        "and use the atlas controls to isolate, hide, or make structures transparent."
-    )
-    st.markdown(
-        "**Atlas:** [Open full-screen 3D Anatomy](https://nqwrc.github.io/3d-anatomy/) · "
-        "[Source code and model credits](https://github.com/nqwrc/3d-anatomy)"
-    )
-    components.iframe("https://nqwrc.github.io/3d-anatomy/", height=height, scrolling=True)
-    st.caption(
-        "The anatomy engine and models are hosted by the upstream project and load over the internet. "
-        "They are not bundled into MedStudy. Attribution and licence terms belong to the upstream model; "
-        "its published atlas includes non-commercial components. Review the licence before any redistribution or commercial use."
-    )
-
-
 def render_hospital_monitor(organ_name, vitals, scene_label="PATIENT MONITOR"):
     """Render a self-contained animated teaching monitor and conceptual body map."""
     selected = json.dumps(str(organ_name))
@@ -809,6 +789,9 @@ elif page == "Exam Arena":
 elif page == "Anatomy Lab":
     st.title("🫀 Anatomy Lab")
     st.caption("Explore systems, select structures, connect gross anatomy to physiology, and test your understanding.")
+    if st.button("Open detailed touch-enabled 3D Anatomy Atlas ↗", type="primary", use_container_width=True):
+        st.session_state.navigation = "Real 3D Anatomy Atlas"
+        st.rerun()
     systems = {
         "Cardiovascular": {
             "image":"assets/heart.svg",
