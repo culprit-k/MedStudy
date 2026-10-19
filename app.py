@@ -101,7 +101,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Learning Library", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -134,6 +134,7 @@ if page == "Home":
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
         ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
         ("🧪","Physiology lab","Run interactive experiments in cardiovascular, respiratory, renal and nerve physiology.","Physiology Lab"),
+        ("🧍","Whole-body organ simulator","Adjust organ-system variables and explore simplified whole-body responses.","Whole-Body Organ Simulator"),
         ("🔬","Histology lab","Study tissue architecture, cell identification and microscopic patterns.","Histology Lab"),
         ("🧫","Pathology lab","Explore mechanisms, gross patterns, blood films and case-based morphology.","Pathology Lab"),
         ("🦠","Microbiology lab","Practise organism identification, staining, culture and diagnostic reasoning.","Microbiology Lab"),
@@ -351,6 +352,182 @@ elif page == "Anatomy Lab":
                     st.session_state.anatomy_system = {"2":"Cardiovascular","3":"Respiratory","4":"Renal","5":"Nervous"}.get(num, system_name)
                     st.rerun()
     st.caption("Next pathway suggestion: revise a structure, answer its recall check, then practise related questions in Exam Arena. Content is educational and should be checked against trusted anatomy resources.")
+
+elif page == "Whole-Body Organ Simulator":
+    st.title("🧍 Whole-Body Organ Simulator")
+    st.caption("An educational sandbox for exploring how organ systems interact. All outputs are simplified teaching models, not predictions for real people.")
+    st.warning("Simulation only: these equations are illustrative, not physiologically complete or clinically validated. Do not enter real patient data or use the outputs for diagnosis, treatment, or medication decisions.")
+    organ_groups = {
+        "Heart & circulation": {
+            "organ":"Heart","icon":"💓","description":"Explore how heart rate, stroke volume and vascular resistance interact in a simplified circulation model.",
+            "controls":[("Heart rate (beats/min)",40,180,75),("Stroke volume (mL/beat)",30,130,70),("Systemic vascular resistance (relative units)",0.5,2.0,1.0)],
+            "model":"cardio"
+        },
+        "Lungs & ventilation": {
+            "organ":"Lungs","icon":"🫁","description":"Explore minute ventilation and a simplified carbon dioxide trend.",
+            "controls":[("Respiratory rate (breaths/min)",6,40,14),("Tidal volume (mL)",200,900,500),("Dead-space volume (mL)",50,300,150)],
+            "model":"resp"
+        },
+        "Kidneys & fluid balance": {
+            "organ":"Kidneys","icon":"🫘","description":"Explore conceptual relationships among filtration, urine output and fluid balance.",
+            "controls":[("Filtration index (% of reference)",10,140,100),("Daily fluid intake (L)",0.5,5.0,2.0),("Daily fluid loss outside urine (L)",0.2,3.0,0.8)],
+            "model":"renal"
+        },
+        "Liver & metabolism": {
+            "organ":"Liver","icon":"🟤","description":"Explore a conceptual hepatic processing index and its effect on a fictional metabolism score.",
+            "controls":[("Hepatic function index (%)",10,120,100),("Nutrient load (relative units)",0,10,5),("Medication burden (relative units)",0,10,2)],
+            "model":"liver"
+        },
+        "Pancreas & glucose": {
+            "organ":"Pancreas","icon":"🧬","description":"Explore how a simplified insulin-effect parameter changes a fictional glucose trend.",
+            "controls":[("Glucose input (relative units)",0,12,5),("Insulin effect (%)",0,150,100),("Activity level (relative units)",0,10,4)],
+            "model":"glucose"
+        },
+        "Brain & nervous system": {
+            "organ":"Brain / nerves","icon":"🧠","description":"Explore a conceptual signal transmission index as myelination and synaptic efficiency vary.",
+            "controls":[("Myelination index (%)",0,100,90),("Synaptic efficiency (%)",10,120,85),("Signal load (relative units)",1,10,5)],
+            "model":"neuro"
+        },
+        "Gastrointestinal system": {
+            "organ":"GI tract","icon":"🫃","description":"Explore simplified transit and absorption concepts.",
+            "controls":[("Motility index (%)",10,180,100),("Absorption efficiency (%)",10,100,85),("Nutrient load (relative units)",1,10,5)],
+            "model":"gi"
+        },
+        "Endocrine / thyroid": {
+            "organ":"Thyroid axis","icon":"🦋","description":"Explore a conceptual metabolic activity index; real endocrine feedback is more complex.",
+            "controls":[("Thyroid hormone activity index (%)",10,180,100),("Energy demand (relative units)",1,10,5),("Stress signal (relative units)",0,10,3)],
+            "model":"endo"
+        },
+        "Blood & oxygen transport": {
+            "organ":"Blood","icon":"🩸","description":"Explore oxygen-carrying capacity concepts using haemoglobin and saturation sliders.",
+            "controls":[("Haemoglobin (g/dL)",4.0,20.0,14.0),("Oxygen saturation (%)",50,100,98),("Cardiac output (L/min)",2.0,10.0,5.0)],
+            "model":"blood"
+        },
+        "Immune / inflammation": {
+            "organ":"Immune system","icon":"🛡️","description":"Explore a fictional inflammation-response index, illustrating how immune activation can affect systemic demand.",
+            "controls":[("Immune activation index (%)",0,200,30),("Tissue injury index (%)",0,100,10),("Recovery support index (%)",0,100,70)],
+            "model":"immune"
+        },
+        "Skin & temperature": {
+            "organ":"Skin / thermoregulation","icon":"🌡️","description":"Explore conceptual thermoregulation inputs and heat-loss balance.",
+            "controls":[("Ambient temperature (°C)",-5,40,22),("Activity heat production (relative units)",0,10,4),("Skin blood-flow index (%)",10,150,80)],
+            "model":"skin"
+        },
+        "Reproductive system": {
+            "organ":"Reproductive system","icon":"🧬","description":"Explore a conceptual hormone-cycle signal. This does not model fertility or predict individual outcomes.",
+            "controls":[("Hormone signal A (relative units)",0,10,5),("Hormone signal B (relative units)",0,10,5),("Cycle phase (teaching index)",1,4,2)],
+            "model":"repro"
+        }
+    }
+    organ_name = st.selectbox("Choose an organ system", list(organ_groups.keys()), key="wholebody_organ")
+    cfg = organ_groups[organ_name]
+    st.markdown(f"### {cfg['icon']} {cfg['organ']}")
+    st.write(cfg["description"])
+    left, right = st.columns([1,1], gap="large")
+    values = []
+    with left:
+        st.markdown("#### Simulation controls")
+        for label, lo, hi, default in cfg["controls"]:
+            if isinstance(lo, int) and isinstance(hi, int):
+                value = st.slider(label, lo, hi, default, key=f"wholebody_{cfg['model']}_{label}")
+            else:
+                value = st.slider(label, float(lo), float(hi), float(default), key=f"wholebody_{cfg['model']}_{label}")
+            values.append(value)
+    a,b,c = values
+    if cfg["model"] == "cardio":
+        cardiac_output = a*b/1000
+        pressure_index = cardiac_output*c
+        metrics = [("Cardiac output",f"{cardiac_output:.1f} L/min"),("Relative pressure index",f"{pressure_index:.1f}"),("Heart rate",f"{a} bpm")]
+        chart = {"Heart rate":[a,a+5,a+10,a+15],"Cardiac output (L/min)":[round(cardiac_output,1),round(cardiac_output*1.04,1),round(cardiac_output*1.08,1),round(cardiac_output*1.12,1)]}
+        note = "Cardiac output = heart rate × stroke volume. The pressure index is illustrative; real blood pressure depends on complex haemodynamics."
+    elif cfg["model"] == "resp":
+        minute_vent = a*b/1000
+        alveolar = a*max(b-c,0)/1000
+        co2_index = 40*5/max(alveolar,0.1)
+        metrics = [("Minute ventilation",f"{minute_vent:.1f} L/min"),("Alveolar ventilation",f"{alveolar:.1f} L/min"),("Illustrative CO₂ index",f"{co2_index:.1f}")]
+        chart = {"Respiratory rate":[max(6,a-3),a,a+3,a+6],"Alveolar ventilation (L/min)":[round(max(0,(a-3)*max(b-c,0)/1000),1),round(alveolar,1),round((a+3)*max(b-c,0)/1000,1),round((a+6)*max(b-c,0)/1000,1)]}
+        note = "The inverse CO₂ relationship assumes constant CO₂ production and idealised steady state. Real gas exchange depends on perfusion, metabolism and lung disease."
+    elif cfg["model"] == "renal":
+        net = b-(c+1.2)
+        metrics = [("Filtration index",f"{a}%"),("Illustrative net fluid balance",f"{net:+.1f} L/day"),("Model urine trend", "Lower" if a<60 else ("Reference range" if a<=120 else "Higher filtration index"))]
+        chart = {"Filtration index (%)":[max(10,a-30),max(10,a-15),a,min(140,a+15)],"Net fluid balance (L/day)":[round(net-0.6,1),round(net-0.3,1),round(net,1),round(net+0.3,1)]}
+        note = "This is not a kidney-function estimator. Actual GFR requires appropriate clinical assessment and validated methods; fluid balance depends on many inputs."
+    elif cfg["model"] == "liver":
+        score = max(0, a - 2*b - c)
+        metrics = [("Hepatic function index",f"{a}%"),("Fictional processing score",f"{score:.0f}"),("Relative load",f"{b+c} units")]
+        chart = {"Function index (%)":[max(10,a-30),max(10,a-15),a,min(120,a+10)],"Fictional processing score":[max(0,score-10),max(0,score-5),score,score+3]}
+        note = "There is no single liver-function score represented here. Real hepatic assessment uses history, examination, laboratory patterns and sometimes imaging or other tests."
+    elif cfg["model"] == "glucose":
+        trend = max(0, 100 + 8*a - 0.45*b - 3*c)
+        metrics = [("Fictional glucose trend index",f"{trend:.0f}"),("Insulin-effect input",f"{b}%"),("Activity input",f"{c} units")]
+        chart = {"Glucose trend index":[trend+10,trend+5,trend, max(0,trend-5)],"Insulin effect (%)":[max(0,b-30),max(0,b-15),b,min(150,b+15)]}
+        note = "This is not a blood glucose prediction. Real glucose regulation depends on pancreatic secretion, sensitivity, meals, counter-regulatory hormones and many other factors."
+    elif cfg["model"] == "neuro":
+        signal = a*b/100
+        metrics = [("Signal transmission index",f"{signal:.0f}/100"),("Signal load",f"{c} units"),("Conceptual efficiency","Higher" if signal>65 else "Reduced")]
+        chart = {"Myelination (%)":[max(0,a-30),max(0,a-15),a,min(100,a+5)],"Transmission index":[round(max(0,a-30)*b/100),round(max(0,a-15)*b/100),round(signal),round(min(100,a+5)*b/100)]}
+        note = "Neural signalling is far more complex than a single index; this slider illustrates only the conceptual contribution of myelin and synaptic function."
+    elif cfg["model"] == "gi":
+        absorption = b * min(1.2, max(0.2, a/100))
+        metrics = [("Conceptual absorption index",f"{absorption:.0f}"),("Motility index",f"{a}%"),("Nutrient load",f"{c} units")]
+        chart = {"Motility index (%)":[max(10,a-30),max(10,a-15),a,min(180,a+15)],"Absorption index":[round(absorption*0.7,1),round(absorption*0.85,1),round(absorption,1),round(absorption*1.05,1)]}
+        note = "Motility and absorption vary by organ segment, nutrient, neural and hormonal regulation, and disease. This is a conceptual illustration only."
+    elif cfg["model"] == "endo":
+        score = a - 2*c + b
+        metrics = [("Metabolic activity index",f"{score:.0f}"),("Hormone activity input",f"{a}%"),("Stress signal",f"{c} units")]
+        chart = {"Hormone activity (%)":[max(10,a-30),max(10,a-15),a,min(180,a+15)],"Metabolic activity index":[score-10,score-5,score,score+5]}
+        note = "The hypothalamic–pituitary–thyroid axis uses feedback loops; this model does not represent hormone concentrations or diagnose thyroid disorders."
+    elif cfg["model"] == "blood":
+        oxygen_capacity = 1.34*a*b/100
+        delivery = oxygen_capacity*c
+        metrics = [("Estimated O₂ capacity component",f"{oxygen_capacity:.1f} mL O₂/dL"),("Conceptual delivery index",f"{delivery:.1f}"),("Haemoglobin",f"{a:.1f} g/dL")]
+        chart = {"Haemoglobin (g/dL)":[max(4,a-3),max(4,a-1.5),a,min(20,a+1)],"O₂ capacity component":[round(1.34*max(4,a-3)*b/100,1),round(1.34*max(4,a-1.5)*b/100,1),round(oxygen_capacity,1),round(1.34*min(20,a+1)*b/100,1)]}
+        note = "The haemoglobin-bound oxygen component is approximate and excludes dissolved oxygen; oxygen delivery also depends on cardiac output and tissue extraction."
+    elif cfg["model"] == "immune":
+        score = max(0,a + 0.7*b - 0.5*c)
+        metrics = [("Fictional inflammation index",f"{score:.0f}"),("Tissue injury input",f"{b}%"),("Recovery support",f"{c}%")]
+        chart = {"Immune activation (%)":[max(0,a-30),max(0,a-15),a,min(200,a+15)],"Fictional inflammation index":[max(0,score-15),max(0,score-7),score,score+5]}
+        note = "Inflammation is a coordinated biological response, not a single numerical score. This toy model is not a sepsis or immune-risk calculator."
+    elif cfg["model"] == "skin":
+        heat = c/100*max(1,35-a) + b
+        metrics = [("Conceptual heat-balance index",f"{heat:.1f}"),("Ambient temperature",f"{a} °C"),("Skin blood-flow input",f"{c}%")]
+        chart = {"Ambient temperature (°C)":[max(-5,a-6),max(-5,a-3),a,min(40,a+3)],"Heat-balance index":[round(heat+4,1),round(heat+2,1),round(heat,1),round(heat-1,1)]}
+        note = "Thermoregulation includes hypothalamic control, sweating, vasomotor changes, behaviour and environmental factors. This is not a core-temperature prediction."
+    else:
+        score = max(0,10-abs(a-b)-abs(c-2))
+        metrics = [("Fictional synchrony index",f"{score:.0f}/10"),("Signal A",f"{a} units"),("Signal B",f"{b} units")]
+        chart = {"Signal A":[max(0,a-2),max(0,a-1),a,min(10,a+1)],"Signal B":[max(0,b-2),max(0,b-1),b,min(10,b+1)]}
+        note = "Reproductive physiology depends on age, anatomy, endocrine feedback, timing and individual variation. This toy score has no fertility or diagnostic meaning."
+    with right:
+        st.markdown("#### Live model output")
+        metric_cols = st.columns(2)
+        for i,(label,value) in enumerate(metrics):
+            metric_cols[i%2].metric(label,value)
+        st.markdown("#### Response curve")
+        st.line_chart(chart)
+        st.info(note)
+    st.markdown("### Organ-to-organ connections")
+    connections = {
+        "Heart & circulation":"The heart supplies blood flow to the lungs, kidneys, brain, liver and other tissues; vascular resistance and circulating volume influence pressure.",
+        "Lungs & ventilation":"Lungs exchange gases with blood; ventilation and perfusion must be matched for efficient oxygen uptake and carbon dioxide removal.",
+        "Kidneys & fluid balance":"Kidneys regulate water, electrolytes, acid–base balance and contribute to blood-pressure control through volume handling and hormonal pathways.",
+        "Liver & metabolism":"The liver processes nutrients, synthesises proteins, metabolises many substances and contributes to glucose homeostasis.",
+        "Pancreas & glucose":"Insulin and glucagon coordinate with liver, muscle and adipose tissue to regulate circulating glucose.",
+        "Brain & nervous system":"Autonomic and endocrine signals coordinate heart rate, breathing, temperature, digestion and many homeostatic responses.",
+        "Gastrointestinal system":"Digestion and absorption provide nutrients and fluid for metabolism and influence endocrine and immune signalling.",
+        "Endocrine / thyroid":"Hormones coordinate metabolic activity and interact with cardiovascular, nervous, reproductive and other systems.",
+        "Blood & oxygen transport":"Blood transports oxygen, carbon dioxide, nutrients, hormones and immune components between organs.",
+        "Immune / inflammation":"Immune signalling interacts with circulation, liver acute-phase responses, bone marrow and thermoregulation.",
+        "Skin & temperature":"Skin blood flow and sweating help exchange heat with the environment; the brain coordinates thermoregulatory responses.",
+        "Reproductive system":"Reproductive function interacts with hypothalamic, pituitary, gonadal and other endocrine pathways."
+    }
+    st.write(connections[organ_name])
+    st.markdown("### Suggested practical sequence")
+    st.write("1. Record the baseline settings.  2. Change one variable at a time.  3. Observe the output curve.  4. Explain the mechanism.  5. Identify at least one limitation of the model.  6. Compare the concept with a trusted physiology text.")
+    if st.button("Ask Teacher AI to explain these results", type="primary", key="wholebody_explain"):
+        st.session_state.tutor_prefill = f"Explain the physiology of {cfg['organ']} and its connections to other organ systems. Explain these illustrative simulation outputs: {metrics}. State the model limitations and give MBBS-level retrieval questions."
+        st.session_state.navigation = "Teacher AI"
+        st.rerun()
 
 elif page in ["Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center"]:
     lab_configs = {
