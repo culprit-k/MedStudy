@@ -69,6 +69,23 @@ class AppSmokeTests(unittest.TestCase):
             self.assertIn(label, source)
         self.assertNotIn("def render_3d_anatomy_viewer", source)
 
+    def test_surgery_simulator_has_multiple_cases_and_safety_guardrails(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for label in [
+            "Surgery Simulator",
+            "Appendectomy (acute appendicitis)",
+            "Laparoscopic cholecystectomy (gallbladder)",
+            "Skin wound closure (simulation)",
+            "Hip fracture: theatre safety and fixation planning",
+            "Submit decision",
+            "Restart this case",
+            "TRAINING ONLY",
+            "Real 3D Anatomy Atlas"
+        ]:
+            self.assertIn(label, source)
+        self.assertIn("surgery_progress_", source)
+        self.assertIn("surgery_answers_", source)
+
     def test_virtual_hospital_workspace_is_integrated(self):
         source = APP_FILE.read_text(encoding="utf-8")
         for label in ["Virtual Hospital", "Operating theatre", "Microbiology bench", "Diagnostics lab", "render_hospital_monitor", "render_simulation_scene", "Patient scenario", "Team safety view"]:
