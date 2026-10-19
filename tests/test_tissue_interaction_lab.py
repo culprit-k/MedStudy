@@ -26,7 +26,7 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("Tissue Interaction Lab", self.readme)
         self.assertIn("not a realistic or clinically validated surgical simulator", self.readme)
         self.assertIn("mass-spring membrane approximation", self.docs)
-        self.assertIn("not calibrated", self.docs)
+        self.assertIn("not literature-derived measurements", self.docs)
 
     def test_main_navigation_routes_to_tissue_lab(self):
         self.assertIn('"Tissue Interaction Lab"', self.app)
