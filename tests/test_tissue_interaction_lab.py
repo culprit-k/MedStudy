@@ -63,6 +63,11 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("SOFA", self.page)
         self.assertIn("No finite-element tissue physics", self.page)
 
+    def test_membrane_has_bounded_deformation_and_fixed_rim(self):
+        self.assertIn("if(indent[i]>.18)", self.html)
+        self.assertIn("ix<2||ix>columns-3||iz<2||iz>rows-3", self.html)
+        self.assertIn("Math.min(.033", self.html)
+
     def test_external_body_mesh_has_loader_focus_and_disclosure(self):
         self.assertIn("GLTFLoader.js", self.html)
         self.assertIn("human_posed.glb", self.html)
