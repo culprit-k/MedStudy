@@ -8,11 +8,13 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 ROOT = Path(__file__).parent
 DATA_FILE = ROOT / "data" / "questions.json"
 VISUAL_FILE = ROOT / "data" / "visual_questions.json"
 IMAGE_LIBRARY_FILE = ROOT / "data" / "image_library.json"
+HOSPITAL_FILE = ROOT / "data" / "hospital_training.json"
 
 st.set_page_config(
     page_title="MedStudy — Medical Learning Studio",
@@ -29,6 +31,8 @@ def load_json(path):
 QUESTIONS = load_json(DATA_FILE)
 VISUAL_QUESTIONS = load_json(VISUAL_FILE)
 IMAGE_LIBRARY = load_json(IMAGE_LIBRARY_FILE)
+HOSPITAL_DATA = load_json(HOSPITAL_FILE)
+HOSPITAL_DATA = load_json(HOSPITAL_FILE)
 SUBJECTS = list(QUESTIONS)
 ALL_CARDS = [{"subject": subject, **item} for subject, items in QUESTIONS.items() for item in items]
 ALL_CARDS += [{"subject": item["subject"], **item} for item in VISUAL_QUESTIONS]
@@ -42,6 +46,7 @@ def init_state():
         "daily_goal": 15, "visual_index": 0, "case_revealed": [],
         "image_library_results": [], "image_library_last_query": "",
         "image_library_error": "", "saved_image_references": [],
+        "hospital_completed_steps": {}, "hospital_micro_results": {}, "hospital_diagnostic_results": {},
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -174,6 +179,118 @@ def render_image_library_card(image, key_prefix):
         st.toast("Image reference saved for this session")
 
 
+
+def render_hospital_monitor(organ_name, vitals, scene_label="PATIENT MONITOR"):
+    """Render a self-contained animated teaching monitor and conceptual body map."""
+    selected = json.dumps(str(organ_name))
+    display = json.dumps({
+        "hr": int(vitals.get("hr", 80)),
+        "spo2": int(vitals.get("spo2", 98)),
+        "rr": int(vitals.get("rr", 16)),
+        "sbp": int(vitals.get("systolic_bp", 120)),
+        "dbp": int(vitals.get("diastolic_bp", 80)),
+        "temp": float(vitals.get("temperature", 37.0)),
+    })
+    scene = html.escape(str(scene_label))
+    page = r"""
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08121c;color:#e5f2f5;font-family:Inter,system-ui,Arial,sans-serif}
+.frame{border:1px solid #263d4c;border-radius:18px;background:radial-gradient(circle at 12% 5%,#163746 0,transparent 40%),linear-gradient(140deg,#101f2d,#071119);padding:15px;overflow:hidden}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #253d4b;padding-bottom:12px;margin-bottom:12px}
+.kicker{font-size:10px;letter-spacing:2px;color:#86d6d0;font-weight:800}.heading{font-weight:800;font-size:16px;margin-top:5px}
+.live{font-size:10px;color:#92f4ca;background:#123d36;border:1px solid #1e7764;padding:6px 10px;border-radius:50px;white-space:nowrap}
+.content{display:grid;grid-template-columns:minmax(155px,.7fr) minmax(250px,1.3fr);gap:12px}
+.box{border:1px solid #294250;background:#0b1923;border-radius:14px;padding:10px;min-width:0}
+.box-title{font-size:10px;letter-spacing:1.4px;color:#83adb9;font-weight:800;margin:0 0 8px}
+.body-svg{width:100%;height:280px;display:block}
+.silhouette{fill:#213947;stroke:#4a7580;stroke-width:2}
+.organ{fill:#1a5c65;stroke:#65c9c1;stroke-width:1.5;opacity:.8;transition:all .25s}
+.organ.active{fill:#dd7761;stroke:#ffc3ab;filter:drop-shadow(0 0 7px #ee806c);opacity:1}
+.organ-text{fill:#bce6e8;font-size:8px;font-weight:600}
+.pulse{transform-origin:center;animation:pulse var(--pulse-duration,1s) infinite ease-in-out}
+@keyframes pulse{0%,100%{opacity:.65;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.metric{background:#07121b;border:1px solid #203642;padding:8px;border-radius:9px;min-width:0}
+.label{color:#7f9ca7;font-size:9px;font-weight:700;letter-spacing:.5px}
+.value{font-family:ui-monospace,monospace;font-size:21px;color:#a6ffdb;font-weight:800;margin-top:4px}
+.unit{font-size:9px;color:#7f9ca7}
+.ecg{width:100%;height:70px;background:#061017;border:1px solid #183b3c;border-radius:9px;margin-top:8px}
+.trace{fill:none;stroke:#62e3b5;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:7 4;animation:scroll 1.8s linear infinite}
+@keyframes scroll{to{stroke-dashoffset:-44}}
+.subtrace{fill:none;stroke:#51b9dc;stroke-width:1.5;stroke-dasharray:5 4;animation:scroll 3.8s linear infinite}
+.note{margin-top:8px;color:#809ca8;font-size:10px;line-height:1.5}
+@media(max-width:540px){.content{grid-template-columns:1fr}.body-svg{height:220px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.value{font-size:18px}}
+</style></head><body>
+<div class="frame" id="frame">
+ <div class="top"><div><div class="kicker">MEDSTUDY · SIMULATION SUITE</div><div class="heading">__SCENE__</div></div><div class="live">● SIMULATION RUNNING</div></div>
+ <div class="content">
+  <section class="box"><div class="box-title">CONCEPTUAL ORGAN MAP</div>
+   <svg class="body-svg" viewBox="0 0 210 330" role="img" aria-label="Simplified body map with selectable organ-system highlight">
+    <ellipse class="silhouette" cx="105" cy="28" rx="22" ry="25"/>
+    <path class="silhouette" d="M87 52 L84 65 Q65 69 52 78 L34 124 Q30 136 38 140 Q46 143 51 129 L68 92 L74 150 L64 219 L76 226 L86 166 L92 232 L83 301 Q82 311 91 311 L100 311 L107 243 L113 311 L123 311 Q131 311 128 300 L119 232 L126 166 L136 219 L148 226 L138 150 L142 92 L159 129 Q164 143 173 140 Q180 136 176 124 L158 78 Q145 69 126 65 L123 52 Z"/>
+    <path class="silhouette" d="M85 64 Q105 80 125 64 L131 155 Q106 170 79 155 Z"/>
+    <ellipse data-organ="Brain & nervous system" class="organ" cx="105" cy="27" rx="14" ry="15"/>
+    <path data-organ="Lungs & airway" class="organ" d="M96 87 C80 80 72 101 78 124 C81 137 92 135 101 120 L101 91 Z"/>
+    <path data-organ="Lungs & airway" class="organ" d="M114 87 C130 80 138 101 132 124 C129 137 118 135 109 120 L109 91 Z"/>
+    <path data-organ="Heart & circulation" class="organ pulse" d="M103 101 C91 89 83 105 94 116 L105 128 L117 114 C130 99 115 91 107 102 L105 105 Z"/>
+    <path data-organ="Liver & metabolism" class="organ" d="M78 139 Q95 128 111 140 Q108 158 85 158 Q75 153 78 139 Z"/>
+    <path data-organ="GI tract & pancreas" class="organ" d="M115 142 Q137 135 132 154 Q125 162 119 153 Q110 160 111 169 Q100 171 99 158 Q100 146 115 142 Z"/>
+    <ellipse data-organ="Kidneys & fluid balance" class="organ" cx="82" cy="173" rx="7" ry="11"/>
+    <ellipse data-organ="Kidneys & fluid balance" class="organ" cx="128" cy="173" rx="7" ry="11"/>
+    <path data-organ="Blood & immune system" class="organ" d="M95 177 Q105 170 115 177 L117 205 Q105 214 93 205 Z"/>
+    <path data-organ="Endocrine system" class="organ" d="M98 75 Q105 70 112 75 L109 83 L101 83 Z"/>
+    <path data-organ="Reproductive system" class="organ" d="M96 211 Q105 205 114 211 L114 225 L105 232 L96 225 Z"/>
+    <path data-organ="Skin & musculoskeletal" d="M58 80 Q105 60 152 80 L140 155 L132 222 L123 301 M77 301 L68 222 L74 155" fill="none" stroke="#4b7582" stroke-width="1.4" opacity=".8"/>
+    <text class="organ-text" x="105" y="326" text-anchor="middle">SELECTED SYSTEM GLOW</text>
+   </svg>
+   <div class="note">Conceptual anatomy map only — not to anatomical scale and not a diagnostic display.</div>
+  </section>
+  <section class="box"><div class="box-title">BEDSIDE MONITOR · FICTIONAL VALUES</div>
+   <div class="metrics">
+    <div class="metric"><div class="label">HEART RATE</div><div class="value">__HR__</div><div class="unit">beats/min</div></div>
+    <div class="metric"><div class="label">SpO₂</div><div class="value">__SPO2__<span class="unit">%</span></div><div class="unit">oxygen saturation</div></div>
+    <div class="metric"><div class="label">RESP RATE</div><div class="value">__RR__</div><div class="unit">breaths/min</div></div>
+    <div class="metric"><div class="label">NIBP</div><div class="value">__SBP__/__DBP__</div><div class="unit">mmHg</div></div>
+    <div class="metric"><div class="label">TEMPERATURE</div><div class="value">__TEMP__</div><div class="unit">°C</div></div>
+    <div class="metric"><div class="label">PULSE TRACE</div><div class="value pulse">●</div><div class="unit">animated illustration</div></div>
+   </div>
+   <svg class="ecg" viewBox="0 0 540 70" preserveAspectRatio="none" aria-label="Animated illustrative ECG trace">
+    <defs><pattern id="grid" width="18" height="14" patternUnits="userSpaceOnUse"><path d="M18 0H0V14" fill="none" stroke="#133136" stroke-width=".6"/></pattern></defs>
+    <rect width="540" height="70" fill="url(#grid)"/>
+    <path class="trace" d="M0 38 L35 38 L42 35 L50 38 L58 38 L68 38 L75 12 L83 56 L91 32 L106 38 L140 38 L175 38 L182 35 L190 38 L198 38 L208 38 L215 12 L223 56 L231 32 L246 38 L280 38 L315 38 L322 35 L330 38 L338 38 L348 38 L355 12 L363 56 L371 32 L386 38 L420 38 L455 38 L462 35 L470 38 L478 38 L488 38 L495 12 L503 56 L511 32 L526 38 L540 38"/>
+    <path class="subtrace" d="M0 56 Q40 56 54 55 T108 56 T162 55 T216 56 T270 55 T324 56 T378 55 T432 56 T486 55 T540 56"/>
+   </svg>
+   <div class="note">The animated wave is a decorative teaching trace, not ECG data. Trends and values are fictional inputs for this scenario.</div>
+  </section>
+ </div>
+</div>
+<script>
+const chosen = __SELECTED__;
+document.querySelectorAll("[data-organ]").forEach(el=>{
+  const active = el.getAttribute("data-organ") === chosen;
+  if(active) el.classList.add("active");
+});
+const vitals = __VITALS__;
+document.documentElement.style.setProperty("--pulse-duration", Math.max(.35,60/Math.max(vitals.hr,30))+"s");
+</script></body></html>
+"""
+    replacements = {
+        "__SCENE__": scene,
+        "__HR__": str(int(vitals.get("hr", 80))),
+        "__SPO2__": str(int(vitals.get("spo2", 98))),
+        "__RR__": str(int(vitals.get("rr", 16))),
+        "__SBP__": str(int(vitals.get("systolic_bp", 120))),
+        "__DBP__": str(int(vitals.get("diastolic_bp", 80))),
+        "__TEMP__": f"{float(vitals.get('temperature', 37.0)):.1f}",
+        "__SELECTED__": selected,
+        "__VITALS__": display,
+    }
+    for marker, value in replacements.items():
+        page = page.replace(marker, value)
+    components.html(page, height=470, scrolling=False)
+
+
 def record_answer(item, correct, chosen):
     st.session_state.answered.append({
         "id": item["id"], "subject": item["subject"], "correct": bool(correct),
@@ -192,7 +309,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Medical Image Library", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Virtual Hospital", "Learning Library", "Medical Image Library", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -224,6 +341,7 @@ if page == "Home":
         ("🧠","Learning library","Build strong foundations, then review mechanisms and clinical correlations.","Learning Library"),
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
         ("🖼️","Medical image library","Search and save image references across every major medical subject.","Medical Image Library"),
+        ("🏥","Virtual hospital","Enter a simulated ward, operating theatre, microbiology bench and diagnostic lab.","Virtual Hospital"),
         ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
         ("🧪","Physiology lab","Run interactive experiments in cardiovascular, respiratory, renal and nerve physiology.","Physiology Lab"),
         ("🧍","Whole-body organ simulator","Adjust organ-system variables and explore simplified whole-body responses.","Whole-Body Organ Simulator"),
@@ -251,6 +369,214 @@ if page == "Home":
         st.markdown('<div class="panel"><h3>Suggested study loop</h3><p>① Learn one concept → ② test recall → ③ apply it to a case → ④ explain it in your own words.</p><p class="muted">Short active-recall sessions are more useful than rereading alone.</p></div>', unsafe_allow_html=True)
     with right:
         st.markdown('<div class="panel"><h3>Session snapshot</h3><p><b>'+str(correct_total)+'</b> correct responses</p><p><b>'+str(len(st.session_state.bookmarks))+'</b> saved questions</p><p><b>'+str(mastered_subjects)+'</b> subjects with a correct answer</p></div>', unsafe_allow_html=True)
+
+
+elif page == "Virtual Hospital":
+    st.markdown("""
+    <div style="background:linear-gradient(115deg,#071827,#10374a 62%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px 26px;color:#effcff;margin-bottom:14px">
+      <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · SIMULATION CENTER</div>
+      <h1 style="color:white;margin:.5rem 0">Virtual Hospital</h1>
+      <p style="color:#ccebed;max-width:850px;margin:0">Practise bedside assessment, organ-system exploration, operating-room safety, microbiology interpretation and laboratory reasoning in one interactive teaching environment.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.warning("All patients, monitor values and results are fictional. These activities do not provide diagnosis, treatment, medication instructions, real operating-room credentialing or real laboratory protocols. Follow qualified supervision and local institutional guidance in actual clinical environments.")
+    cases = HOSPITAL_DATA.get("patient_cases", [])
+    organ_systems = HOSPITAL_DATA.get("organ_systems", [])
+    micro_tests = HOSPITAL_DATA.get("microbiology_tests", [])
+    or_stages = HOSPITAL_DATA.get("or_workflow", [])
+    diag_panels = HOSPITAL_DATA.get("diagnostic_panels", [])
+    st.markdown("#### Choose your hospital station")
+    tab_ward, tab_organs, tab_or, tab_micro, tab_diag = st.tabs([
+        "🏥 Patient ward", "🫀 Organ explorer", "🧤 Operating theatre", "🦠 Microbiology bench", "🔬 Diagnostics lab"
+    ])
+
+    with tab_ward:
+        st.markdown("### Bedside assessment & live monitor")
+        st.caption("Select a fictional case, review simulated observations, then complete a structured clinical review.")
+        case_names = [c["name"] for c in cases]
+        chosen_case_name = st.selectbox("Patient scenario", case_names, key="hospital_case_select")
+        case = next(c for c in cases if c["name"] == chosen_case_name)
+        c1, c2 = st.columns([1.1, 1])
+        with c1:
+            st.markdown(f"**{case['location']}** · {case['level']}")
+            st.write(case["presentation"])
+            st.markdown("#### Adjust fictional monitor values")
+            st.caption("This is a teaching sandbox; changes are not connected to a real person or medical device.")
+            v = case["vitals"]
+            p1, p2 = st.columns(2)
+            with p1:
+                hr = st.slider("Heart rate · bpm", 35, 190, int(v["hr"]), key=f"ward_hr_{case['id']}")
+                spo2 = st.slider("SpO₂ · %", 65, 100, int(v["spo2"]), key=f"ward_spo2_{case['id']}")
+                rr = st.slider("Respiratory rate · /min", 6, 45, int(v["rr"]), key=f"ward_rr_{case['id']}")
+            with p2:
+                sbp = st.slider("Systolic BP · mmHg", 60, 220, int(v["systolic_bp"]), key=f"ward_sbp_{case['id']}")
+                dbp = st.slider("Diastolic BP · mmHg", 30, 140, int(v["diastolic_bp"]), key=f"ward_dbp_{case['id']}")
+                temp = st.slider("Temperature · °C", 34.0, 42.0, float(v["temperature"]), step=0.1, key=f"ward_temp_{case['id']}")
+            st.markdown("#### Bedside review checklist")
+            step_done = []
+            check_map = {}
+            for idx, item in enumerate(case["observations"]):
+                key = f"ward_{case['id']}_step_{idx}"
+                checked = st.checkbox(item, key=key)
+                check_map[str(idx)] = checked
+                if checked:
+                    step_done.append(idx)
+            st.progress(len(step_done) / max(len(case["observations"]),1))
+            if st.button("Submit bedside review", type="primary", key=f"ward_submit_{case['id']}"):
+                st.session_state.setdefault("hospital_case_reviews", {})[case["id"]] = {
+                    "completed": len(step_done), "total": len(case["observations"]),
+                    "reflection": st.session_state.get(f"ward_reflection_{case['id']}", "")
+                }
+                record_answer({"id":f"hospital-review-{case['id']}","subject":"Virtual Hospital · Patient assessment"},
+                              len(step_done) == len(case["observations"]), f"{len(step_done)}/{len(case['observations'])} checklist items")
+                st.success("Review recorded in this session. Read the debrief and consider what would require a supervisor in a real setting.")
+            reflection = st.text_area("Clinical reasoning reflection", key=f"ward_reflection_{case['id']}", placeholder="What changed? What is uncertain? What would you report to the supervising clinician?")
+        with c2:
+            render_hospital_monitor("Heart & circulation", {
+                "hr":hr,"spo2":spo2,"rr":rr,"systolic_bp":sbp,"diastolic_bp":dbp,"temperature":temp
+            }, "BEDSIDE MONITOR · SIMULATED")
+            st.markdown("#### Debrief")
+            st.info(case["debrief"])
+            st.markdown("**Structured handover**")
+            st.write("Use SBAR: Situation → Background → Assessment → Recommendation. Report observed findings and trends, distinguish facts from interpretation, and escalate concerns through the appropriate real-world pathway.")
+            saved_review = st.session_state.get("hospital_case_reviews", {}).get(case["id"])
+            if saved_review:
+                st.caption(f"Last checklist attempt this session: {saved_review['completed']}/{saved_review['total']} items.")
+
+    with tab_organs:
+        st.markdown("### Interactive organ-system explorer")
+        st.caption("Select an organ system to highlight it in a live animated conceptual body map and connect structure to function.")
+        org_names = [o["name"] for o in organ_systems]
+        selected_name = st.selectbox("Organ system", org_names, key="hospital_organ_select")
+        organ = next(o for o in organ_systems if o["name"] == selected_name)
+        oleft, oright = st.columns([1,1])
+        with oleft:
+            render_hospital_monitor(selected_name, {
+                "hr":84,"spo2":98,"rr":16,"systolic_bp":120,"diastolic_bp":78,"temperature":36.8
+            }, "WHOLE-BODY ORGAN MAP")
+        with oright:
+            st.markdown(f"## {organ['icon']} {organ['name']}")
+            st.markdown(f"**Key structures:** {organ['focus']}")
+            st.write(organ["concept"])
+            st.info(organ["caseLink"])
+            st.markdown("#### Quick learning actions")
+            q1, q2 = st.columns(2)
+            with q1:
+                if st.button("Study this system", key=f"organ_study_{selected_name}", use_container_width=True):
+                    st.session_state.navigation = "Anatomy Lab"
+                    st.rerun()
+            with q2:
+                if st.button("Run a physiology model", key=f"organ_physiology_{selected_name}", use_container_width=True):
+                    st.session_state.navigation = "Whole-Body Organ Simulator"
+                    st.rerun()
+            if st.button("Ask the Teacher AI", key=f"organ_teacher_{selected_name}", use_container_width=True):
+                st.session_state.tutor_prefill = f"Teach me about {selected_name}: structure, physiology, histology, pathology, diagnostic tests and clinical correlations at MBBS level. Clearly state uncertainties."
+                st.session_state.navigation = "Teacher AI"
+                st.rerun()
+
+    with tab_or:
+        st.markdown("### Operating theatre · safety and team workflow")
+        st.caption("This module focuses on communication, verification, sterility and checklist discipline—not instructions for performing a real operation.")
+        stage_names = [stage["stage"] for stage in or_stages]
+        stage_name = st.selectbox("Theatre phase", stage_names, key="or_stage_select")
+        stage = next(s for s in or_stages if s["stage"] == stage_name)
+        st.markdown(f"#### {stage['stage']}")
+        selected_checks = []
+        for idx, item in enumerate(stage["items"]):
+            if st.checkbox(item, key=f"or_{stage_name}_{idx}"):
+                selected_checks.append(item)
+        st.progress(len(selected_checks) / max(len(stage["items"]),1))
+        st.metric("Checklist completion", f"{len(selected_checks)}/{len(stage['items'])}")
+        st.markdown("#### Team briefing")
+        briefing = st.text_area("What would you confirm with the team before proceeding?", key=f"or_briefing_{stage_name}", placeholder="Patient/site/procedure, roles, risks, equipment, specimen plan and concerns...")
+        if st.button("Complete simulated theatre phase", type="primary", key=f"or_complete_{stage_name}"):
+            all_done = len(selected_checks) == len(stage["items"])
+            st.session_state.setdefault("or_phase_results", {})[stage_name] = {"completed":len(selected_checks),"total":len(stage["items"]),"briefing":briefing}
+            if all_done:
+                st.success("Phase checklist complete in this simulation. In practice, always use the approved local checklist and supervising team.")
+            else:
+                st.warning("The checklist is incomplete. Review the omitted safety items before marking this phase complete.")
+            record_answer({"id":f"or-{stage_name}","subject":"Virtual Hospital · Operating theatre"},all_done,f"{len(selected_checks)}/{len(stage['items'])} items")
+        st.markdown("---")
+        st.markdown("**Operating-room environment**")
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#102a3a,#0a1722);border:1px solid #315568;border-radius:15px;padding:18px;color:#d5eff3">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><b>THEATRE 02 · SIMULATION</b><span style="color:#8de3d3">● TEAM BRIEFING</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:15px">
+            <div style="background:#1a3544;padding:12px;border-radius:10px"><div style="font-size:22px">🧑‍⚕️</div><b>Team roles</b><div style="font-size:11px;color:#a6c5ce">Surgeon · Anaesthesia · Nursing</div></div>
+            <div style="background:#1a3544;padding:12px;border-radius:10px"><div style="font-size:22px">🧼</div><b>Sterile field</b><div style="font-size:11px;color:#a6c5ce">Asepsis · Instrument count</div></div>
+            <div style="background:#1a3544;padding:12px;border-radius:10px"><div style="font-size:22px">📋</div><b>Safety checklist</b><div style="font-size:11px;color:#a6c5ce">Time-out · Sign-out</div></div>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with tab_micro:
+        st.markdown("### Clinical microbiology bench")
+        st.caption("Virtual bench: specimen reasoning, test principles, interpretation and limitations. No real biological materials are used.")
+        test_names = [test["name"] for test in micro_tests]
+        test_name = st.selectbox("Choose a microbiology station", test_names, key="micro_station_select")
+        test = next(t for t in micro_tests if t["name"] == test_name)
+        st.markdown(f"#### 🦠 {test['name']}")
+        st.markdown(f"**Specimen context:** {test['specimen']}")
+        st.markdown(f"**Principle:** {test['principle']}")
+        st.markdown(f"**Task:** {test['learning_task']}")
+        answer = st.radio("Select your interpretation", test["options"], key=f"micro_answer_{test_name}")
+        if st.button("Submit interpretation", type="primary", key=f"micro_submit_{test_name}"):
+            correct = test["options"].index(answer) == int(test["answer"])
+            st.session_state.setdefault("hospital_micro_results", {})[test_name] = {
+                "correct": correct, "selected": answer, "best_answer": test["options"][int(test["answer"])]
+            }
+            record_answer({"id":f"micro-{test_name}","subject":"Virtual Hospital · Microbiology"},correct,answer)
+        result = st.session_state.get("hospital_micro_results", {}).get(test_name)
+        if result:
+            if result["correct"]:
+                st.success("Correct interpretation.")
+            else:
+                st.error(f"Review the interpretation. Best answer: {result['best_answer']}")
+            st.write(test["explanation"])
+        with st.expander("Quality control, limitations and safety"):
+            st.write(test["limitations"])
+            st.write("Actual specimen handling, culture, staining, amplification, susceptibility testing and quality control must be done by trained personnel under approved laboratory SOPs and institutional biosafety requirements.")
+        m1, m2 = st.columns(2)
+        with m1:
+            if st.button("Study organisms and stains", key="micro_to_library", use_container_width=True):
+                st.session_state.navigation = "Medical Image Library"
+                st.rerun()
+        with m2:
+            if st.button("Open microbiology questions", key="micro_to_quiz", use_container_width=True):
+                st.session_state.navigation = "Learning Library"
+                st.rerun()
+
+    with tab_diag:
+        st.markdown("### Clinical diagnostics laboratory")
+        st.caption("Interpret fictional panels and learn the limitations of test results. These are examples, not real patient results.")
+        panel_names = [p["name"] for p in diag_panels]
+        panel_name = st.selectbox("Diagnostic panel", panel_names, key="diagnostic_panel_select")
+        panel = next(p for p in diag_panels if p["name"] == panel_name)
+        st.markdown(f"#### {panel['name']}")
+        st.caption(panel["context"])
+        for test_label, value, interpretation in panel["results"]:
+            row1, row2, row3 = st.columns([1.15,1,1.4])
+            row1.markdown(f"**{test_label}**")
+            row2.write(value)
+            row3.caption(interpretation)
+        st.markdown("---")
+        st.markdown(f"**{panel['question']}**")
+        diag_answer = st.radio("Choose the best interpretation", panel["options"], key=f"diagnostic_answer_{panel_name}")
+        if st.button("Submit lab interpretation", type="primary", key=f"diagnostic_submit_{panel_name}"):
+            correct = panel["options"].index(diag_answer) == int(panel["answer"])
+            st.session_state.setdefault("hospital_diagnostic_results", {})[panel_name] = {
+                "correct": correct, "selected": diag_answer, "best_answer": panel["options"][int(panel["answer"])]
+            }
+            record_answer({"id":f"diagnostic-{panel_name}","subject":"Virtual Hospital · Diagnostics"},correct,diag_answer)
+        result = st.session_state.get("hospital_diagnostic_results", {}).get(panel_name)
+        if result:
+            if result["correct"]:
+                st.success("Good interpretation.")
+            else:
+                st.error(f"Best answer: {result['best_answer']}")
+            st.info(panel["explanation"])
+        st.info("In clinical care, test results must be interpreted by qualified personnel using current guidelines, local reference ranges, patient context and appropriate escalation.")
 
 elif page == "Learning Library":
     st.title("📚 Learning library")
