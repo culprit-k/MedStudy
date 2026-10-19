@@ -75,6 +75,14 @@ def jump(page):
 def find_question(qid):
     return next((item for item in ALL_CARDS if item["id"] == qid), None)
 
+def show_image(relative_path):
+    """Render local SVGs from their markup so Streamlit can display them reliably."""
+    image_path = ROOT / relative_path
+    if image_path.suffix.lower() == ".svg":
+        st.image(image_path.read_text(encoding="utf-8"), use_container_width=True)
+    else:
+        st.image(str(image_path), use_container_width=True)
+
 def record_answer(item, correct, chosen):
     st.session_state.answered.append({
         "id": item["id"], "subject": item["subject"], "correct": bool(correct),
@@ -214,7 +222,7 @@ elif page == "Exam Arena":
             st.progress(st.session_state.quiz_index/len(ids))
             st.caption(f"QUESTION {st.session_state.quiz_index+1} OF {len(ids)} · {item['subject']} · {quiz_mode}")
             if item.get("image"):
-                st.image(str(ROOT/item["image"]),use_container_width=True)
+                show_image(item["image"])
             st.markdown(f'<div class="panel"><h3>{item["question"]}</h3></div>',unsafe_allow_html=True)
             feedback=st.session_state.quiz_feedback.get(qid)
             if feedback:
@@ -250,7 +258,7 @@ elif page == "Visual Lab":
         st.caption(f"IMAGE CHALLENGE {index+1} / {len(order)}  ·  {item['subject']}  ·  {item.get('level','MBBS')}")
         a,b = st.columns([1.05,1])
         with a:
-            st.image(str(ROOT / item["image"]), use_container_width=True)
+            show_image(item["image"])
             st.caption(item.get("image_caption","Schematic illustration for learning."))
         with b:
             st.markdown(f"### {item['question']}")
