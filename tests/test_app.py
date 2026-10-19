@@ -57,10 +57,13 @@ class AppSmokeTests(unittest.TestCase):
             self.assertTrue(panel.get("results"))
             self.assertIn(panel.get("answer"), range(len(panel.get("options", []))))
 
-    def test_interactive_3d_anatomy_viewer_is_integrated(self):
+    def test_interactive_3d_anatomy_viewer_uses_detailed_atlas(self):
         source = APP_FILE.read_text(encoding="utf-8")
-        for label in ["render_3d_anatomy_viewer", "THREE.OrbitControls", "TOUCH ANATOMY STUDIO", "Pull organ out", "Isolate organ", "ray.intersectObjects"]:
+        for label in ["render_3d_anatomy_viewer", "components.iframe", "https://nqwrc.github.io/3d-anatomy/", "Source code and model credits", "licence before any redistribution"]:
             self.assertIn(label, source)
+        viewer = source[source.index("def render_3d_anatomy_viewer"):source.index("def render_hospital_monitor")]
+        self.assertNotIn("THREE.SphereGeometry", viewer)
+        self.assertIn("components.iframe", viewer)
 
     def test_virtual_hospital_workspace_is_integrated(self):
         source = APP_FILE.read_text(encoding="utf-8")
