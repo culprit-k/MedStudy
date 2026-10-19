@@ -61,6 +61,8 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("function setBodyView(show)", self.html)
         self.assertIn("model.rotation.z=-Math.PI/2", self.html)
         self.assertIn("not internal anatomy", self.html)
+        self.assertIn("tool.position.set(p.x-.36,p.y+.035,p.z)", self.html)
+        self.assertIn("if(dragging&&mode==='explore'){az-=", self.html)
         self.assertIn("CC0 1.0", self.page)
 
 
