@@ -60,6 +60,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def jump_to_subject(subject):
+    st.session_state.selected_subject = subject
+    st.session_state.navigation = "Study by Subject"
+
+
+if "navigation" not in st.session_state:
+    st.session_state.navigation = "Dashboard"
+
 with st.sidebar:
     st.markdown("# 🩺 MedStudy")
     st.caption("Your MBBS revision companion")
@@ -67,6 +75,7 @@ with st.sidebar:
         "NAVIGATION",
         ["Dashboard", "Study by Subject", "MCQ Quiz", "Flashcards", "Bookmarks", "Progress"],
         label_visibility="visible",
+        key="navigation",
     )
     st.divider()
     st.caption("Built for learning. Not for clinical decision-making.")
@@ -127,16 +136,17 @@ if page == "Dashboard":
                 f'<b>{len(QUESTIONS[subject])} practice questions</b></div>',
                 unsafe_allow_html=True,
             )
-            if st.button(f"Study {subject}", key=f"dash_{subject}", use_container_width=True):
-                st.session_state.selected_subject = subject
-                st.session_state.page_jump = True
-                st.rerun()
+            st.button(
+                f"Study {subject}", key=f"dash_{subject}", use_container_width=True,
+                on_click=jump_to_subject, args=(subject,),
+            )
 
     st.info("Tip: Read the explanation after every question, including the ones you answer correctly.")
 
 elif page == "Study by Subject":
     st.title("📚 Study by Subject")
-    subject = st.selectbox("Choose a subject", SUBJECTS)
+    default_subject = st.session_state.get("selected_subject", SUBJECTS[0])
+    subject = st.selectbox("Choose a subject", SUBJECTS, index=SUBJECTS.index(default_subject) if default_subject in SUBJECTS else 0)
     st.write(f"**{len(QUESTIONS[subject])} practice questions** in {subject}")
     for number, item in enumerate(QUESTIONS[subject], start=1):
         with st.expander(f"{number}. {item['question']}"):
