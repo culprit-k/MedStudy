@@ -757,6 +757,17 @@ elif page == "Surgery Simulator":
         st.session_state.navigation = "Real 3D Anatomy Atlas"
         st.rerun()
     st.divider()
+    st.markdown("### Enter the interactive operation room")
+    st.write("For hands-on practice with a touch-controlled 3D scene, open the Skills Lab. Choose a virtual station, move the on-screen instrument, select targets, and practise camera orientation. This prototype is for simulated coordination, not a complete validated operation.")
+    if st.button("🎮 Open Hands-on Skills Lab", type="primary", use_container_width=True):
+        st.session_state.navigation = "Hands-on Skills Lab"
+        st.rerun()
+    st.markdown("### What you can practise interactively")
+    skills1, skills2, skills3 = st.columns(3)
+    skills1.markdown("**Camera control**\n\nMove the view and orient toward highlighted targets.")
+    skills2.markdown("**Virtual instrument**\n\nMove a simplified tool and practise target acquisition.")
+    skills3.markdown("**Suture alignment**\n\nSelect marked points in order; this is not real suturing mechanics.")
+
     st.markdown("### Operating theatre workflow")
     st.caption("Work through each stage in order. Select an answer, review the rationale, and then continue to the next stage.")
     progress_key = "surgery_progress_" + procedure_name
