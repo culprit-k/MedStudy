@@ -1,0 +1,50 @@
+[
+  {
+    "id": "visual-heart-01",
+    "subject": "Anatomy",
+    "level": "MBBS · Structure and function",
+    "image": "assets/heart.svg",
+    "image_caption": "Simplified frontal schematic of the heart and great vessels.",
+    "question": "In this schematic, which chamber sends deoxygenated blood into the pulmonary trunk?",
+    "options": ["Right atrium", "Right ventricle", "Left atrium", "Left ventricle"],
+    "answer": "Right ventricle",
+    "explanation": "The right ventricle ejects blood through the pulmonary valve into the pulmonary trunk. The left ventricle ejects oxygenated blood into the aorta.",
+    "pearl": "Trace the route: venae cavae → right atrium → right ventricle → pulmonary arteries → lungs."
+  },
+  {
+    "id": "visual-nephron-01",
+    "subject": "Physiology",
+    "level": "MBBS · Renal physiology",
+    "image": "assets/nephron.svg",
+    "image_caption": "Schematic nephron; not to scale.",
+    "question": "Which nephron segment is responsible for the largest fraction of filtered sodium and water reabsorption?",
+    "options": ["Proximal convoluted tubule", "Thin ascending limb", "Distal convoluted tubule", "Collecting duct only"],
+    "answer": "Proximal convoluted tubule",
+    "explanation": "The proximal tubule reabsorbs roughly two-thirds of filtered sodium and water, as well as most filtered glucose and amino acids under normal conditions.",
+    "pearl": "The thick ascending limb reabsorbs Na-K-2Cl but is relatively impermeable to water; this helps build the medullary osmotic gradient."
+  },
+  {
+    "id": "visual-neuron-01",
+    "subject": "Physiology",
+    "level": "MBBS · Neurophysiology",
+    "image": "assets/neuron.svg",
+    "image_caption": "Schematic multipolar neuron with dendrites, soma, axon and terminals.",
+    "question": "Which part of a typical neuron primarily receives synaptic input from other neurons?",
+    "options": ["Dendrites", "Myelin sheath only", "Axon terminal only", "Node of Ranvier only"],
+    "answer": "Dendrites",
+    "explanation": "Dendrites and the soma receive many synaptic inputs. The axon initial segment is commonly the site where action potentials are initiated when threshold is reached.",
+    "pearl": "Do not treat the neuron as a simple one-way wire: synaptic integration at the soma and dendrites determines output."
+  },
+  {
+    "id": "visual-alveoli-01",
+    "subject": "Histology",
+    "level": "MBBS · Respiratory histology",
+    "image": "assets/alveoli.svg",
+    "image_caption": "Simplified alveolar-capillary interface, showing thin barrier and surrounding capillary.",
+    "question": "Which structural feature most directly supports rapid gas diffusion across the alveolar-capillary barrier?",
+    "options": ["A very thick epithelial wall", "A thin barrier and large surface area", "Cartilage surrounding each alveolus", "A keratinised stratified epithelium"],
+    "answer": "A thin barrier and large surface area",
+    "explanation": "Type I pneumocytes and closely apposed capillary endothelium create a thin diffusion barrier; the many alveoli provide a large surface area for gas exchange.",
+    "pearl": "Type II pneumocytes produce surfactant and can proliferate after injury; type I pneumocytes cover most of the gas-exchange surface."
+  }
+]
