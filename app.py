@@ -1064,9 +1064,10 @@ elif page == "Whole-Body Organ Simulator":
     }
     organ_name = st.selectbox("Choose an organ system", list(organ_groups.keys()), key="wholebody_organ")
     cfg = organ_groups[organ_name]
-    st.markdown("### Interactive 3D anatomy")
-    st.caption("Drag to rotate, pinch or scroll to zoom, tap an organ to select it, and toggle transparent-body mode. This is a simplified 3D teaching model.")
-    render_3d_anatomy_viewer(organ_name, height=610)
+    st.markdown("### Detailed 3D anatomy atlas")
+    st.caption("The detailed model below is provided by the external 3D Anatomy atlas. Use one finger to rotate, pinch to zoom, tap a named structure, and use Isolate/Hide/Transparent controls. The model is derived from Z-Anatomy/BodyParts3D.")
+    components.iframe("https://nqwrc.github.io/3d-anatomy/", height=800, scrolling=True)
+    st.markdown("[Open detailed atlas in a full-screen tab ↗](https://nqwrc.github.io/3d-anatomy/)")
     st.markdown(f"### {cfg['icon']} {cfg['organ']}")
     st.write(cfg["description"])
     left, right = st.columns([1,1], gap="large")
