@@ -8,6 +8,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 COMPONENT = ROOT / "components" / "realistic_tissue_interaction_lab.html"
 PAGE = ROOT / "pages" / "3_Tissue_Interaction_Lab.py"
+APP = ROOT / "app.py"
 
 
 class TissueInteractionLabSmokeTests(unittest.TestCase):
@@ -15,6 +16,11 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.html = COMPONENT.read_text(encoding="utf-8")
         cls.page = PAGE.read_text(encoding="utf-8")
+        cls.app = APP.read_text(encoding="utf-8")
+
+    def test_main_navigation_routes_to_tissue_lab(self):
+        self.assertIn('"Tissue Interaction Lab"', self.app)
+        self.assertIn('st.switch_page("pages/3_Tissue_Interaction_Lab.py")', self.app)
 
     def test_page_embeds_component(self):
         self.assertIn("components.html", self.page)
