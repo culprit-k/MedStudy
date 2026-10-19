@@ -57,6 +57,11 @@ class AppSmokeTests(unittest.TestCase):
             self.assertTrue(panel.get("results"))
             self.assertIn(panel.get("answer"), range(len(panel.get("options", []))))
 
+    def test_interactive_3d_anatomy_viewer_is_integrated(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for label in ["render_3d_anatomy_viewer", "THREE.OrbitControls", "Animate physiology", "Transparent body", "renderer.intersectObjects"]:
+            self.assertIn(label, source)
+
     def test_virtual_hospital_workspace_is_integrated(self):
         source = APP_FILE.read_text(encoding="utf-8")
         for label in ["Virtual Hospital", "Operating theatre", "Microbiology bench", "Diagnostics lab", "render_hospital_monitor", "render_simulation_scene", "Patient scenario", "Team safety view"]:
