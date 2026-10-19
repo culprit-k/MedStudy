@@ -181,43 +181,46 @@ def render_image_library_card(image, key_prefix):
 
 
 
-def render_3d_anatomy_viewer(selected_system="Heart & circulation", height=610):
-    """Interactive 3D teaching anatomy viewer with rotation, zoom, organ selection and simple motion."""
+def render_3d_anatomy_viewer(selected_system="Heart & circulation", height=720):
+    """Touch-first interactive 3D anatomy explorer with selectable, isolatable and detachable teaching organs."""
     selected = json.dumps(str(selected_system))
     page = r"""
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07131d;color:#e8f7fb;font-family:system-ui,Arial,sans-serif}
-#shell{height:100%;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 10%,#17394b,#07131d 72%);border:1px solid #294b5b;border-radius:16px;overflow:hidden}
-#top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #254451}
-#title{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#93e7e0}#sub{font-size:10px;color:#86aab8;margin-top:4px}
-#badge{font-size:10px;color:#9af4cb;border:1px solid #286b60;background:#103a35;padding:6px 9px;border-radius:30px}
-#view{position:relative;flex:1;min-height:290px}#canvas{position:absolute;inset:0}
-#labels{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:6px;max-width:55%;pointer-events:none}
-.tag{font-size:10px;background:#0b202cdd;border:1px solid #2d5667;border-radius:8px;padding:7px;color:#b8d9e2}
-#help{position:absolute;right:8px;bottom:8px;color:#7fa7b7;font-size:10px;background:#07131dcc;padding:7px;border-radius:8px}
-#controls{padding:10px 12px;border-top:1px solid #254451;background:#0a1a25}
-#organs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
-button{font:inherit;cursor:pointer}.organbtn{border:1px solid #2a4b5a;border-radius:9px;background:#102633;color:#b8d3dc;padding:8px 10px;font-size:11px;white-space:nowrap}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07131d;color:#e8f7fb;font-family:system-ui,Arial,sans-serif;touch-action:pan-y}
+#shell{height:100%;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 8%,#17394b,#07131d 72%);border:1px solid #294b5b;border-radius:16px;overflow:hidden}
+#top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 12px;border-bottom:1px solid #254451}
+#title{font-size:11px;font-weight:800;letter-spacing:1.3px;color:#93e7e0}#sub{font-size:10px;color:#86aab8;margin-top:4px}
+#badge{font-size:9px;color:#9af4cb;border:1px solid #286b60;background:#103a35;padding:6px 8px;border-radius:30px;white-space:nowrap}
+#view{position:relative;flex:1;min-height:320px;touch-action:none}#canvas{position:absolute;inset:0}
+#labels{position:absolute;left:9px;top:9px;display:flex;flex-direction:column;gap:5px;max-width:64%;pointer-events:none}
+.tag{font-size:10px;background:#0b202cdd;border:1px solid #2d5667;border-radius:8px;padding:7px;color:#c3e1e8;backdrop-filter:blur(5px)}
+#help{position:absolute;right:7px;bottom:7px;color:#9bb9c5;font-size:10px;background:#07131dcc;padding:7px;border-radius:8px;pointer-events:none}
+#controls{padding:9px 10px 11px;border-top:1px solid #254451;background:#0a1a25}
+#organs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+button{font:inherit;cursor:pointer;touch-action:manipulation}.organbtn{border:1px solid #2a4b5a;border-radius:9px;background:#102633;color:#b8d3dc;padding:8px 10px;font-size:11px;white-space:nowrap}
 .organbtn.active{background:#145d68;border-color:#54d7d0;color:#fff}
-.action{border:1px solid #2a4b5a;border-radius:8px;background:#122936;color:#d5e9ee;padding:7px 10px;font-size:11px;margin-right:5px}
-.action.on{border-color:#56c9c0;color:#a1f3e8}#note{font-size:10px;color:#819eab;line-height:1.4;margin-top:8px}
+#actions{display:flex;gap:5px;flex-wrap:wrap}.action{border:1px solid #2a4b5a;border-radius:8px;background:#122936;color:#d5e9ee;padding:8px 9px;font-size:11px}
+.action.on{border-color:#56c9c0;color:#a1f3e8}#note{font-size:10px;color:#819eab;line-height:1.4;margin-top:7px}
+@media(max-width:430px){#top{padding:9px}#view{min-height:330px}.action{font-size:10px;padding:8px 7px}.tag{font-size:9px}}
 </style></head><body><div id="shell">
-<div id="top"><div><div id="title">MEDSTUDY · INTERACTIVE 3D ANATOMY</div><div id="sub">Rotate · zoom · select an organ · animate systems</div></div><div id="badge">● WEBGL SCENE</div></div>
-<div id="view"><div id="canvas"></div><div id="labels"><div class="tag" id="organlabel">Selected: Heart & circulation</div><div class="tag" id="detail">Heart, chambers and great vessels</div></div><div id="help">Drag to rotate · pinch to zoom</div></div>
-<div id="controls"><div id="organs"></div><button class="action on" id="motion">▶ Animate physiology</button><button class="action" id="wire">◇ Transparent body</button><button class="action" id="reset">↻ Reset view</button><div id="note">Simplified 3D teaching model, not an anatomically precise atlas or diagnostic tool. Requires internet access to load the 3D engine.</div></div></div>
+<div id="top"><div><div id="title">MEDSTUDY · TOUCH ANATOMY STUDIO</div><div id="sub">Touch an organ · isolate it · pull it out · inspect</div></div><div id="badge">● INTERACTIVE 3D</div></div>
+<div id="view"><div id="canvas"></div><div id="labels"><div class="tag" id="organlabel">Selected: Heart & circulation</div><div class="tag" id="detail">Tap an organ in the model or choose below</div><div class="tag" id="status">Whole body · all structures visible</div></div><div id="help">1 finger: rotate · pinch: zoom · tap: select</div></div>
+<div id="controls"><div id="organs"></div><div id="actions">
+<button class="action" id="isolate">◉ Isolate organ</button><button class="action" id="extract">↗ Pull organ out</button><button class="action" id="layers">◇ Transparent body</button><button class="action" id="motion">Ⅱ Pause motion</button><button class="action" id="reset">↻ Reset</button>
+</div><div id="note">Touch-friendly educational model. “Pull organ out” is an exploded-view teaching action, not a surgical procedure. Simplified geometry; not for clinical use.</div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 (function(){
-const initial=__SELECTED__, host=document.getElementById('canvas');
+const initial=__SELECTED__,host=document.getElementById('canvas');
 if(!window.THREE){host.innerHTML='<div style="padding:20px;color:#ffd09b">3D engine unavailable. Check internet and reload.</div>';return;}
 const systems=[
-['Heart & circulation','Heart, chambers and great vessels'],['Lungs & airway','Lungs, bronchi and airway'],['Brain & nervous system','Brain and spinal cord'],['Kidneys & fluid balance','Kidneys and urinary tract'],['Liver & metabolism','Liver and biliary region'],['GI tract & pancreas','Stomach, bowel and pancreas'],['Blood & immune system','Spleen and immune tissues'],['Endocrine system','Thyroid and endocrine glands'],['Reproductive system','Reproductive region'],['Skin & musculoskeletal','Body surface, bones and muscles']];
-let selected=initial,motion=true,wire=false;
+['Heart & circulation','Heart, chambers and great vessels'],['Lungs & airway','Lungs, bronchi and airway'],['Brain & nervous system','Brain and spinal cord'],['Kidneys & fluid balance','Kidneys and urinary tract'],['Liver & metabolism','Liver and biliary region'],['GI tract & pancreas','Stomach, bowel and pancreas'],['Blood & immune system','Spleen and immune tissues'],['Endocrine system','Thyroid and endocrine glands'],['Reproductive system','Reproductive region'],['Skin & musculoskeletal','Body surface, bones and muscle volumes']];
+let selected=initial,motion=true,wire=false,isolate=false,extracted=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x081621);
 const camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(0,.8,9.4);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;host.appendChild(renderer.domElement);
-const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,.25,0);controls.minDistance=5;controls.maxDistance=15;
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;host.appendChild(renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.08;controls.target.set(0,.25,0);controls.minDistance=4.5;controls.maxDistance=15;controls.enablePan=true;
 scene.add(new THREE.HemisphereLight(0xc7f4ff,0x13212c,2));
 const key=new THREE.DirectionalLight(0xffffff,2);key.position.set(4,6,7);scene.add(key);
 const rim=new THREE.PointLight(0x36c9cb,1.8,20);rim.position.set(-4,1,1);scene.add(rim);
@@ -230,44 +233,48 @@ liver:new THREE.MeshStandardMaterial({color:0x9b523b}),gut:new THREE.MeshStandar
 kidney:new THREE.MeshStandardMaterial({color:0x9d6a80}),brain:new THREE.MeshStandardMaterial({color:0xd4a3d1}),
 nerve:new THREE.MeshStandardMaterial({color:0xeed76f}),blood:new THREE.MeshStandardMaterial({color:0x9c5367}),
 endo:new THREE.MeshStandardMaterial({color:0xf0d76d}),repro:new THREE.MeshStandardMaterial({color:0xd987b5})};
-const objs={};
-function add(geo,material,pos,scale,sys,name){const m=new THREE.Mesh(geo,material);m.position.set(...pos);m.scale.set(...scale);m.userData={system:sys,name:name||sys};body.add(m);(objs[sys]||(objs[sys]=[])).push(m);return m;}
-function ball(mat,pos,scale,sys,name){return add(new THREE.SphereGeometry(1,28,20),mat,pos,scale,sys,name);}
-function tube(points,r,material,sys){return add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),32,r,8,false),material,[0,0,0],[1,1,1],sys);}
-ball(mat.body,[0,.15,0],[1.12,2,.54],'Skin & musculoskeletal','Torso');
-ball(mat.body,[0,2.55,0],[.43,.49,.4],'Skin & musculoskeletal','Head');
+const objs={},originals=new Map();
+function add(geo,material,pos,scale,sys,name){const m=new THREE.Mesh(geo,material);m.position.set(...pos);m.scale.set(...scale);m.userData={system:sys,name:name||sys};body.add(m);(objs[sys]||(objs[sys]=[])).push(m);originals.set(m,{position:m.position.clone(),scale:m.scale.clone(),material:m.material});return m;}
+function ball(material,pos,scale,sys,name){return add(new THREE.SphereGeometry(1,32,24),material,pos,scale,sys,name);}
+function tube(points,r,material,sys,name){return add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),32,r,8,false),material,[0,0,0],[1,1,1],sys,name);}
+ball(mat.body,[0,.15,0],[1.12,2,.54],'Skin & musculoskeletal','Torso');ball(mat.body,[0,2.55,0],[.43,.49,.4],'Skin & musculoskeletal','Head');
 ball(mat.body,[-1.25,.55,0],[.22,1.1,.24],'Skin & musculoskeletal','Arm');ball(mat.body,[1.25,.55,0],[.22,1.1,.24],'Skin & musculoskeletal','Arm');
 ball(mat.body,[-.4,-1.95,0],[.28,1.25,.3],'Skin & musculoskeletal','Leg');ball(mat.body,[.4,-1.95,0],[.28,1.25,.3],'Skin & musculoskeletal','Leg');
 for(let y=-.75;y<1.5;y+=.23)ball(mat.bone,[0,y,-.33],[.1,.075,.09],'Skin & musculoskeletal','Vertebra');
-for(let i=0;i<7;i++){let y=1.05-i*.2,w=.72-i*.025;tube([[-.08,y,-.08],[-w*.7,y+.06,0],[-w,y-.04,.08]],.027,mat.bone,'Skin & musculoskeletal');tube([[.08,y,-.08],[w*.7,y+.06,0],[w,y-.04,.08]],.027,mat.bone,'Skin & musculoskeletal');}
+for(let i=0;i<7;i++){let y=1.05-i*.2,w=.72-i*.025;tube([[-.08,y,-.08],[-w*.7,y+.06,0],[-w,y-.04,.08]],.027,mat.bone,'Skin & musculoskeletal','Rib');tube([[.08,y,-.08],[w*.7,y+.06,0],[w,y-.04,.08]],.027,mat.bone,'Skin & musculoskeletal','Rib');}
 ball(mat.lung,[-.43,.72,.02],[.39,.72,.31],'Lungs & airway','Left lung');ball(mat.lung,[.43,.72,.02],[.39,.72,.31],'Lungs & airway','Right lung');
-tube([[0,1.65,.1],[0,1.25,.1],[0,1.05,.1]],.06,mat.nerve,'Lungs & airway');tube([[0,1.05,.1],[-.22,.83,.1],[-.4,.48,.1]],.04,mat.nerve,'Lungs & airway');tube([[0,1.05,.1],[.22,.83,.1],[.4,.48,.1]],.04,mat.nerve,'Lungs & airway');
+tube([[0,1.65,.1],[0,1.25,.1],[0,1.05,.1]],.06,mat.nerve,'Lungs & airway','Trachea');tube([[0,1.05,.1],[-.22,.83,.1],[-.4,.48,.1]],.04,mat.nerve,'Lungs & airway','Left bronchus');tube([[0,1.05,.1],[.22,.83,.1],[.4,.48,.1]],.04,mat.nerve,'Lungs & airway','Right bronchus');
 const heart=ball(mat.heart,[0,.53,.38],[.29,.38,.24],'Heart & circulation','Heart');heart.userData.pulse=true;
-tube([[.02,.8,.4],[.02,1.08,.35],[.14,1.27,.3],[.14,1.48,.28]],.065,mat.heart,'Heart & circulation');tube([[.12,1.4,.28],[.35,1.43,.24],[.42,1.31,.2]],.04,mat.heart,'Heart & circulation');
+tube([[.02,.8,.4],[.02,1.08,.35],[.14,1.27,.3],[.14,1.48,.28]],.065,mat.heart,'Heart & circulation','Aorta');tube([[.12,1.4,.28],[.35,1.43,.24],[.42,1.31,.2]],.04,mat.heart,'Heart & circulation','Great vessel');
 ball(mat.liver,[-.4,-.03,.3],[.51,.27,.22],'Liver & metabolism','Liver');ball(mat.endo,[-.08,-.25,.4],[.06,.12,.07],'Liver & metabolism','Gallbladder');
 ball(mat.gut,[.32,-.03,.31],[.27,.33,.2],'GI tract & pancreas','Stomach').rotation.z=-.3;
-for(let i=0;i<4;i++){let y=-.52-i*.12,w=.32;tube([[-w,y,.28],[-w,y-.05,.28],[w,y-.05,.28],[w,y-.12,.28]],.045,mat.gut,'GI tract & pancreas');}
+for(let i=0;i<4;i++){let y=-.52-i*.12,w=.32;tube([[-w,y,.28],[-w,y-.05,.28],[w,y-.05,.28],[w,y-.12,.28]],.045,mat.gut,'GI tract & pancreas','Bowel loop');}
 ball(mat.kidney,[-.63,-.6,.03],[.16,.28,.15],'Kidneys & fluid balance','Left kidney').rotation.z=.3;ball(mat.kidney,[.63,-.6,.03],[.16,.28,.15],'Kidneys & fluid balance','Right kidney').rotation.z=-.3;
-tube([[-.63,-.85,.1],[-.52,-1.18,.1],[-.32,-1.35,.1]],.025,mat.nerve,'Kidneys & fluid balance');tube([[.63,-.85,.1],[.52,-1.18,.1],[.32,-1.35,.1]],.025,mat.nerve,'Kidneys & fluid balance');
-ball(mat.brain,[0,2.58,.03],[.34,.32,.31],'Brain & nervous system','Brain');tube([[0,2.25,-.03],[0,1.7,-.08],[0,1.05,-.1],[0,.3,-.12],[0,-.5,-.14]],.045,mat.nerve,'Brain & nervous system');
+tube([[-.63,-.85,.1],[-.52,-1.18,.1],[-.32,-1.35,.1]],.025,mat.nerve,'Kidneys & fluid balance','Ureter');tube([[.63,-.85,.1],[.52,-1.18,.1],[.32,-1.35,.1]],.025,mat.nerve,'Kidneys & fluid balance','Ureter');
+ball(mat.brain,[0,2.58,.03],[.34,.32,.31],'Brain & nervous system','Brain');tube([[0,2.25,-.03],[0,1.7,-.08],[0,1.05,-.1],[0,.3,-.12],[0,-.5,-.14]],.045,mat.nerve,'Brain & nervous system','Spinal cord');
 ball(mat.blood,[.62,-.12,.05],[.12,.19,.1],'Blood & immune system','Spleen');ball(mat.endo,[0,1.88,.12],[.14,.08,.1],'Endocrine system','Thyroid');ball(mat.repro,[0,-1.52,.18],[.22,.16,.13],'Reproductive system','Reproductive region');
 const floor=new THREE.GridHelper(6,24,0x1d5966,0x15313d);floor.position.y=-3.25;scene.add(floor);
 const buttons=document.getElementById('organs');
 systems.forEach(sys=>{const b=document.createElement('button');b.className='organbtn';b.textContent=sys[0];b.onclick=()=>select(sys[0]);b.dataset.name=sys[0];buttons.appendChild(b)});
-function select(name){selected=name;const d=systems.find(x=>x[0]===name);document.getElementById('organlabel').textContent='Selected: '+name;document.getElementById('detail').textContent=d?d[1]:'';document.querySelectorAll('.organbtn').forEach(b=>b.classList.toggle('active',b.dataset.name===name));Object.keys(objs).forEach(k=>objs[k].forEach(m=>{if(m.material.emissive){m.material.emissive.setHex(k===name?0x16434a:0x000000);m.material.emissiveIntensity=k===name?.7:0;}}));}
-document.getElementById('motion').onclick=()=>{motion=!motion;document.getElementById('motion').classList.toggle('on',motion);document.getElementById('motion').textContent=motion?'▶ Animate physiology':'Ⅱ Pause motion'};
-document.getElementById('wire').onclick=()=>{wire=!wire;document.getElementById('wire').classList.toggle('on',wire);objs['Skin & musculoskeletal'].forEach(m=>{m.material.transparent=true;m.material.opacity=wire?.045:.16;});};
-document.getElementById('reset').onclick=()=>{camera.position.set(0,.8,9.4);controls.target.set(0,.25,0);controls.update();body.rotation.set(0,0,0)};
-const ray=new THREE.Raycaster(),pt=new THREE.Vector2();renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pt.x=(e.clientX-r.left)/r.width*2-1;pt.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pt,camera);const hits=ray.intersectObjects(body.children);if(hits.length&&hits[0].object.userData.system)select(hits[0].object.userData.system);});
+function refreshVisibility(){Object.keys(objs).forEach(k=>objs[k].forEach(m=>{m.visible=!isolate||k===selected;const o=originals.get(m);if(o){m.material=o.material;if(k==='Skin & musculoskeletal'){m.material.transparent=true;m.material.opacity=wire?.045:.16;}else{m.material.transparent=o.material.transparent;m.material.opacity=o.material.opacity===undefined?1:o.material.opacity;}}}));}
+function select(name){selected=name;const d=systems.find(x=>x[0]===name);document.getElementById('organlabel').textContent='Selected: '+name;document.getElementById('detail').textContent=d?d[1]:'';document.querySelectorAll('.organbtn').forEach(b=>b.classList.toggle('active',b.dataset.name===name));Object.keys(objs).forEach(k=>objs[k].forEach(m=>{if(m.material.emissive){m.material.emissive.setHex(k===name?0x16434a:0x000000);m.material.emissiveIntensity=k===name?.7:0;}}));refreshVisibility();document.getElementById('status').textContent=(isolate?'Isolated view · ':'Whole body · ')+(extracted?'organ pulled out':'all structures visible');}
+function resetPositions(){originals.forEach((o,m)=>{m.position.copy(o.position);m.scale.copy(o.scale)});extracted=false;document.getElementById('extract').classList.remove('on');}
+document.getElementById('isolate').onclick=()=>{isolate=!isolate;document.getElementById('isolate').classList.toggle('on',isolate);document.getElementById('isolate').textContent=isolate?'◉ Show whole body':'◉ Isolate organ';select(selected)};
+document.getElementById('extract').onclick=()=>{if(!extracted){const list=objs[selected]||[];list.forEach((m,i)=>{const o=originals.get(m);const dir=new THREE.Vector3(o.position.x,o.position.y+.25,o.position.z+1).normalize();m.position.copy(o.position).add(dir.multiplyScalar(1.45));});extracted=true;isolate=true;document.getElementById('isolate').classList.add('on');document.getElementById('isolate').textContent='◉ Show whole body';document.getElementById('extract').classList.add('on');document.getElementById('extract').textContent='↙ Return organ';}else{resetPositions();document.getElementById('extract').textContent='↗ Pull organ out';}select(selected)};
+document.getElementById('layers').onclick=()=>{wire=!wire;document.getElementById('layers').classList.toggle('on',wire);document.getElementById('layers').textContent=wire?'◇ Restore body opacity':'◇ Transparent body';refreshVisibility()};
+document.getElementById('motion').onclick=()=>{motion=!motion;document.getElementById('motion').classList.toggle('on',motion);document.getElementById('motion').textContent=motion?'Ⅱ Pause motion':'▶ Animate physiology'};
+document.getElementById('reset').onclick=()=>{isolate=false;wire=false;resetPositions();body.rotation.set(0,0,0);camera.position.set(0,.8,9.4);controls.target.set(0,.25,0);controls.update();document.getElementById('isolate').classList.remove('on');document.getElementById('isolate').textContent='◉ Isolate organ';document.getElementById('layers').classList.remove('on');document.getElementById('layers').textContent='◇ Transparent body';select(initial)};
+const ray=new THREE.Raycaster(),pt=new THREE.Vector2();let down=null;
+renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('pointerup',e=>{if(!down||Math.hypot(e.clientX-down.x,e.clientY-down.y)>7){down=null;return;}down=null;const r=renderer.domElement.getBoundingClientRect();pt.x=(e.clientX-r.left)/r.width*2-1;pt.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pt,camera);const hits=ray.intersectObjects(body.children);if(hits.length&&hits[0].object.userData.system)select(hits[0].object.userData.system);});
 function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}new ResizeObserver(resize).observe(host);
 select(initial);
-function animate(t){requestAnimationFrame(animate);if(motion){body.rotation.y=Math.sin(t*.00015)*.06;Object.keys(objs).forEach(k=>objs[k].forEach(m=>{if(m.userData.pulse){const z=1+Math.max(0,Math.sin(t*.008))*.07;m.scale.set(.29*z,.38*z,.24*z)}if(k==='Lungs & airway'&&(m.userData.name==='Left lung'||m.userData.name==='Right lung'))m.scale.y=.72*(1+Math.sin(t*.0018)*.025)}));}controls.update();renderer.render(scene,camera)}animate(0);
+function animate(t){requestAnimationFrame(animate);if(motion){body.rotation.y=Math.sin(t*.00015)*.035;Object.keys(objs).forEach(k=>objs[k].forEach(m=>{if(m.userData.pulse){const z=1+Math.max(0,Math.sin(t*.008))*.07;const o=originals.get(m);m.scale.set(o.scale.x*z,o.scale.y*z,o.scale.z*z);}if(k==='Lungs & airway'&&(m.userData.name==='Left lung'||m.userData.name==='Right lung')){const o=originals.get(m);m.scale.y=o.scale.y*(1+Math.sin(t*.0018)*.025);}}));}controls.update();renderer.render(scene,camera)}animate(0);
 })();
 </script></body></html>
 """
     page = page.replace("__SELECTED__", selected)
     components.html(page, height=height, scrolling=False)
-
 
 
 def render_hospital_monitor(organ_name, vitals, scene_label="PATIENT MONITOR"):
