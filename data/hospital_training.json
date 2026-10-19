@@ -363,5 +363,186 @@
         "Document learning points and receive supervisor feedback."
       ]
     }
+  ],
+  "diagnostic_panels": [
+    {
+      "name": "Complete blood count",
+      "context": "Fictional teaching panel; units and reference intervals are illustrative and vary by laboratory.",
+      "results": [
+        [
+          "Haemoglobin",
+          "9.2 g/dL",
+          "Low in this teaching reference"
+        ],
+        [
+          "White-cell count",
+          "14.8 ×10⁹/L",
+          "Raised in this teaching reference"
+        ],
+        [
+          "Platelets",
+          "310 ×10⁹/L",
+          "Within the teaching reference"
+        ]
+      ],
+      "question": "Which statement is most defensible?",
+      "options": [
+        "The panel shows anaemia and leukocytosis; causes require clinical context and further assessment",
+        "This combination proves one specific disease",
+        "Normal platelets exclude serious illness"
+      ],
+      "answer": 0,
+      "explanation": "A CBC describes cell counts, not a final diagnosis. Morphology, indices, trend, symptoms and other tests may be needed."
+    },
+    {
+      "name": "Arterial blood gas",
+      "context": "Fictional sample for acid–base practice; real samples require correct collection and prompt validated analysis.",
+      "results": [
+        [
+          "pH",
+          "7.29",
+          "Low"
+        ],
+        [
+          "PaCO₂",
+          "55 mmHg",
+          "Raised"
+        ],
+        [
+          "HCO₃⁻",
+          "25 mmol/L",
+          "Within the teaching reference"
+        ]
+      ],
+      "question": "What is the primary acid–base pattern?",
+      "options": [
+        "Respiratory acidosis pattern; assess compensation, oxygenation and clinical context",
+        "Primary respiratory alkalosis",
+        "Primary metabolic alkalosis"
+      ],
+      "answer": 0,
+      "explanation": "Low pH with raised PaCO₂ supports a respiratory acidosis pattern. Mixed disorders, timing, oxygenation and clinical state matter; do not make treatment decisions from this exercise."
+    },
+    {
+      "name": "Renal and electrolyte panel",
+      "context": "Fictional results using illustrative reference intervals.",
+      "results": [
+        [
+          "Creatinine",
+          "2.0 mg/dL",
+          "Raised in this teaching reference"
+        ],
+        [
+          "Potassium",
+          "5.7 mmol/L",
+          "Raised in this teaching reference"
+        ],
+        [
+          "Sodium",
+          "132 mmol/L",
+          "Low in this teaching reference"
+        ]
+      ],
+      "question": "What should a learner notice first?",
+      "options": [
+        "Renal-function and electrolyte abnormalities that need prompt clinical interpretation in context",
+        "This proves chronic kidney disease without baseline or duration",
+        "A single panel defines the cause and safest treatment"
+      ],
+      "answer": 0,
+      "explanation": "The pattern raises concern for renal dysfunction and electrolyte disturbance but does not establish cause or chronicity. Real abnormalities, especially potassium disturbance, need professional assessment using local pathways."
+    },
+    {
+      "name": "Liver biochemistry",
+      "context": "Fictional result pattern; the laboratory's reference ranges and patient context matter.",
+      "results": [
+        [
+          "ALT",
+          "310 U/L",
+          "Raised"
+        ],
+        [
+          "ALP",
+          "105 U/L",
+          "Within this teaching reference"
+        ],
+        [
+          "Total bilirubin",
+          "2.3 mg/dL",
+          "Raised"
+        ]
+      ],
+      "question": "Which is the best first interpretation?",
+      "options": [
+        "A predominantly hepatocellular enzyme pattern with raised bilirubin needs context and further assessment",
+        "This alone proves a single viral cause",
+        "Normal ALP excludes all hepatobiliary disease"
+      ],
+      "answer": 0,
+      "explanation": "ALT-predominant elevation can suggest hepatocellular injury, but interpretation depends on AST, ALP, bilirubin fractions, medication/exposure history and clinical review."
+    },
+    {
+      "name": "Cardiac markers",
+      "context": "Fictional result pattern. Do not use a single marker to assess real chest pain.",
+      "results": [
+        [
+          "High-sensitivity troponin",
+          "Above the assay's 99th percentile",
+          "Raised"
+        ],
+        [
+          "ECG",
+          "Not supplied",
+          "Requires appropriate assessment"
+        ],
+        [
+          "Previous sample",
+          "Not supplied",
+          "No trend available"
+        ]
+      ],
+      "question": "What is the safest academic interpretation?",
+      "options": [
+        "Myocardial injury is possible; diagnosis requires symptoms, ECG, serial change and clinical assessment",
+        "A single elevated result alone proves plaque rupture in every case",
+        "A missing ECG means cardiac disease is excluded"
+      ],
+      "answer": 0,
+      "explanation": "Troponin elevation indicates myocardial injury in the appropriate assay context but is not specific to one cause. Real chest pain or deterioration needs urgent professional evaluation."
+    },
+    {
+      "name": "Urinalysis",
+      "context": "Fictional dipstick results for interpretation practice.",
+      "results": [
+        [
+          "Leukocyte esterase",
+          "Positive",
+          "May indicate white cells"
+        ],
+        [
+          "Nitrite",
+          "Negative",
+          "Does not exclude infection"
+        ],
+        [
+          "Blood",
+          "Trace",
+          "Needs context"
+        ],
+        [
+          "Specific gravity",
+          "1.025",
+          "Reflects concentration in this sample"
+        ]
+      ],
+      "question": "How should the findings be used?",
+      "options": [
+        "Combine symptoms, collection quality and possible microscopy/culture when indicated",
+        "Treat a positive leukocyte esterase as definitive proof in every case",
+        "Use it as a direct measurement of glomerular filtration"
+      ],
+      "answer": 0,
+      "explanation": "Dipstick findings support but do not replace clinical assessment. Contamination and asymptomatic findings can mislead, and negative nitrite does not exclude a urinary infection."
+    }
   ]
 }
