@@ -29,11 +29,19 @@ class QuestionBankTests(unittest.TestCase):
                     self.assertNotIn(item["id"], seen_ids, "Question IDs must be unique")
                     seen_ids.add(item["id"])
                     self.assertGreaterEqual(len(item["options"]), 2)
+                    self.assertEqual(len(item["options"]), len(set(item["options"])))
                     self.assertIn(item["answer"], item["options"])
+                    self.assertTrue(item["question"].strip())
                     self.assertTrue(item["explanation"].strip())
+                    self.assertIsInstance(item["options"], list)
 
     def test_question_bank_has_at_least_one_question_per_subject(self):
-        self.assertGreaterEqual(sum(len(items) for items in self.questions.values()), 6)
+        self.assertGreaterEqual(sum(len(items) for items in self.questions.values()), 30)
+
+    def test_each_subject_has_questions(self):
+        for subject, items in self.questions.items():
+            with self.subTest(subject=subject):
+                self.assertGreaterEqual(len(items), 3)
 
 
 if __name__ == "__main__":
