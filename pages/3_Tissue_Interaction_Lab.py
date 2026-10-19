@@ -69,26 +69,34 @@ with anatomy_tab:
     components.iframe("https://nqwrc.github.io/3d-anatomy/", height=760, scrolling=True)
 
 with roadmap_tab:
-    st.subheader("Next engineering milestones")
+    st.subheader("Implementation status and remaining work")
     st.markdown(
         """
-        1. **Anatomical asset pipeline:** choose one region and one model source; record each
-           mesh's source, licence, attribution, scale, units and anatomical label.
-        2. **Mesh integration:** load a web-ready GLB/GLTF asset with separate structures and
-           collision proxies. Do not redistribute mixed-licence assets until their terms are checked.
-        3. **Physics prototype:** implement a small, bounded deformable mesh with stable constraints,
-           instrument collision, time-step limits and reset/recovery tests.
-        4. **Validation:** compare deformation and tool interactions against known test cases and
-           expert review before describing it as realistic.
-        5. **Later scope:** cutting, tissue tearing, bleeding, haptics and performance assessment
-           require separate models and validation; they are not implemented here.
+        **Implemented in this prototype**
+        - External CC0 static body-surface mesh loaded on demand, with a dedicated framed body view.
+        - A 55 × 39 node surface grid using a damped mass-spring approximation.
+        - Adjustable spring stiffness, damping, and neighbour coupling.
+        - Raycast-based surface contact, animated recovery, visible incision traces, visual stitches,
+          layer toggles, counters, and reset behavior.
+        - An embedded anatomy-atlas reference and a GitHub Actions smoke-test workflow.
+
+        **Still required for a high-fidelity simulator**
+        1. Import legally compatible, separately identifiable structures for one focused surgical region.
+        2. Build collision meshes and align them to the body reference with documented units and landmarks.
+        3. Replace the spring membrane with a validated volumetric model, such as a finite-element model,
+           for tissue volumes where appropriate.
+        4. Implement true geometry separation/cutting, tearing, suture purchase/tension, and tool-tissue
+           collision response rather than the current visual traces.
+        5. Add instrument haptics only with suitable hardware and calibration.
+        6. Validate geometry, numerical stability, interaction behavior, and learning outcomes with
+           qualified anatomy and surgical-simulation reviewers before making realism claims.
         """
     )
     st.markdown(
-        "A research-grade option for the physics layer is "
+        "A research-grade candidate for future volumetric physics is "
         "[SOFA](https://github.com/sofa-framework/sofa), an open-source framework focused on "
-        "interactive physics and medical simulation. It would be a separate native/service layer, "
-        "not a drop-in JavaScript library."
+        "interactive physics and medical simulation. SOFA is not integrated into this browser prototype; "
+        "using it would require a separate native or service layer plus a tested communication interface."
     )
 st.caption(
     "External body mesh source: UMRAM-Bilkent/supine-human-model, CC0 1.0. "
@@ -96,6 +104,6 @@ st.caption(
     "The mesh loads on demand from GitHub; internet access is required."
 )
 st.caption(
-    "Current state: interactive visual prototype with an optional external body mesh and an embedded anatomy reference. "
-    "No finite-element tissue physics, calibrated cutting forces, or clinical validation yet."
+    "Current state: interactive prototype with an optional static body-surface mesh and an adjustable spring-membrane demo. "
+    "No finite-element tissue physics, true cutting mechanics, calibrated tissue parameters, or clinical validation yet."
 )
