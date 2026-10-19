@@ -44,6 +44,14 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn('id="reset"', self.html)
         self.assertIn('id="layers"', self.html)
 
+    def test_physics_controls_are_wired_to_model_parameters(self):
+        self.assertIn('id="stiffnessSlider"', self.html)
+        self.assertIn('id="dampingSlider"', self.html)
+        self.assertIn('id="couplingSlider"', self.html)
+        self.assertIn("stiffness=Number(e.target.value)", self.html)
+        self.assertIn("damping=Number(e.target.value)", self.html)
+        self.assertIn("coupling=Number(e.target.value)", self.html)
+
     def test_limitations_are_disclosed(self):
         self.assertIn("not a realistic or validated surgical simulator", self.page)
         self.assertIn("not biomechanically calibrated", self.html)
