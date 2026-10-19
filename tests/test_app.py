@@ -41,6 +41,24 @@ class AppSmokeTests(unittest.TestCase):
         for label in ["Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI"]:
             self.assertIn(label, source)
 
+    def test_medical_image_library_catalog_is_complete_and_local_assets_exist(self):
+        catalog = json.loads((ROOT / "data" / "image_library.json").read_text(encoding="utf-8"))
+        subjects = catalog.get("subjects", [])
+        names = [item["name"] for item in subjects]
+        self.assertGreaterEqual(len(subjects), 25)
+        self.assertEqual(len(names), len(set(names)), "Image-library subjects must be unique")
+        self.assertEqual(names[0], "All subjects")
+        self.assertGreaterEqual(len(catalog.get("local_images", [])), 5)
+        for item in catalog["local_images"]:
+            self.assertTrue((ROOT / item["path"]).is_file(), item["path"])
+            self.assertTrue(item.get("subjects"), item["title"])
+        self.assertGreaterEqual(len(catalog.get("resources", [])), 3)
+
+    def test_image_library_feature_is_in_navigation_and_uses_attribution_metadata(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for text in ["Medical Image Library", "search_wikimedia_images", "LicenseShortName", "Saved image references"]:
+            self.assertIn(text, source)
+
 
 if __name__ == "__main__":
     unittest.main()
