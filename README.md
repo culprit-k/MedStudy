@@ -9,7 +9,7 @@ MedStudy is an interactive medical learning project built for medical students w
 - **Learning library:** 90 starter MCQs across anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology, with explanations and adjustable learning depth.
 - **Visual lab:** original heart, nephron, neuron, alveolar-interface, and ECG teaching schematics with image-based questions and clinical/exam pearls.
 - **Medical Image Library:** searchable image catalogue across 30 medical subjects, live Wikimedia Commons previews, original source pages, creator credits, per-file licence metadata, session-saved references, and curated collection links.
-- **Tissue Interaction Lab:** a separate 3D educational prototype with a static external body-surface reference, a generated deformable surface using an adjustable damped mass-spring approximation, visual probe/incision/suture interactions, and automated smoke/syntax checks. Accessible from the main sidebar. The mesh parameters are illustrative, not calibrated human biomechanics; this is not a realistic or clinically validated surgical simulator. See [`docs/TISSUE_INTERACTION_LAB.md`](docs/TISSUE_INTERACTION_LAB.md) for limitations and future work.
+- **Tissue Interaction Lab:** a separate 3D educational prototype with a static external body-surface reference, a generated deformable surface using an adjustable damped mass-spring approximation, visual probe/incision/suture interactions, and automated smoke/syntax checks. The mesh parameters are illustrative, not calibrated human biomechanics; this is not a realistic or clinically validated surgical simulator. See [technical documentation](docs/TISSUE_INTERACTION_LAB.md).
 - **Hands-on Skills Lab:** a touch-controlled Three.js sandbox with camera-orientation, instrument-targeting, suture-target alignment concepts and instrument-recognition stations. Includes target selection, simple attempt/success feedback, and navigation to the Surgery Simulator and detailed anatomy atlas. It is a prototype coordination exercise—not a validated surgical simulator and not a guide to real operative technique.
 - **Surgery Simulator:** four fictional surgical/operative training cases (appendectomy, laparoscopic cholecystectomy, wound-assessment/closure decisions, and hip-fracture theatre safety), with staged decisions, anatomy orientation, explanations, scores, missed-answer review, restart controls, and links to the detailed 3D anatomy atlas. This is a safety-focused educational simulation, not a surgical procedural guide or credentialing tool. It also includes a 10-stage end-to-end operating-room workflow from pre-operative checks through team briefing, anaesthesia handoff, positioning, sterile-field/equipment checks, intraoperative uncertainty, deterioration response, sign-out, recovery handover and postoperative review.
 - **Virtual Hospital:** immersive teaching workspace with an animated conceptual organ map, fictional bedside-monitor values, structured patient-assessment scenarios, operating-theatre safety workflow, virtual microbiology test interpretation, and fictional diagnostic laboratory panels.
@@ -23,6 +23,7 @@ MedStudy is an interactive medical learning project built for medical students w
 - **Personal teacher:** adapts tone and level to the learner's goal; guided tutor prompts work without an API key.
 - **Optional AI tutor:** configure an OpenAI API key in Streamlit Community Cloud Secrets as `OPENAI_API_KEY = "your-key"` to enable open-ended AI responses. API usage may incur charges. Never commit keys to GitHub.
 - **Active-recall flashcards, bookmarks, and progress charts.**
+- **Android test wrapper:** a lightweight APK shell for opening the deployed Streamlit app on Android. Build and install instructions are in [android/README.md](android/README.md); GitHub Actions builds a downloadable debug APK.
 - **Automated checks** through GitHub Actions.
 
 The question bank is a growing educational starter set, not a comprehensive MBBS, postgraduate, or PhD curriculum. Advanced learning depth changes the style of prompts, but it does not replace validated specialist-level content or research supervision. The current question set is deliberately a foundation for expansion and should be faculty-reviewed before formal exam use.
@@ -49,6 +50,12 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## Android APK
+
+The Android project is in [android/](android/). The APK is a WebView wrapper; it requires a deployed HTTPS Streamlit URL and internet access, and it is not an offline/native rewrite of the Python app.
+
+Open the [Android APK workflow](https://github.com/culprit-k/MedStudy/actions/workflows/android-apk.yml), select a successful run, and download the `MedStudy-Android-debug-APK` artifact. The artifact contains `app-debug.apk` and is retained for 14 days. Detailed instructions: [android/README.md](android/README.md).
+
 ## Add questions
 
 - Core questions: `data/questions.json`
@@ -66,7 +73,7 @@ Every question should have a unique ID, question, options, answer matching one o
 - The detailed 3D atlas is a third-party project hosted at https://nqwrc.github.io/3d-anatomy/ and documented at https://github.com/nqwrc/3d-anatomy. Its model set includes non-commercial components; review upstream attribution and licence terms before redistribution or commercial use. It is for education, not clinical use.
 - AI tutor output can be inaccurate. An API key is optional and usage may incur charges.
 - No licence has been added yet; public visibility does not automatically grant reuse rights.
-
+- The Android wrapper does not include or host the Streamlit backend and cannot work until a public HTTPS app URL is configured.
 
 ## Virtual Hospital data
 
