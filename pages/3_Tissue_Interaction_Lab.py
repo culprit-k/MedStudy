@@ -37,10 +37,10 @@ st.markdown(
 )
 st.warning(
     "Important limitation: this is a browser-based educational prototype, not a realistic or "
-    "validated surgical simulator. Tissue appearance and interactions are approximations. It "
-    "does not provide validated anatomical geometry, physical tissue deformation, cutting "
-    "mechanics, bleeding, haptics, or clinical skill assessment. It must not be used to train "
-    "or perform real procedures without qualified supervision."
+    "validated surgical simulator. The surface now uses an illustrative damped mass-spring "
+    "approximation, not validated human-tissue biomechanics. It does not provide anatomically "
+    "validated structures, cutting or tearing mechanics, bleeding, haptics, or clinical skill "
+    "assessment. It must not be used to train or perform real procedures without qualified supervision."
 )
 sim_tab, anatomy_tab, roadmap_tab = st.tabs(
     ["Tissue interaction", "Anatomy reference", "Physics roadmap"]
