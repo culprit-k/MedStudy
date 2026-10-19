@@ -394,7 +394,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Virtual Hospital", "Surgery Simulator", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Virtual Hospital", "Surgery Simulator", "Hands-on Skills Lab", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -881,6 +881,112 @@ elif page == "Surgery Simulator":
                 st.session_state.pop(f"{full_key}_feedback_{i}", None)
             st.rerun()
 
+
+elif page == "Hands-on Skills Lab":
+    st.markdown("""
+    <div style="background:linear-gradient(120deg,#071827,#15384b 60%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px;color:#effcff;margin-bottom:14px">
+      <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · VIRTUAL SKILLS LAB</div>
+      <h1 style="color:white;margin:.45rem 0">Hands-on Surgical Skills Lab</h1>
+      <p style="color:#ccebed;margin:0">A touch-controlled 3D training sandbox for camera orientation, instrument targeting, tissue handling concepts and suture-placement accuracy.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.warning("EDUCATIONAL SIMULATION ONLY. The virtual tissue and tools are simplified game-like representations, not a validated surgical simulator. This does not teach a complete real operation or provide safe real-world cutting, dissection, suturing or instrument-force instructions. Use formal skills-lab training and direct clinical supervision.")
+    skill = st.selectbox("Choose a training station", [
+        "Laparoscopic camera orientation",
+        "Instrument targeting and hand-eye coordination",
+        "Suture target alignment",
+        "Operating-room instrument identification"
+    ], key="hands_on_station")
+    station_config = {
+        "Laparoscopic camera orientation": ("CAMERA NAVIGATION", "Move the camera view to bring the highlighted target into the centre, then select it. Practise spatial orientation without a real patient or procedure.", "centre the teal target"),
+        "Instrument targeting and hand-eye coordination": ("TARGET ACQUISITION", "Move the virtual instrument tip to the highlighted target and select it. This is a basic coordination exercise, not a tissue manipulation technique.", "touch the glowing target"),
+        "Suture target alignment": ("SUTURE PLACEMENT CONCEPT", "Select the two marked points in sequence to practise visual alignment and order tracking. No real needle-driving or knot-tying technique is represented.", "select point A, then point B"),
+        "Operating-room instrument identification": ("INSTRUMENT RECOGNITION", "Choose the instrument category requested by the station. Instruments are simplified icons; identification does not imply competence to use them.", "select the matching instrument")
+    }
+    station_title, station_help, station_goal = station_config[skill]
+    st.markdown(f"### {station_title}")
+    st.write(station_help)
+    station_js = json.dumps(skill)
+    lab_html = r"""
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07131d;color:#eaf8fb;font-family:system-ui,Arial,sans-serif;touch-action:none}
+#app{height:100%;display:flex;flex-direction:column;border:1px solid #2b5261;border-radius:15px;overflow:hidden;background:radial-gradient(ellipse at 50% 15%,#17394b,#07131d 70%)}
+#head{padding:10px 12px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #244451}
+#eyebrow{font-size:10px;letter-spacing:1.4px;color:#8de8df;font-weight:800}#hint{font-size:11px;color:#a8c9d3;margin-top:4px}
+#status{font-size:10px;border:1px solid #286b60;color:#9af4cb;border-radius:20px;padding:6px 8px;white-space:nowrap;height:max-content}
+#scene{position:relative;flex:1;min-height:300px;touch-action:none}#scene canvas{display:block;width:100%;height:100%}
+#overlay{position:absolute;left:9px;top:9px;pointer-events:none;display:flex;flex-direction:column;gap:5px;max-width:65%}
+.pill{background:#081a25dd;border:1px solid #2b5362;border-radius:8px;padding:7px;font-size:10px;color:#cbe7ec}
+#bottom{padding:10px;border-top:1px solid #244451;background:#0a1a25}
+#tools{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+button{border:1px solid #315465;border-radius:9px;background:#102b39;color:#d5edf2;padding:9px 11px;font:inherit;font-size:11px;white-space:nowrap;touch-action:manipulation}
+button.active{background:#12616b;border-color:#62e2d7;color:white}button:disabled{opacity:.4}
+#actions{display:flex;gap:6px;flex-wrap:wrap}#result{font-size:11px;color:#9ed6df;margin-top:7px;min-height:16px}
+</style></head><body><div id="app">
+<div id="head"><div><div id="eyebrow">MEDSTUDY · TOUCH SKILLS SIMULATOR</div><div id="hint">Drag to move · tap to select · use the station controls</div></div><div id="status">● TRAINING MODE</div></div>
+<div id="scene"><div id="overlay"><div class="pill" id="station">Station</div><div class="pill" id="goal">Goal: interact with the highlighted target</div><div class="pill" id="count">Attempts: 0 · Successful: 0</div></div></div>
+<div id="bottom"><div id="tools"></div><div id="actions"><button id="reset">↻ Reset station</button><button id="next">Next target →</button><button id="show">Show target</button></div><div id="result">Loading 3D training scene…</div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const station=__STATION__,root=document.getElementById('scene');
+document.getElementById('station').textContent=station.toUpperCase();
+const instructions={
+"Laparoscopic camera orientation":"Drag to rotate the camera. Tap the highlighted teal target when it is centred.",
+"Instrument targeting and hand-eye coordination":"Choose an instrument, drag its tip and tap the glowing target to acquire it.",
+"Suture target alignment":"Select point A, then point B, in the marked order. This represents alignment only.",
+"Operating-room instrument identification":"Select the requested instrument category from the buttons."
+};
+document.getElementById('goal').textContent=instructions[station]||"Select the highlighted target.";
+if(!window.THREE){document.getElementById('result').textContent="3D engine did not load. Check internet access and reload.";return;}
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x081621);
+const camera=new THREE.PerspectiveCamera(45,1,.1,100);camera.position.set(0,0,7);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xc8f6ff,0x17232c,2));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,5,6);scene.add(light);
+const controls={yaw:0,pitch:0};let dragging=false,lastX=0,lastY=0,selectedTool="Grasper",attempts=0,success=0,targetIndex=0,step=0;
+const board=new THREE.Mesh(new THREE.BoxGeometry(5.6,3.6,.16),new THREE.MeshStandardMaterial({color:0x17313c,roughness:.72}));board.position.z=-.7;scene.add(board);
+const grid=new THREE.GridHelper(5,20,0x2c7581,0x204754);grid.rotation.x=Math.PI/2;grid.position.z=-.58;scene.add(grid);
+const targets=[];const targetMat=new THREE.MeshStandardMaterial({color:0x38e1d0,emissive:0x0d817b,emissiveIntensity:1.1});
+const pointPositions=[[-1.2,.45,.08],[1.1,-.42,.08],[.15,.8,.08],[-.75,-.7,.08],[1.3,.6,.08]];
+for(let i=0;i<pointPositions.length;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.18,.035,10,36),targetMat.clone());ring.position.set(...pointPositions[i]);ring.userData.target=i;scene.add(ring);targets.push(ring);const dot=new THREE.Mesh(new THREE.SphereGeometry(.055,16,12),new THREE.MeshStandardMaterial({color:0xbafff7,emissive:0x29b9b0}));dot.position.copy(ring.position);dot.position.z+=.01;scene.add(dot);}
+const toolGroup=new THREE.Group();scene.add(toolGroup);
+const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,2.1,16),new THREE.MeshStandardMaterial({color:0xb9d6df,metalness:.6,roughness:.3}));shaft.rotation.z=Math.PI/2;toolGroup.add(shaft);
+const tip=new THREE.Mesh(new THREE.SphereGeometry(.12,20,16),new THREE.MeshStandardMaterial({color:0xf0c878,metalness:.3,roughness:.3}));tip.position.x=1.12;toolGroup.add(tip);
+const handle=new THREE.Mesh(new THREE.TorusGeometry(.22,.055,12,30),new THREE.MeshStandardMaterial({color:0x41b9b4,metalness:.2}));handle.position.x=-1.15;toolGroup.add(handle);toolGroup.position.set(0,0,.25);
+const tools=document.getElementById('tools');const toolNames=station==="Operating-room instrument identification"?["Scissors","Grasper","Needle holder","Suction","Retractor"]:["Grasper","Camera","Probe","Suture pointer"];
+function drawTools(){tools.innerHTML="";toolNames.forEach(n=>{const b=document.createElement('button');b.textContent=n;b.className=n===selectedTool?'active':'';b.onclick=()=>{selectedTool=n;drawTools();document.getElementById('result').textContent="Selected: "+n+". Use the station's target task.";};tools.appendChild(b);});}
+drawTools();
+function updateTarget(){targets.forEach((t,i)=>{t.visible=i===targetIndex||station==="Operating-room instrument identification";t.scale.setScalar(i===targetIndex?1.15:0.7);});document.getElementById('count').textContent="Attempts: "+attempts+" · Successful: "+success+" · Target "+(targetIndex+1)+"/"+targets.length;}
+function resize(){const w=root.clientWidth,h=root.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}new ResizeObserver(resize).observe(root);
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
+function pick(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(targets.filter(t=>t.visible));if(hit.length){attempts++;const id=hit[0].object.userData.target;if(id===targetIndex){success++;document.getElementById('result').textContent="Target acquired. Good visual alignment; move to the next target when ready.";targetIndex=(targetIndex+1)%targets.length;updateTarget();}else{document.getElementById('result').textContent="That was not the highlighted target. Reorient and try again.";updateTarget();}}else{const p=new THREE.Vector3(pointer.x,pointer.y,.1).unproject(camera);const dir=p.sub(camera.position).normalize();const distance=(-.1-camera.position.z)/dir.z;const pos=camera.position.clone().add(dir.multiplyScalar(distance));toolGroup.position.x=Math.max(-2.2,Math.min(2.2,pos.x));toolGroup.position.y=Math.max(-1.35,Math.min(1.35,pos.y));document.getElementById('result').textContent="Virtual "+selectedTool+" repositioned.";}}
+let down=null;renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};lastX=e.clientX;lastY=e.clientY;dragging=true;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{if(!dragging||!down)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;if(station==="Laparoscopic camera orientation"){camera.position.x=Math.max(-2,Math.min(2,camera.position.x-dx*.008));camera.position.y=Math.max(-1.3,Math.min(1.3,camera.position.y+dy*.008));camera.lookAt(0,0,0);}else if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>4){toolGroup.position.x=Math.max(-2.2,Math.min(2.2,toolGroup.position.x+dx*.009));toolGroup.position.y=Math.max(-1.35,Math.min(1.35,toolGroup.position.y-dy*.009));}});
+renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<8)pick(e);down=null;});
+renderer.domElement.addEventListener('wheel',e=>{camera.position.z=Math.max(3.5,Math.min(10,camera.position.z+e.deltaY*.005));},{passive:true});
+document.getElementById('reset').onclick=()=>{attempts=0;success=0;targetIndex=0;step=0;camera.position.set(0,0,7);camera.lookAt(0,0,0);toolGroup.position.set(0,0,.25);document.getElementById('result').textContent="Station reset. Start with the highlighted target.";updateTarget();};
+document.getElementById('next').onclick=()=>{targetIndex=(targetIndex+1)%targets.length;updateTarget();document.getElementById('result').textContent="New target highlighted. Continue practising visual orientation.";};
+document.getElementById('show').onclick=()=>{const t=targets[targetIndex];camera.position.x=t.position.x*.25;camera.position.y=t.position.y*.25;camera.lookAt(t.position);document.getElementById('result').textContent="Target brought into view.";};
+updateTarget();document.getElementById('result').textContent="Touch the scene to begin. This is a simplified coordination exercise.";
+function animate(t){requestAnimationFrame(animate);targets.forEach((o,i)=>{if(i===targetIndex){const z=1+Math.sin(t*.004)*.12;o.scale.setScalar(z);}});renderer.render(scene,camera);}animate(0);
+})();
+</script></body></html>
+"""
+    lab_html = lab_html.replace("__STATION__", station_js)
+    components.html(lab_html, height=690, scrolling=False)
+    st.markdown("### What this station measures")
+    st.write("This prototype provides a visual target-acquisition task and simple attempt/success counts inside the embedded scene. It does not measure clinical skill, tissue force, depth perception under validated conditions, or surgical competence.")
+    st.markdown("### Continue your case")
+    a, b = st.columns(2)
+    with a:
+        if st.button("Return to Surgery Simulator", use_container_width=True):
+            st.session_state.navigation = "Surgery Simulator"
+            st.rerun()
+    with b:
+        if st.button("Open Real 3D Anatomy Atlas", use_container_width=True):
+            st.session_state.navigation = "Real 3D Anatomy Atlas"
+            st.rerun()
 
 elif page == "Learning Library":
     st.title("📚 Learning library")
