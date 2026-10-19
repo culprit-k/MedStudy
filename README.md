@@ -1,86 +1,55 @@
-# 🩺 MedStudy — MBBS Learning Platform
+# 🩺 MedStudy — Medical Learning Studio
 
-MedStudy is a beginner-friendly medical education web app for MBBS students. It includes subject-wise practice questions, MCQ quizzes, flashcards, bookmarks, and a simple progress dashboard.
+MedStudy is an interactive medical learning project built for medical students who want to move from basic recall toward mechanism-based understanding and clinical reasoning. It uses Streamlit, a JSON question bank, and GitHub Actions; it does not require a database or a trained ML model.
 
-> **Educational use only:** MedStudy is not a diagnostic tool and must not be used to make patient-care decisions. Verify medical information with trusted textbooks, current guidelines, and qualified instructors.
+> **Educational use only.** This is not a diagnostic or treatment tool. Clinical vignettes are for learning and must not be used to make real patient-care decisions. Verify information with current textbooks, guidelines, and qualified faculty.
 
-## Features
+## What is included
 
-- Six starter subjects: Anatomy, Physiology, Biochemistry, Pathology, Microbiology, and Pharmacology
-- 36 multiple-choice questions with explanations
-- Quiz sessions with immediate feedback and selectable quiz length
-- Flashcard-style revision
-- Question bookmarks
-- Session-based progress summaries
-- Responsive Streamlit interface
-- Automated syntax and app/data tests in GitHub Actions
+- **Learning library:** six starter subjects, searchable questions, explanations, and adjustable learning depth.
+- **Visual lab:** original schematic diagrams with image-based questions and clinical/exam pearls.
+- **Clinical cases:** structured case vignettes with explanations and stretch prompts.
+- **Personal teacher:** adapts tone and level to the learner's goal; guided tutor prompts work without an API key.
+- **Optional AI tutor:** configure an OpenAI API key in Streamlit Community Cloud Secrets as `OPENAI_API_KEY = "your-key"` to enable open-ended AI responses. API usage may incur charges. Never commit keys to GitHub.
+- **Active-recall flashcards, bookmarks, and progress charts.**
+- **Automated checks** through GitHub Actions.
 
-## Public web deployment
+The question bank is a growing educational starter set, not a comprehensive MBBS, postgraduate, or PhD curriculum. Advanced learning depth changes the style of prompts, but it does not replace validated specialist-level content or research supervision.
 
-**Deploy MedStudy for free with Streamlit Community Cloud:**
+## Deploy publicly
 
-1. Open the [Streamlit Community Cloud workspace](https://share.streamlit.io/).
-2. Sign in with GitHub and authorize Streamlit to access `culprit-k/MedStudy` if asked.
-3. Select **Create app**. If prompted, choose **Yup, I have an app**.
-4. Enter:
-   - **Repository:** `culprit-k/MedStudy`
-   - **Branch:** `main`
-   - **Main file path:** `app.py`
-   - **App URL (optional):** `medstudy-mbbs` (if available)
-5. In advanced settings, use Python **3.12** (the Community Cloud default).
-6. Click **Deploy** and wait for the build to finish.
-7. Once it starts, open the generated `.streamlit.app` URL and test the dashboard, quizzes, flashcards, and bookmarks.
+1. Open [Streamlit Community Cloud](https://share.streamlit.io/) and sign in with GitHub.
+2. Create an app from repository `culprit-k/MedStudy`, branch `main`, main file `app.py`.
+3. Deploy and open the generated `.streamlit.app` URL.
+4. Optional: to enable AI responses, open app settings → Secrets and add `OPENAI_API_KEY = "your-key"`. Do not put the key in source code or commit it to GitHub.
 
-The repository is public, so the deployed app will normally be public too. If the suggested app URL is already taken, let Streamlit assign one. See the [official deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy) for screenshots and troubleshooting.
-
-> **Important:** The repository and automated checks are ready, but a live hosted URL is not created just by pushing code to GitHub. The initial deployment requires signing in to Streamlit and clicking **Deploy**. I cannot approve account permissions or click the final deployment button on your behalf from this GitHub connection.
+A public repository is not automatically a live website: the first deployment requires the repository owner to authorize the service and press Deploy. See the [official deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy).
 
 ## Run locally
 
-Requires Python 3.10 or newer.
+Requires Python 3.10+.
 
 ```bash
 git clone https://github.com/culprit-k/MedStudy.git
 cd MedStudy
 python -m venv .venv
-```
-
-Activate the environment:
-
-- **Windows:** `.venv\\Scripts\\activate`
-- **macOS/Linux:** `source .venv/bin/activate`
-
-Install dependencies and launch:
-
-```bash
+# Activate the environment, then:
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
 ## Add questions
 
-Edit `data/questions.json`. Each question needs a unique `id`, a `question`, an `options` list, an `answer` that exactly matches one option, and an `explanation`.
+- Core questions: `data/questions.json`
+- Image-led questions: `data/visual_questions.json`
+- Original schematic illustrations: `assets/*.svg`
 
-Example:
-
-```json
-{
-  "id": "anat-004",
-  "question": "Example question?",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "answer": "Option B",
-  "explanation": "A short explanation of the correct answer."
-}
-```
-
-Keep questions accurate, cite reliable sources when expanding the question bank, and never upload patient-identifiable information.
+Every question should have a unique ID, question, options, answer matching one option, and an explanatory rationale. Visual questions also specify an image path. Cite reliable educational sources when expanding the bank, respect image licences, and never upload identifiable patient information.
 
 ## Current limitations
 
-- Progress and bookmarks are stored in the current Streamlit session and may reset when the session ends.
-- The starter question bank is small and intended for demonstration and revision.
-- The app does not provide diagnosis, treatment recommendations, or patient-specific medical advice.
-
-## License
-
-No license has been added yet. Until a license is chosen, the repository is visible publicly but reuse is not automatically granted.
+- Progress and bookmarks are stored in the active Streamlit session and may reset.
+- The starter question bank is small; it must be expanded and faculty-reviewed before claiming comprehensive exam coverage.
+- Visuals are original schematic teaching diagrams, not radiology, histopathology, or diagnostic-grade clinical images.
+- AI tutor output can be inaccurate. An API key is optional and usage may incur charges.
+- No licence has been added yet; public visibility does not automatically grant reuse rights.
