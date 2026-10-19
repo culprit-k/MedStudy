@@ -477,7 +477,7 @@ elif page == "Flashcards":
         index=st.session_state.flashcard_index%len(cards); item=cards[index]
         st.caption(f"CARD {index+1} OF {len(cards)} · {item['subject']}")
         if item.get("image"):
-            st.image(str(ROOT/item["image"]),use_container_width=True)
+            show_image(item["image"])
         st.markdown(f'<div class="hero"><div class="eyebrow">Recall before reveal</div><h1 style="font-size:1.8rem">{item["question"]}</h1><p>Say the answer aloud before opening the explanation.</p></div>',unsafe_allow_html=True)
         with st.expander("Reveal answer and explanation"):
             st.success(item["answer"]); st.write(item["explanation"])
@@ -500,7 +500,7 @@ elif page == "Bookmarks":
         st.caption(f"{len(saved)} saved items")
         for item in saved:
             with st.expander(f"{item['subject']} · {item['question']}"):
-                if item.get("image"): st.image(str(ROOT/item["image"]),use_container_width=True)
+                if item.get("image"): show_image(item["image"])
                 st.success(item["answer"]); st.write(item["explanation"])
                 if st.button("Remove from list",key=f"remove_{item['id']}"):
                     st.session_state.bookmarks.remove(item["id"]); st.rerun()
