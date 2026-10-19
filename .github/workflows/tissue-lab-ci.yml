@@ -6,12 +6,14 @@ on:
     paths:
       - "components/realistic_tissue_interaction_lab.html"
       - "pages/3_Tissue_Interaction_Lab.py"
+      - "app.py"
       - "tests/test_tissue_interaction_lab.py"
       - ".github/workflows/tissue-lab-ci.yml"
   pull_request:
     paths:
       - "components/realistic_tissue_interaction_lab.html"
       - "pages/3_Tissue_Interaction_Lab.py"
+      - "app.py"
       - "tests/test_tissue_interaction_lab.py"
       - ".github/workflows/tissue-lab-ci.yml"
   workflow_dispatch:
@@ -35,6 +37,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_tissue_interaction_lab.py' -v
       - name: Check Streamlit page Python syntax
         run: python -m py_compile pages/3_Tissue_Interaction_Lab.py
+      - name: Check main app Python syntax
+        run: python -m py_compile app.py
       - name: Check embedded simulator JavaScript syntax
         shell: bash
         run: |
