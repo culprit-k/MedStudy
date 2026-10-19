@@ -1,0 +1,50 @@
+name: Tissue Interaction Lab Checks
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "components/realistic_tissue_interaction_lab.html"
+      - "pages/3_Tissue_Interaction_Lab.py"
+      - "tests/test_tissue_interaction_lab.py"
+      - ".github/workflows/tissue-lab-ci.yml"
+  pull_request:
+    paths:
+      - "components/realistic_tissue_interaction_lab.html"
+      - "pages/3_Tissue_Interaction_Lab.py"
+      - "tests/test_tissue_interaction_lab.py"
+      - ".github/workflows/tissue-lab-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  tissue-lab-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Node.js for JavaScript syntax validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run tissue-lab smoke tests
+        run: python -m unittest discover -s tests -p 'test_tissue_interaction_lab.py' -v
+      - name: Check Streamlit page Python syntax
+        run: python -m py_compile pages/3_Tissue_Interaction_Lab.py
+      - name: Check embedded simulator JavaScript syntax
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path("components/realistic_tissue_interaction_lab.html").read_text(encoding="utf-8")
+          chunks = html.rsplit("<script>", 1)
+          if len(chunks) != 2:
+              raise SystemExit("Could not find the inline simulator script")
+          script = chunks[1].split("</script>", 1)[0]
+          Path("/tmp/tissue-lab.js").write_text(script, encoding="utf-8")
+          PY
+          node --check /tmp/tissue-lab.js
