@@ -35,6 +35,42 @@
       ],
       "answer": "Axillary nerve",
       "explanation": "The axillary nerve arises from the posterior cord of the brachial plexus and supplies the deltoid and teres minor."
+    },
+    {
+      "id": "anat-004",
+      "question": "Which nerve supplies the muscles of facial expression?",
+      "options": [
+        "Facial nerve (CN VII)",
+        "Trigeminal nerve (CN V)",
+        "Hypoglossal nerve (CN XII)",
+        "Vagus nerve (CN X)"
+      ],
+      "answer": "Facial nerve (CN VII)",
+      "explanation": "The facial nerve supplies the muscles of facial expression. The trigeminal nerve provides motor supply to the muscles of mastication."
+    },
+    {
+      "id": "anat-005",
+      "question": "Which chamber of the heart pumps blood into the pulmonary trunk?",
+      "options": [
+        "Right atrium",
+        "Right ventricle",
+        "Left atrium",
+        "Left ventricle"
+      ],
+      "answer": "Right ventricle",
+      "explanation": "The right ventricle ejects deoxygenated blood through the pulmonary valve into the pulmonary trunk and pulmonary arteries."
+    },
+    {
+      "id": "anat-006",
+      "question": "Which bone forms the forehead?",
+      "options": [
+        "Parietal bone",
+        "Occipital bone",
+        "Frontal bone",
+        "Temporal bone"
+      ],
+      "answer": "Frontal bone",
+      "explanation": "The frontal bone forms the forehead and contributes to the roof of the orbits and the anterior cranial floor."
     }
   ],
   "Physiology": [
@@ -73,6 +109,42 @@
       ],
       "answer": "Alveoli",
       "explanation": "Thin alveolar-capillary membranes provide a large surface area for oxygen and carbon dioxide diffusion."
+    },
+    {
+      "id": "phys-004",
+      "question": "Which part of the nephron is the primary site of bulk reabsorption of filtered sodium and water?",
+      "options": [
+        "Proximal convoluted tubule",
+        "Thin ascending limb",
+        "Distal convoluted tubule only",
+        "Collecting duct only"
+      ],
+      "answer": "Proximal convoluted tubule",
+      "explanation": "The proximal tubule reabsorbs the largest fraction of filtered sodium and water, along with glucose, amino acids, and bicarbonate."
+    },
+    {
+      "id": "phys-005",
+      "question": "Which neurotransmitter is released at the skeletal neuromuscular junction?",
+      "options": [
+        "Dopamine",
+        "Acetylcholine",
+        "Serotonin",
+        "Glycine"
+      ],
+      "answer": "Acetylcholine",
+      "explanation": "Motor neurons release acetylcholine, which activates nicotinic receptors on the motor end plate to initiate skeletal muscle action potentials."
+    },
+    {
+      "id": "phys-006",
+      "question": "Which blood component is chiefly responsible for oxygen transport?",
+      "options": [
+        "Albumin",
+        "Platelets",
+        "Hemoglobin in erythrocytes",
+        "Fibrinogen"
+      ],
+      "answer": "Hemoglobin in erythrocytes",
+      "explanation": "Hemoglobin within red blood cells binds and transports most oxygen in blood; a small amount is dissolved in plasma."
     }
   ],
   "Biochemistry": [
@@ -111,6 +183,42 @@
       ],
       "answer": "Salivary amylase",
       "explanation": "Salivary amylase begins hydrolysis of internal alpha-1,4 glycosidic bonds in starch."
+    },
+    {
+      "id": "bio-004",
+      "question": "Which organ is the major site of urea synthesis?",
+      "options": [
+        "Liver",
+        "Spleen",
+        "Pancreas",
+        "Thyroid"
+      ],
+      "answer": "Liver",
+      "explanation": "The hepatic urea cycle converts toxic ammonia, generated during nitrogen metabolism, into urea for renal excretion."
+    },
+    {
+      "id": "bio-005",
+      "question": "Which vitamin deficiency classically causes megaloblastic anemia and neurological abnormalities?",
+      "options": [
+        "Vitamin B12",
+        "Vitamin C",
+        "Vitamin K",
+        "Vitamin E only"
+      ],
+      "answer": "Vitamin B12",
+      "explanation": "Vitamin B12 deficiency can impair DNA synthesis and myelin-related pathways, causing megaloblastic anemia and neurological manifestations."
+    },
+    {
+      "id": "bio-006",
+      "question": "Which molecule is the immediate energy currency used by many cellular processes?",
+      "options": [
+        "DNA",
+        "ATP",
+        "Cholesterol",
+        "Urea"
+      ],
+      "answer": "ATP",
+      "explanation": "ATP transfers usable free energy to many cellular processes, including biosynthesis, transport, and muscle contraction."
     }
   ],
   "Pathology": [
@@ -149,6 +257,42 @@
       ],
       "answer": "Tunica intima",
       "explanation": "Atherosclerotic plaques develop in the intima and contain lipid, inflammatory cells, connective tissue, and often a fibrous cap."
+    },
+    {
+      "id": "path-004",
+      "question": "Which type of cell death is typically associated with cell swelling and inflammation?",
+      "options": [
+        "Apoptosis",
+        "Necrosis",
+        "Physiological cell turnover only",
+        "Cellular senescence"
+      ],
+      "answer": "Necrosis",
+      "explanation": "Necrosis commonly involves loss of membrane integrity and release of cellular contents, provoking inflammation. Apoptosis generally preserves membrane integrity until clearance."
+    },
+    {
+      "id": "path-005",
+      "question": "Which protein is a major component of the extracellular amyloid deposits in many forms of amyloidosis?",
+      "options": [
+        "Misfolded proteins arranged in beta-pleated sheets",
+        "Normal collagen triple helices only",
+        "Actin filaments only",
+        "Hemoglobin crystals"
+      ],
+      "answer": "Misfolded proteins arranged in beta-pleated sheets",
+      "explanation": "Amyloid consists of misfolded proteins with characteristic beta-pleated-sheet structure, detectable by Congo red staining with apple-green birefringence under polarized light."
+    },
+    {
+      "id": "path-006",
+      "question": "Which lipoprotein is commonly described as carrying cholesterol from peripheral tissues toward the liver?",
+      "options": [
+        "HDL",
+        "Chylomicrons only",
+        "VLDL only",
+        "LDL only"
+      ],
+      "answer": "HDL",
+      "explanation": "High-density lipoprotein participates in reverse cholesterol transport, moving cholesterol from peripheral tissues toward the liver, although the process involves multiple pathways."
     }
   ],
   "Microbiology": [
@@ -187,6 +331,42 @@
       ],
       "answer": "PCR",
       "explanation": "Polymerase chain reaction uses repeated cycles of denaturation, primer annealing, and extension to amplify target DNA."
+    },
+    {
+      "id": "micro-004",
+      "question": "Which bacterial structure is the principal target of Ziehl–Neelsen acid-fast staining?",
+      "options": [
+        "Mycolic-acid-rich cell wall",
+        "Flagellar proteins",
+        "Capsular polysaccharide only",
+        "Ribosomal RNA"
+      ],
+      "answer": "Mycolic-acid-rich cell wall",
+      "explanation": "Mycobacteria have lipid-rich cell walls containing mycolic acids, which help retain carbol fuchsin during acid-fast staining."
+    },
+    {
+      "id": "micro-005",
+      "question": "Which test detects antigen or antibody using an enzyme-linked signal?",
+      "options": [
+        "ELISA",
+        "Gram stain",
+        "Wet mount only",
+        "Kirby–Bauer disk diffusion"
+      ],
+      "answer": "ELISA",
+      "explanation": "Enzyme-linked immunosorbent assays use specific antigen–antibody binding and an enzyme-mediated signal to detect or quantify a target."
+    },
+    {
+      "id": "micro-006",
+      "question": "Which organism is a common cause of antibiotic-associated pseudomembranous colitis?",
+      "options": [
+        "Clostridioides difficile",
+        "Vibrio cholerae",
+        "Bordetella pertussis",
+        "Treponema pallidum"
+      ],
+      "answer": "Clostridioides difficile",
+      "explanation": "Clostridioides difficile can overgrow after antibiotic-associated disruption of the intestinal microbiota and produce toxins that cause colitis."
     }
   ],
   "Pharmacology": [
@@ -225,6 +405,42 @@
       ],
       "answer": "Analgesia and antipyresis",
       "explanation": "Paracetamol reduces pain and fever. It has little peripheral anti-inflammatory activity compared with NSAIDs."
+    },
+    {
+      "id": "pharm-004",
+      "question": "Which drug class commonly reduces gastric acid secretion by inhibiting the gastric proton pump?",
+      "options": [
+        "Proton pump inhibitors",
+        "Antacids only",
+        "H1 antihistamines",
+        "Beta blockers"
+      ],
+      "answer": "Proton pump inhibitors",
+      "explanation": "Proton pump inhibitors inhibit the gastric parietal-cell H+/K+-ATPase and reduce gastric acid secretion."
+    },
+    {
+      "id": "pharm-005",
+      "question": "Which adverse effect is characteristic of opioid analgesics such as morphine?",
+      "options": [
+        "Respiratory depression",
+        "Severe hypoglycemia in every patient",
+        "Increased intestinal motility",
+        "Universal hypertension"
+      ],
+      "answer": "Respiratory depression",
+      "explanation": "Opioids can suppress brainstem respiratory drive. Risk increases with excessive doses and combinations with other sedatives."
+    },
+    {
+      "id": "pharm-006",
+      "question": "Which drug class is commonly used to reduce blood pressure by inhibiting angiotensin-converting enzyme?",
+      "options": [
+        "ACE inhibitors",
+        "Macrolides",
+        "Antifungals",
+        "Antimuscarinics"
+      ],
+      "answer": "ACE inhibitors",
+      "explanation": "ACE inhibitors reduce angiotensin II formation and aldosterone secretion, lowering blood pressure. They have important contraindications and adverse effects."
     }
   ]
 }
