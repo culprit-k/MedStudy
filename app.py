@@ -422,7 +422,11 @@ elif page in ["Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology 
     st.title(f"{cfg['icon']} {page}")
     st.caption(cfg["subtitle"])
     topic = st.selectbox("Choose a virtual practical", list(cfg["experiments"].keys()), key=f"lab_topic_{page}")
-    label, options, correct_index, explanation = cfg["experiments"][topic]
+    if page == "Physiology Lab":
+        label, minimum, maximum, default, explanation = cfg["experiments"][topic]
+        options, correct_index = [], 0
+    else:
+        label, options, correct_index, explanation = cfg["experiments"][topic]
     st.markdown('<div class="panel"><div class="eyebrow">VIRTUAL PRACTICAL</div><h3>'+topic+'</h3><p class="muted">Read the prompt, choose your answer, submit it, then review the mechanism.</p></div>',unsafe_allow_html=True)
     if page == "Physiology Lab":
         st.markdown("### Experiment controls")
