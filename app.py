@@ -32,7 +32,6 @@ QUESTIONS = load_json(DATA_FILE)
 VISUAL_QUESTIONS = load_json(VISUAL_FILE)
 IMAGE_LIBRARY = load_json(IMAGE_LIBRARY_FILE)
 HOSPITAL_DATA = load_json(HOSPITAL_FILE)
-HOSPITAL_DATA = load_json(HOSPITAL_FILE)
 SUBJECTS = list(QUESTIONS)
 ALL_CARDS = [{"subject": subject, **item} for subject, items in QUESTIONS.items() for item in items]
 ALL_CARDS += [{"subject": item["subject"], **item} for item in VISUAL_QUESTIONS]
