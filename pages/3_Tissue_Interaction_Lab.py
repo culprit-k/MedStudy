@@ -42,12 +42,55 @@ st.warning(
     "mechanics, bleeding, haptics, or clinical skill assessment. It must not be used to train "
     "or perform real procedures without qualified supervision."
 )
-sim_path = ROOT / "components" / "realistic_tissue_interaction_lab.html"
-if sim_path.exists():
-    components.html(sim_path.read_text(encoding="utf-8"), height=790, scrolling=True)
-else:
-    st.error("The tissue interaction component is missing from the components directory.")
+sim_tab, anatomy_tab, roadmap_tab = st.tabs(
+    ["Tissue interaction", "Anatomy reference", "Physics roadmap"]
+)
+
+with sim_tab:
+    sim_path = ROOT / "components" / "realistic_tissue_interaction_lab.html"
+    if sim_path.exists():
+        components.html(sim_path.read_text(encoding="utf-8"), height=790, scrolling=True)
+    else:
+        st.error("The tissue interaction component is missing from the components directory.")
+
+with anatomy_tab:
+    st.subheader("Real 3D anatomy reference")
+    st.markdown(
+        "Use this linked atlas to inspect anatomical structures and spatial relationships. "
+        "It is a reference viewer, not a surgically deformable model, and its assets are not "
+        "automatically imported into the tissue simulator."
+    )
+    st.link_button("Open anatomy atlas in a new tab", "https://nqwrc.github.io/3d-anatomy/")
+    st.caption(
+        "The atlas documents BodyParts3D and Z-Anatomy sources. Its distributed asset set "
+        "includes non-commercial components; review the upstream licence and notices before "
+        "redistributing models or using them commercially."
+    )
+    components.iframe("https://nqwrc.github.io/3d-anatomy/", height=760, scrolling=True)
+
+with roadmap_tab:
+    st.subheader("Next engineering milestones")
+    st.markdown(
+        """
+        1. **Anatomical asset pipeline:** choose one region and one model source; record each
+           mesh's source, licence, attribution, scale, units and anatomical label.
+        2. **Mesh integration:** load a web-ready GLB/GLTF asset with separate structures and
+           collision proxies. Do not redistribute mixed-licence assets until their terms are checked.
+        3. **Physics prototype:** implement a small, bounded deformable mesh with stable constraints,
+           instrument collision, time-step limits and reset/recovery tests.
+        4. **Validation:** compare deformation and tool interactions against known test cases and
+           expert review before describing it as realistic.
+        5. **Later scope:** cutting, tissue tearing, bleeding, haptics and performance assessment
+           require separate models and validation; they are not implemented here.
+        """
+    )
+    st.markdown(
+        "A research-grade option for the physics layer is "
+        "[SOFA](https://github.com/sofa-framework/sofa), an open-source framework focused on "
+        "interactive physics and medical simulation. It would be a separate native/service layer, "
+        "not a drop-in JavaScript library."
+    )
 st.caption(
-    "Next engineering milestone for higher fidelity: integrate properly licensed anatomical "
-    "meshes, then implement and validate a deformable-tissue physics model and instrument collision."
+    "Current state: interactive visual prototype plus an embedded anatomy reference. "
+    "No finite-element tissue physics, calibrated cutting forces, or clinical validation yet."
 )
