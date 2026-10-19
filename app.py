@@ -101,7 +101,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Learning Library", "Anatomy Lab", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -132,6 +132,7 @@ if page == "Home":
     cards = [
         ("🧠","Learning library","Build strong foundations, then review mechanisms and clinical correlations.","Learning Library"),
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
+        ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
         ("🩺","Clinical reasoning","Work through structured cases and explain your differential.","Clinical Cases"),
         ("👩‍⚕️","OSCE studio","Practise structured history, examination, and communication.","OSCE Studio"),
         ("📊","Research & EBM","Explore PICO, study design, diagnostic tests, and critical appraisal.","Research & EBM"),
@@ -242,6 +243,105 @@ elif page == "Exam Arena":
                 if st.button("Bookmark this question",key=f"arena_bookmark_{qid}"):
                     if qid not in st.session_state.bookmarks: st.session_state.bookmarks.append(qid)
                     st.toast("Saved to revision list")
+
+elif page == "Anatomy Lab":
+    st.title("🫀 Anatomy Lab")
+    st.caption("Explore systems, select structures, connect gross anatomy to physiology, and test your understanding.")
+    systems = {
+        "Cardiovascular": {
+            "image":"assets/heart.svg",
+            "structures":{
+                "Heart":("Four-chambered muscular pump","Right atrium receives systemic venous blood; right ventricle pumps it to the pulmonary circulation. Left atrium receives oxygenated pulmonary venous blood; left ventricle ejects into the aorta.","Clinical link: left ventricular dysfunction can cause pulmonary congestion; right ventricular dysfunction can cause systemic venous congestion."),
+                "Coronary circulation":("Arterial supply of the myocardium","The right and left coronary arteries arise from the ascending aorta. Coronary perfusion, especially of the left ventricle, occurs predominantly during diastole.","Clinical link: coronary occlusion can cause myocardial ischaemia and infarction."),
+                "Conduction system":("Specialised cardiac excitation pathway","The SA node normally initiates impulses; conduction proceeds through the AV node, His bundle, bundle branches and Purkinje network.","Clinical link: conduction blocks alter the relationship between atrial and ventricular activity.")
+            }},
+        "Renal": {
+            "image":"assets/nephron.svg",
+            "structures":{
+                "Nephron":("Functional unit of the kidney","Glomerular filtration is followed by selective tubular reabsorption and secretion. The proximal tubule reabsorbs most filtered sodium and water; the loop of Henle contributes to the medullary osmotic gradient.","Clinical link: tubular injury may impair electrolyte handling even when filtration is relatively preserved."),
+                "Glomerulus":("Capillary filtration apparatus","Fenestrated endothelium, glomerular basement membrane and podocyte slit diaphragms contribute to selective filtration.","Clinical link: damage to the filtration barrier can produce haematuria and/or proteinuria."),
+                "Juxtaglomerular apparatus":("Renal pressure and salt-sensing region","Macula densa cells sense tubular NaCl delivery; granular cells release renin in response to appropriate signals.","Clinical link: renin initiates the renin–angiotensin–aldosterone system.")
+            }},
+        "Nervous": {
+            "image":"assets/neuron.svg",
+            "structures":{
+                "Neuron":("Excitable information-processing cell","Dendrites receive signals, the soma integrates them, the axon conducts action potentials and synaptic terminals communicate with target cells.","Clinical link: demyelination can slow or block saltatory conduction."),
+                "Myelin":("Electrical insulation around selected axons","Myelin increases conduction velocity by allowing action potentials to regenerate at nodes of Ranvier.","Clinical link: central and peripheral demyelinating disorders affect different myelin-forming cells."),
+                "Synapse":("Junction for cell-to-cell signalling","Chemical synapses convert presynaptic electrical activity into neurotransmitter release and postsynaptic responses.","Clinical link: many medicines alter neurotransmitter synthesis, release, receptors or reuptake.")
+            }},
+        "Respiratory": {
+            "image":"assets/alveoli.svg",
+            "structures":{
+                "Alveolar interface":("Thin barrier for gas exchange","Oxygen and carbon dioxide diffuse down partial-pressure gradients across the alveolar–capillary interface; effective exchange depends on area, thickness and ventilation–perfusion matching.","Clinical link: oedema or fibrosis increases diffusion distance; pulmonary embolism disrupts perfusion."),
+                "Type I pneumocytes":("Thin alveolar epithelial cells","These cells cover most of the alveolar surface and provide a short diffusion path.","Clinical link: injury to the alveolar epithelium can compromise gas exchange."),
+                "Type II pneumocytes":("Surfactant-producing epithelial cells","They secrete pulmonary surfactant and can proliferate to help restore alveolar epithelium after injury.","Clinical link: surfactant deficiency increases alveolar surface tension.")
+            }}
+    }
+    system_name = st.selectbox("Choose a system", list(systems.keys()), key="anatomy_system")
+    system = systems[system_name]
+    left, right = st.columns([1.05, 1.35], gap="large")
+    with left:
+        show_image(system["image"])
+        st.markdown("#### Structure explorer")
+        structure_name = st.radio("Select a structure", list(system["structures"].keys()), key=f"anatomy_structure_{system_name}")
+        st.caption("Teaching schematics are simplified and not to scale.")
+    with right:
+        title, explanation, clinical = system["structures"][structure_name]
+        st.markdown(f"### {structure_name}")
+        st.markdown(f"**{title}**")
+        st.write(explanation)
+        st.info(clinical)
+        st.markdown("#### Quick actions")
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("Explain clinically", use_container_width=True):
+                st.session_state.navigation = "Teacher AI"
+                st.session_state.tutor_prefill = f"Explain {structure_name} in the {system_name.lower()} system with clinical correlations, mechanisms, and exam traps."
+                st.rerun()
+        with c2:
+            if st.button("Quiz me on this", type="primary", use_container_width=True):
+                st.session_state.anatomy_quiz_structure = structure_name
+                st.session_state.anatomy_quiz_system = system_name
+        if st.session_state.get("anatomy_quiz_structure") == structure_name and st.session_state.get("anatomy_quiz_system") == system_name:
+            quiz_items = {
+                "Heart":("Which chamber ejects blood into the systemic circulation?","Left ventricle"),
+                "Coronary circulation":("When does most left ventricular coronary perfusion occur?","During diastole"),
+                "Conduction system":("What is the usual primary pacemaker of the heart?","SA node"),
+                "Nephron":("Which two processes follow glomerular filtration to modify tubular fluid?","Reabsorption and secretion"),
+                "Glomerulus":("Name one component of the glomerular filtration barrier.","Glomerular basement membrane"),
+                "Juxtaglomerular apparatus":("Which enzyme is released by granular cells?","Renin"),
+                "Neuron":("Which neuronal region commonly conducts action potentials away from the soma?","Axon"),
+                "Myelin":("What is the effect of myelin on conduction velocity?","It increases conduction velocity"),
+                "Synapse":("What chemical messenger is released at a typical chemical synapse?","Neurotransmitter"),
+                "Alveolar interface":("Name one factor that reduces diffusion across the alveolar-capillary membrane.","Increased membrane thickness / reduced surface area"),
+                "Type I pneumocytes":("What is the main gas-exchange role of type I pneumocytes?","Provide a thin diffusion surface"),
+                "Type II pneumocytes":("What important substance do type II pneumocytes produce?","Surfactant")
+            }
+            question, answer = quiz_items[structure_name]
+            st.markdown(f"**Recall check:** {question}")
+            if st.button("Reveal answer", key=f"reveal_{system_name}_{structure_name}"):
+                st.success(answer)
+    st.markdown("---")
+    st.markdown("### Course pathway")
+    chapters = [
+        ("1","Orientation & anatomical language","Foundations"),
+        ("2","Cardiovascular system","Core concepts"),
+        ("3","Respiratory system","Structure–function"),
+        ("4","Renal system","Filtration and regulation"),
+        ("5","Nervous system","Neuroanatomy"),
+        ("6","Integrated clinical anatomy","Clinical application")
+    ]
+    cols = st.columns(3)
+    for i,(num,name,detail) in enumerate(chapters):
+        with cols[i%3]:
+            with st.container(border=True):
+                st.caption(f"CHAPTER {num}")
+                st.markdown(f"**{name}**")
+                st.caption(detail)
+                if st.button("Open chapter", key=f"anatomy_chapter_{num}", use_container_width=True):
+                    st.session_state.anatomy_system = {"2":"Cardiovascular","3":"Respiratory","4":"Renal","5":"Nervous"}.get(num, system_name)
+                    st.rerun()
+    st.caption("Next pathway suggestion: revise a structure, answer its recall check, then practise related questions in Exam Arena. Content is educational and should be checked against trusted anatomy resources.")
 
 elif page == "Visual Lab":
     st.title("🩻 Visual lab")
