@@ -44,6 +44,13 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("SOFA", self.page)
         self.assertIn("No finite-element tissue physics", self.page)
 
+    def test_external_body_mesh_has_loader_toggle_and_disclosure(self):
+        self.assertIn("GLTFLoader.js", self.html)
+        self.assertIn("human_posed.glb", self.html)
+        self.assertIn('id="bodyModel"', self.html)
+        self.assertIn("not internal anatomy", self.html)
+        self.assertIn("CC0 1.0", self.page)
+
 
 if __name__ == "__main__":
     unittest.main()
