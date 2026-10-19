@@ -291,6 +291,51 @@ document.documentElement.style.setProperty("--pulse-duration", Math.max(.35,60/M
     components.html(page, height=470, scrolling=False)
 
 
+
+def render_simulation_scene(kind):
+    """Render illustrative operating-theatre or microbiology-bench scenes."""
+    common = """
+    <style>
+    *{box-sizing:border-box}body{margin:0;background:#091722;color:#e7f5f7;font-family:Inter,system-ui,Arial,sans-serif}
+    .scene{height:280px;overflow:hidden;border:1px solid #315364;border-radius:18px;padding:14px;position:relative;background:radial-gradient(circle at 50% 5%,#1c4a5c,#0b1b27 68%)}
+    .head{display:flex;justify-content:space-between;gap:10px;align-items:center;position:relative;z-index:2}
+    .small{font-size:10px;letter-spacing:1.5px;color:#86dad4;font-weight:800}.tag{font-size:10px;color:#a5f3ca;background:#104039;padding:6px 9px;border-radius:50px}
+    .foot{position:absolute;left:15px;right:15px;bottom:12px;font-size:10px;color:#8baab6;z-index:2}
+    .lamp{animation:swing 4s ease-in-out infinite;transform-origin:50% 0%}@keyframes swing{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+    .spark{animation:spark 2.5s ease-in-out infinite}@keyframes spark{0%,100%{opacity:.35}50%{opacity:1}}
+    .beam{animation:beam 4s ease-in-out infinite alternate}@keyframes beam{from{opacity:.1}to{opacity:.32}}
+    .colonies{animation:colonies 3s ease-in-out infinite alternate}@keyframes colonies{from{opacity:.55}to{opacity:1}}
+    </style>"""
+    if kind == "operating":
+        visual = """
+        <div class="scene"><div class="head"><div><div class="small">SIMULATED OPERATING THEATRE</div><div style="font-size:16px;font-weight:800;margin-top:4px">Theatre 02 · Team safety view</div></div><div class="tag">● PRE-OP CHECK</div></div>
+        <svg viewBox="0 0 700 235" style="width:100%;height:220px;position:absolute;left:0;bottom:0" role="img" aria-label="Illustrative operating theatre">
+        <defs><linearGradient id="ot-table" x1="0" x2="1"><stop stop-color="#34788d"/><stop offset="1" stop-color="#183e56"/></linearGradient><radialGradient id="ot-light"><stop stop-color="#b9fff1" stop-opacity=".65"/><stop offset="1" stop-color="#65d4d2" stop-opacity="0"/></radialGradient></defs>
+        <path d="M0 195 L700 195 L700 235 L0 235Z" fill="#102b3b"/><path d="M0 50 L700 50" stroke="#315363" stroke-width="2"/>
+        <g class="lamp"><path d="M345 0 L345 20 L390 20 L390 35" stroke="#9abec9" stroke-width="5" fill="none"/><ellipse cx="390" cy="41" rx="65" ry="18" fill="#9dbec8" stroke="#e2f6f9" stroke-width="2"/><ellipse cx="390" cy="44" rx="51" ry="10" fill="#e0fff7"/><circle cx="390" cy="48" r="80" fill="url(#ot-light)" class="beam"/></g>
+        <rect x="235" y="133" width="280" height="18" rx="7" fill="url(#ot-table)" stroke="#7bd0d8" stroke-width="2"/><path d="M260 151 L248 212 M490 151 L505 212" stroke="#799ba9" stroke-width="8"/>
+        <path d="M255 130 Q280 104 330 121 L411 121 Q468 111 497 130 L492 145 L255 145Z" fill="#1b7585" stroke="#6dced4" stroke-width="2"/><ellipse cx="363" cy="109" rx="28" ry="34" fill="#a2b7c1"/><path d="M336 103 Q363 80 390 103 L409 128 L320 128Z" fill="#7ba2b2"/>
+        <g fill="#1c5165" stroke="#6ca6b7" stroke-width="2"><circle cx="135" cy="72" r="20"/><path d="M106 100 Q135 86 164 100 L178 170 L92 170Z"/><circle cx="570" cy="74" r="20"/><path d="M544 103 Q570 91 596 103 L610 170 L531 170Z"/></g>
+        <g fill="#8ddbd5"><rect x="106" y="112" width="58" height="37" rx="5"/><rect x="544" y="113" width="54" height="35" rx="5"/></g><g stroke="#6fe6b6" stroke-width="2" fill="none"><path d="M548 131 L557 131 L561 125 L566 139 L571 119 L576 133 L584 133 L596 131"/><path d="M111 131 L119 131 L123 126 L128 139 L133 118 L138 132 L147 132 L159 131"/></g>
+        <g class="spark" fill="#9ffff0"><circle cx="220" cy="60" r="2"/><circle cx="485" cy="82" r="2"/><circle cx="202" cy="182" r="2"/><circle cx="521" cy="190" r="2"/></g></svg>
+        <div class="foot">Illustrative team environment · no procedure is being performed or taught in this visual.</div></div>"""
+    else:
+        visual = """
+        <div class="scene"><div class="head"><div><div class="small">SIMULATED MICROBIOLOGY LAB</div><div style="font-size:16px;font-weight:800;margin-top:4px">Bench 04 · Microscopy & interpretation</div></div><div class="tag">● VIRTUAL SPECIMENS</div></div>
+        <svg viewBox="0 0 700 235" style="width:100%;height:220px;position:absolute;left:0;bottom:0" role="img" aria-label="Illustrative microscopy bench and culture plates">
+        <defs><linearGradient id="mb-bench" x1="0" x2="1"><stop stop-color="#1c4253"/><stop offset="1" stop-color="#0a1c29"/></linearGradient><radialGradient id="mb-plate"><stop stop-color="#a3f2df" stop-opacity=".7"/><stop offset="1" stop-color="#255d68" stop-opacity=".2"/></radialGradient></defs>
+        <path d="M0 170 L700 170 L700 235 L0 235Z" fill="url(#mb-bench)" stroke="#316174" stroke-width="2"/>
+        <g transform="translate(80 20)" stroke="#a8d4db" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M90 25 L128 57 L111 75 L74 40Z"/><path d="M112 73 L141 109 L111 130"/><path d="M73 40 L43 25"/><path d="M110 130 L85 157 L141 157"/><path d="M80 157 L80 174"/><path d="M42 174 L162 174"/><path d="M134 105 L156 98"/></g>
+        <path d="M170 172 L286 172 L304 183 L168 183Z" fill="#2d6679" stroke="#8bd8df" stroke-width="2"/><rect x="350" y="135" width="100" height="27" rx="6" fill="#274d60" stroke="#5ca6b8" stroke-width="2"/><rect x="367" y="100" width="63" height="37" rx="7" fill="#24586b" stroke="#7cbdc9" stroke-width="2"/>
+        <g transform="translate(505 103)"><circle r="53" fill="url(#mb-plate)" stroke="#a7eade" stroke-width="3"/><circle r="43" fill="none" stroke="#4d9eaa" stroke-width="1.5"/><g class="colonies" fill="#ffd28a"><circle cx="-21" cy="-12" r="4"/><circle cx="7" cy="-21" r="3"/><circle cx="20" cy="6" r="5"/><circle cx="-6" cy="21" r="4"/><circle cx="-26" cy="17" r="2.8"/><circle cx="25" cy="-23" r="2.6"/><circle cx="1" cy="2" r="3.5"/><circle cx="8" cy="31" r="2.7"/></g></g>
+        <g transform="translate(620 115)"><circle r="43" fill="#174b5d" stroke="#8ad8d3" stroke-width="3"/><circle r="34" fill="none" stroke="#487d8c" stroke-width="1.5"/><g class="colonies" fill="#f8b5a1"><circle cx="-13" cy="-13" r="4"/><circle cx="13" cy="-19" r="3"/><circle cx="18" cy="8" r="4"/><circle cx="-7" cy="14" r="3"/><circle cx="-18" cy="2" r="2.8"/></g></g>
+        <g fill="#8fe4d7"><rect x="354" y="71" width="16" height="46" rx="6"/><rect x="378" y="62" width="16" height="55" rx="6"/><rect x="402" y="80" width="16" height="37" rx="6"/></g><g fill="#183c49"><rect x="358" y="72" width="8" height="14" rx="2"/><rect x="382" y="63" width="8" height="14" rx="2"/><rect x="406" y="81" width="8" height="14" rx="2"/></g>
+        <text x="504" y="174" fill="#b4dce0" text-anchor="middle" font-size="10">PLATE A · TEACHING</text><text x="620" y="174" fill="#b4dce0" text-anchor="middle" font-size="10">PLATE B · TEACHING</text></svg>
+        <div class="foot">Fictional visual only · no real cultures or patient specimens are involved.</div></div>"""
+    components.html(common + "<body>" + visual + "</body>", height=292, scrolling=False)
+
+
+
 def record_answer(item, correct, chosen):
     st.session_state.answered.append({
         "id": item["id"], "subject": item["subject"], "correct": bool(correct),
@@ -499,16 +544,7 @@ elif page == "Virtual Hospital":
             record_answer({"id":f"or-{stage_name}","subject":"Virtual Hospital · Operating theatre"},all_done,f"{len(selected_checks)}/{len(stage['items'])} items")
         st.markdown("---")
         st.markdown("**Operating-room environment**")
-        st.markdown("""
-        <div style="background:linear-gradient(135deg,#102a3a,#0a1722);border:1px solid #315568;border-radius:15px;padding:18px;color:#d5eff3">
-          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><b>THEATRE 02 · SIMULATION</b><span style="color:#8de3d3">● TEAM BRIEFING</span></div>
-          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:15px">
-            <div style="background:#1a3544;padding:12px;border-radius:10px"><div style="font-size:22px">🧑‍⚕️</div><b>Team roles</b><div style="font-size:11px;color:#a6c5ce">Surgeon · Anaesthesia · Nursing</div></div>
-            <div style="background:#1a3544;padding:12px;border-radius:10px"><div style="font-size:22px">🧼</div><b>Sterile field</b><div style="font-size:11px;color:#a6c5ce">Asepsis · Instrument count</div></div>
-            <div style="background:#1a3544;padding:12px;border-radius:10px"><div style="font-size:22px">📋</div><b>Safety checklist</b><div style="font-size:11px;color:#a6c5ce">Time-out · Sign-out</div></div>
-          </div>
-        </div>
-        """, unsafe_allow_html=True)
+        render_simulation_scene("operating")
 
     with tab_micro:
         st.markdown("### Clinical microbiology bench")
@@ -520,6 +556,7 @@ elif page == "Virtual Hospital":
         st.markdown(f"**Specimen context:** {test['specimen']}")
         st.markdown(f"**Principle:** {test['principle']}")
         st.markdown(f"**Task:** {test['learning_task']}")
+        render_simulation_scene("microbiology")
         answer = st.radio("Select your interpretation", test["options"], key=f"micro_answer_{test_name}")
         if st.button("Submit interpretation", type="primary", key=f"micro_submit_{test_name}"):
             correct = test["options"].index(answer) == int(test["answer"])
