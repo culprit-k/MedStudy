@@ -25,10 +25,20 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
             with self.subTest(mode=mode):
                 self.assertIn(f'data-mode="{mode}"', self.html)
 
-    def test_surface_deformation_and_recovery_exist(self):
+    def test_surface_deformation_uses_correct_plane_axes(self):
         self.assertIn("function deformAt", self.html)
         self.assertIn("function recoverSurface", self.html)
         self.assertIn("deformAt(p,.19,.52)", self.html)
+        self.assertIn("pos.getZ(i)-local.z", self.html)
+        self.assertIn("pos.setY(i,target)", self.html)
+        self.assertNotIn("pos.setZ(i,basePos[i*3+2]-indent[i])", self.html)
+
+    def test_damped_spring_membrane_and_render_loop_exist(self):
+        self.assertIn("const stiffness=34,damping=9,coupling=5.5", self.html)
+        self.assertIn("const acceleration=-stiffness*indent[i]-damping*velocity[i]", self.html)
+        self.assertIn("animate();updateMetrics();", self.html)
+        self.assertEqual(self.html.count("animate();updateMetrics();"), 1)
+        self.assertNotIn("\\\\nfunction", self.html)
 
     def test_reset_and_layer_controls_exist(self):
         self.assertIn('id="reset"', self.html)
@@ -44,10 +54,12 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("SOFA", self.page)
         self.assertIn("No finite-element tissue physics", self.page)
 
-    def test_external_body_mesh_has_loader_toggle_and_disclosure(self):
+    def test_external_body_mesh_has_loader_focus_and_disclosure(self):
         self.assertIn("GLTFLoader.js", self.html)
         self.assertIn("human_posed.glb", self.html)
         self.assertIn('id="bodyModel"', self.html)
+        self.assertIn("function setBodyView(show)", self.html)
+        self.assertIn("model.rotation.z=-Math.PI/2", self.html)
         self.assertIn("not internal anatomy", self.html)
         self.assertIn("CC0 1.0", self.page)
 
