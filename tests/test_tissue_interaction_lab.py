@@ -34,6 +34,11 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("Tissue interaction lab", self.app)
         self.assertIn("adjustable spring parameters", self.app)
 
+    def test_home_card_button_uses_registered_navigation_target(self):
+        self.assertIn('"Tissue Interaction Lab"', self.app)
+        self.assertIn('key=f"home_{target}"', self.app)
+        self.assertIn('on_click=jump, args=(target,)', self.app)
+
     def test_page_embeds_component(self):
         self.assertIn("components.html", self.page)
         self.assertIn("realistic_tissue_interaction_lab.html", self.page)
