@@ -95,7 +95,7 @@ def show_image(relative_path):
 
 def _plain_text(value):
     """Remove simple HTML from Wikimedia metadata before showing attribution."""
-    return re.sub(r"\\s+", " ", re.sub(r"<[^>]*>", " ", html.unescape(str(value or "")))).strip()
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]*>", " ", html.unescape(str(value or "")))).strip()
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
