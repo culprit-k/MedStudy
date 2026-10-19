@@ -163,11 +163,20 @@ elif page == "MCQ Quiz":
     st.title("📝 MCQ Quiz")
     st.write("Choose a subject and start a short practice session.")
     selected_subject = st.selectbox("Quiz subject", ["All subjects"] + SUBJECTS)
+    quiz_length = st.selectbox("Number of questions", ["5 questions", "10 questions", "All questions"])
     if st.button("Start / restart quiz", type="primary"):
         pool = CARDS if selected_subject == "All subjects" else [
             item for item in CARDS if item["subject"] == selected_subject
         ]
-        st.session_state.quiz_question_ids = [q["id"] for q in random.sample(pool, k=len(pool))]
+        requested_count = {
+            "5 questions": 5,
+            "10 questions": 10,
+            "All questions": len(pool),
+        }[quiz_length]
+        question_count = min(requested_count, len(pool))
+        st.session_state.quiz_question_ids = [
+            q["id"] for q in random.sample(pool, k=question_count)
+        ]
         st.session_state.quiz_index = 0
         st.session_state.quiz_feedback = {}
         st.rerun()
@@ -279,6 +288,17 @@ elif page == "Progress":
         st.bar_chart({subject: stats["correct"] for subject, stats in by_subject.items()})
     else:
         st.info("Complete a few quiz questions to see your progress here.")
+
+    st.divider()
+    st.caption("Progress is stored in this browser session and may reset when the session ends.")
+    confirm_reset = st.checkbox("I want to clear this session's quiz progress")
+    if st.button("Clear session progress", disabled=not confirm_reset):
+        st.session_state.answered = []
+        st.session_state.quiz_feedback = {}
+        st.session_state.quiz_question_ids = []
+        st.session_state.quiz_index = 0
+        st.success("Session progress cleared.")
+        st.rerun()
 
 st.divider()
 st.markdown(
