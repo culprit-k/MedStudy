@@ -1,13 +1,18 @@
+import html
 import json
 import os
 import random
+import re
 from pathlib import Path
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 import streamlit as st
 
 ROOT = Path(__file__).parent
 DATA_FILE = ROOT / "data" / "questions.json"
 VISUAL_FILE = ROOT / "data" / "visual_questions.json"
+IMAGE_LIBRARY_FILE = ROOT / "data" / "image_library.json"
 
 st.set_page_config(
     page_title="MedStudy — Medical Learning Studio",
@@ -23,6 +28,7 @@ def load_json(path):
 
 QUESTIONS = load_json(DATA_FILE)
 VISUAL_QUESTIONS = load_json(VISUAL_FILE)
+IMAGE_LIBRARY = load_json(IMAGE_LIBRARY_FILE)
 SUBJECTS = list(QUESTIONS)
 ALL_CARDS = [{"subject": subject, **item} for subject, items in QUESTIONS.items() for item in items]
 ALL_CARDS += [{"subject": item["subject"], **item} for item in VISUAL_QUESTIONS]
@@ -34,6 +40,8 @@ def init_state():
         "tutor_messages": [], "profile_level": "MBBS — Core concepts",
         "profile_goal": "Exam preparation", "profile_style": "Explain simply, then go deeper",
         "daily_goal": 15, "visual_index": 0, "case_revealed": [],
+        "image_library_results": [], "image_library_last_query": "",
+        "image_library_error": "", "saved_image_references": [],
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -83,6 +91,89 @@ def show_image(relative_path):
     else:
         st.image(str(image_path), use_container_width=True)
 
+
+
+def _plain_text(value):
+    """Remove simple HTML from Wikimedia metadata before showing attribution."""
+    return re.sub(r"\\s+", " ", re.sub(r"<[^>]*>", " ", html.unescape(str(value or "")))).strip()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def search_wikimedia_images(query, limit=12):
+    """Search Wikimedia Commons for freely hosted image files and return per-file source/licence metadata."""
+    params = {
+        "action": "query",
+        "generator": "search",
+        "gsrsearch": query,
+        "gsrnamespace": 6,
+        "gsrlimit": max(1, min(int(limit), 24)),
+        "prop": "imageinfo",
+        "iiprop": "url|extmetadata|mime",
+        "iiurlwidth": 640,
+        "format": "json",
+        "formatversion": 2,
+    }
+    url = "https://commons.wikimedia.org/w/api.php?" + urlencode(params)
+    request = Request(url, headers={"User-Agent": "MedStudy/1.0 (medical education image library)"})
+    try:
+        with urlopen(request, timeout=12) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except Exception as exc:
+        return [], f"Could not reach Wikimedia Commons right now ({type(exc).__name__}). Local diagrams and curated source links are still available."
+
+    results = []
+    for page in payload.get("query", {}).get("pages", []):
+        infos = page.get("imageinfo") or []
+        if not infos:
+            continue
+        info = infos[0]
+        mime = str(info.get("mime", ""))
+        if not mime.startswith("image/"):
+            continue
+        metadata = info.get("extmetadata") or {}
+        def meta(key):
+            raw = metadata.get(key, {})
+            return _plain_text(raw.get("value", "") if isinstance(raw, dict) else raw)
+        licence = meta("LicenseShortName") or meta("UsageTerms") or "Licence not detected — check source page"
+        author = meta("Artist") or meta("Credit") or "Creator not specified in returned metadata"
+        results.append({
+            "title": page.get("title", "Untitled image").removeprefix("File:"),
+            "thumbnail": info.get("thumburl") or info.get("url"),
+            "source_url": info.get("descriptionurl") or "https://commons.wikimedia.org/",
+            "file_url": info.get("url", ""),
+            "licence": licence,
+            "author": author[:400],
+            "description": meta("ImageDescription")[:500],
+            "mime": mime,
+        })
+    return results, ""
+
+
+def render_image_library_card(image, key_prefix):
+    """Show a media preview with its original source, creator credit and licence."""
+    if image.get("thumbnail"):
+        st.image(image["thumbnail"], use_container_width=True)
+    st.markdown(f"**{image.get('title', 'Medical image')}**")
+    description = image.get("description")
+    if description:
+        st.caption(description[:280])
+    st.caption(f"Licence: {image.get('licence', 'Check source page')} ")
+    st.caption(f"Credit: {image.get('author', 'Check source page')[:220]}")
+    st.markdown(f"[Open original source and full reuse terms]({image.get('source_url', 'https://commons.wikimedia.org/')})")
+    save_key = f"save_image_ref_{key_prefix}"
+    if st.button("Save reference", key=save_key, use_container_width=True):
+        refs = st.session_state.setdefault("saved_image_references", [])
+        url = image.get("source_url", "")
+        if not any(item.get("source_url") == url for item in refs):
+            refs.append({
+                "title": image.get("title", "Medical image"),
+                "source_url": url,
+                "licence": image.get("licence", "Check source page"),
+                "author": image.get("author", "Check source page"),
+            })
+        st.toast("Image reference saved for this session")
+
+
 def record_answer(item, correct, chosen):
     st.session_state.answered.append({
         "id": item["id"], "subject": item["subject"], "correct": bool(correct),
@@ -101,7 +192,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Learning Library", "Medical Image Library", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -132,6 +223,7 @@ if page == "Home":
     cards = [
         ("🧠","Learning library","Build strong foundations, then review mechanisms and clinical correlations.","Learning Library"),
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
+        ("🖼️","Medical image library","Search and save image references across every major medical subject.","Medical Image Library"),
         ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
         ("🧪","Physiology lab","Run interactive experiments in cardiovascular, respiratory, renal and nerve physiology.","Physiology Lab"),
         ("🧍","Whole-body organ simulator","Adjust organ-system variables and explore simplified whole-body responses.","Whole-Body Organ Simulator"),
@@ -352,6 +444,97 @@ elif page == "Anatomy Lab":
                     st.session_state.anatomy_system = {"2":"Cardiovascular","3":"Respiratory","4":"Renal","5":"Nervous"}.get(num, system_name)
                     st.rerun()
     st.caption("Next pathway suggestion: revise a structure, answer its recall check, then practise related questions in Exam Arena. Content is educational and should be checked against trusted anatomy resources.")
+
+elif page == "Medical Image Library":
+    st.title("🖼️ Medical Image Library")
+    st.caption("A searchable visual collection for MBBS learning, virtual labs, revision and image-based questions.")
+    local_images = IMAGE_LIBRARY.get("local_images", [])
+    subjects = [entry["name"] for entry in IMAGE_LIBRARY.get("subjects", [])]
+    subject = st.selectbox("Subject", subjects, index=0, key="image_library_subject")
+    subject_info = next((entry for entry in IMAGE_LIBRARY.get("subjects", []) if entry["name"] == subject), {"query": ""})
+    focus_options = {
+        "All image types": "",
+        "Anatomical diagrams": "anatomical diagram organ structure",
+        "Histology & microscopy": "histology microscopy tissue",
+        "Gross pathology": "gross pathology specimen",
+        "Microbiology & parasites": "bacteria parasite microscopy",
+        "Radiology & imaging": "medical X-ray CT MRI radiograph",
+        "ECG & physiology traces": "electrocardiogram ECG physiology graph",
+        "Clinical examination": "clinical examination medical education",
+        "Biochemistry & pathways": "metabolism biochemical pathway diagram",
+        "Public health & research": "epidemiology medical infographic graph"
+    }
+    left, right = st.columns([1.35, 1])
+    with left:
+        query_text = st.text_input("Search topic or structure", placeholder="e.g. nephron, mitral stenosis, gram-positive cocci", key="image_library_query_text")
+    with right:
+        focus = st.selectbox("Image focus", list(focus_options.keys()), key="image_library_focus")
+    count = st.select_slider("Maximum results", options=[6, 12, 18, 24], value=12, key="image_library_count")
+    do_search = st.button("Search free-media image library", type="primary", use_container_width=True)
+    if do_search:
+        pieces = []
+        if subject_info.get("query"):
+            pieces.append(subject_info["query"])
+        if focus_options.get(focus):
+            pieces.append(focus_options[focus])
+        if query_text.strip():
+            pieces.append(query_text.strip())
+        query = " ".join(pieces) or "medical anatomy physiology histology pathology"
+        with st.spinner("Searching Wikimedia Commons and retrieving source/licence metadata..."):
+            images, error = search_wikimedia_images(query, count)
+        st.session_state.image_library_results = images
+        st.session_state.image_library_last_query = query
+        st.session_state.image_library_error = error
+    if st.session_state.get("image_library_last_query"):
+        st.markdown(f"### Online results for: {st.session_state.image_library_last_query}")
+        if st.session_state.get("image_library_error"):
+            st.warning(st.session_state.image_library_error)
+        results = st.session_state.get("image_library_results", [])
+        if results:
+            st.caption(f"{len(results)} image file(s) returned. Every file has its own licence; check its source page before downloading, adapting or publishing it.")
+            cols = st.columns(3)
+            for i, image in enumerate(results):
+                with cols[i % 3]:
+                    with st.container(border=True):
+                        render_image_library_card(image, f"online_{i}_{abs(hash(image.get('source_url',''))) % 1000000}")
+        elif not st.session_state.get("image_library_error"):
+            st.info("No image files found for this query. Try a broader search term or another subject.")
+    st.markdown("---")
+    st.markdown("## Built-in MedStudy teaching illustrations")
+    st.caption("These original schematic illustrations are bundled with the project. They are simplified educational diagrams, not diagnostic images.")
+    relevant_local = local_images if subject == "All subjects" else [item for item in local_images if subject in item.get("subjects", [])]
+    if not relevant_local:
+        st.info("No bundled schematic is tagged to this subject yet. Use the search above to find relevant freely hosted media.")
+    else:
+        cols = st.columns(3)
+        for i, item in enumerate(relevant_local):
+            with cols[i % 3]:
+                with st.container(border=True):
+                    show_image(item["path"])
+                    st.markdown(f"**{item['title']}**")
+                    st.caption(item["caption"])
+                    st.caption("Source: original MedStudy teaching schematic.")
+    st.markdown("---")
+    st.markdown("## Trusted image collections")
+    st.caption("These links provide wider subject coverage. Reuse conditions vary, so check the licence for each image and collection.")
+    resources = IMAGE_LIBRARY.get("resources", [])
+    cols = st.columns(2)
+    for i, resource in enumerate(resources):
+        with cols[i % 2]:
+            with st.container(border=True):
+                st.markdown(f"### [{resource['name']}]({resource['url']})")
+                st.write(resource["description"])
+                st.caption(resource["licence"])
+    with st.expander(f"Saved image references ({len(st.session_state.get('saved_image_references', []))})"):
+        saved_refs = st.session_state.get("saved_image_references", [])
+        if not saved_refs:
+            st.info("Use Save reference on an online result to keep a source citation during this session.")
+        else:
+            for saved in saved_refs:
+                st.markdown(f"**{saved['title']}** — [{saved['source_url']}]({saved['source_url']})")
+                st.caption(f"Licence: {saved['licence']} · Credit: {saved['author']}")
+    st.info("Medical-image licence reminder: public availability does not automatically permit reuse. Confirm the file's licence, attribution, commercial-use terms, privacy restrictions and any separate rights before using it in the app or in publications.")
+
 
 elif page == "Whole-Body Organ Simulator":
     st.title("🧍 Whole-Body Organ Simulator")
