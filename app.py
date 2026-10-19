@@ -491,7 +491,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Virtual Hospital", "Learning Library", "Medical Image Library", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Virtual Hospital", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -524,6 +524,7 @@ if page == "Home":
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
         ("🖼️","Medical image library","Search and save image references across every major medical subject.","Medical Image Library"),
         ("🏥","Virtual hospital","Enter a simulated ward, operating theatre, microbiology bench and diagnostic lab.","Virtual Hospital"),
+        ("🫀","Real 3D anatomy atlas","Explore thousands of named anatomical structures in a detailed touch-enabled 3D viewer.","Real 3D Anatomy Atlas"),
         ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
         ("🧪","Physiology lab","Run interactive experiments in cardiovascular, respiratory, renal and nerve physiology.","Physiology Lab"),
         ("🧍","Whole-body organ simulator","Adjust organ-system variables and explore simplified whole-body responses.","Whole-Body Organ Simulator"),
@@ -633,7 +634,9 @@ elif page == "Virtual Hospital":
         organ = next(o for o in organ_systems if o["name"] == selected_name)
         oleft, oright = st.columns([1,1])
         with oleft:
-            render_3d_anatomy_viewer(selected_name, height=650)
+            st.caption("For detailed individual structures, use the real 3D atlas. The small teaching model below represents organ systems conceptually.")
+            components.iframe("https://nqwrc.github.io/3d-anatomy/", height=650, scrolling=True)
+            st.markdown("[Open full 3D atlas ↗](https://nqwrc.github.io/3d-anatomy/)")
         with oright:
             st.markdown(f"## {organ['icon']} {organ['name']}")
             st.markdown(f"**Key structures:** {organ['focus']}")
@@ -749,6 +752,41 @@ elif page == "Virtual Hospital":
                 st.error(f"Best answer: {result['best_answer']}")
             st.info(panel["explanation"])
         st.info("In clinical care, test results must be interpreted by qualified personnel using current guidelines, local reference ranges, patient context and appropriate escalation.")
+
+elif page == "Real 3D Anatomy Atlas":
+    st.markdown("""
+    <div class="hero">
+      <div class="eyebrow">Open anatomy atlas · external model library</div>
+      <h1>Real 3D Anatomy Atlas</h1>
+      <p>Explore a detailed, touch-enabled anatomical model with individually selectable structures, system layers, isolate/hide controls and transparent views.</p>
+      <span class="pill">Touch rotation</span><span class="pill">Pinch to zoom</span><span class="pill">Select structures</span><span class="pill">Layer controls</span>
+    </div>
+    """, unsafe_allow_html=True)
+    st.info("This embeds an externally hosted atlas based on Z-Anatomy/BodyParts3D data rather than the simplified demo geometry. Its 3D assets load from the atlas provider and require internet access. The atlas contains its own credits and licence notices.")
+    action_col, credit_col = st.columns([1,1])
+    with action_col:
+        st.markdown("**Best on a phone:** rotate with one finger, pinch to zoom, and tap a structure to select it. Use the viewer's own Isolate, Hide, Transparent and Show all controls.")
+        st.markdown("[Open the atlas directly in full screen ↗](https://nqwrc.github.io/3d-anatomy/)")
+    with credit_col:
+        st.caption("Source: 3D Anatomy by nqwrc, using Z-Anatomy and BodyParts3D-derived models. The source project documents CC BY-SA requirements and notes additional non-commercial components. We link/embed the hosted viewer; we are not copying its model assets into this repository.")
+        st.markdown("[Read source and model licensing](https://github.com/nqwrc/3d-anatomy#licence)")
+    st.markdown("### Interactive anatomy viewer")
+    components.iframe("https://nqwrc.github.io/3d-anatomy/", height=870, scrolling=True)
+    st.caption("If your in-app browser blocks the embedded viewer or it does not load, use the full-screen link above. Loading and performance depend on network speed and the browser's WebGL support.")
+    st.markdown("### How this connects to MedStudy")
+    c1,c2,c3 = st.columns(3)
+    with c1:
+        if st.button("Open Anatomy Lab", use_container_width=True):
+            st.session_state.navigation = "Anatomy Lab"
+            st.rerun()
+    with c2:
+        if st.button("Open Whole-Body Simulator", use_container_width=True):
+            st.session_state.navigation = "Whole-Body Organ Simulator"
+            st.rerun()
+    with c3:
+        if st.button("Open Virtual Hospital", use_container_width=True):
+            st.session_state.navigation = "Virtual Hospital"
+            st.rerun()
 
 elif page == "Learning Library":
     st.title("📚 Learning library")
