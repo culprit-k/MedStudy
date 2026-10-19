@@ -10,6 +10,7 @@ MedStudy is an interactive medical learning project built for medical students w
 - **Visual lab:** original heart, nephron, neuron, alveolar-interface, and ECG teaching schematics with image-based questions and clinical/exam pearls.
 - **Medical Image Library:** searchable image catalogue across 30 medical subjects, live Wikimedia Commons previews, original source pages, creator credits, per-file licence metadata, session-saved references, and curated collection links.
 - **Virtual Hospital:** immersive teaching workspace with an animated conceptual organ map, fictional bedside-monitor values, structured patient-assessment scenarios, operating-theatre safety workflow, virtual microbiology test interpretation, and fictional diagnostic laboratory panels.
+- **Immersive visual scenes:** animated fictional bedside monitor/organ map, illustrated operating-theatre environment, and microscopy bench with clearly labelled teaching-only visual specimens.
 - **Image reuse safeguards:** every online image links to its source and licence details; users must verify file-specific reuse terms before redistribution or publication.
 - **Clinical cases:** structured case vignettes with explanations and stretch prompts.
 - **Exam arena:** configurable mixed-question sessions, immediate feedback, score summaries, and missed-question review.
