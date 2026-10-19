@@ -101,7 +101,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Anatomy Lab", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Learning Library", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -133,6 +133,15 @@ if page == "Home":
         ("🧠","Learning library","Build strong foundations, then review mechanisms and clinical correlations.","Learning Library"),
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
         ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
+        ("🧪","Physiology lab","Run interactive experiments in cardiovascular, respiratory, renal and nerve physiology.","Physiology Lab"),
+        ("🔬","Histology lab","Study tissue architecture, cell identification and microscopic patterns.","Histology Lab"),
+        ("🧫","Pathology lab","Explore mechanisms, gross patterns, blood films and case-based morphology.","Pathology Lab"),
+        ("🦠","Microbiology lab","Practise organism identification, staining, culture and diagnostic reasoning.","Microbiology Lab"),
+        ("⚗️","Biochemistry lab","Interpret enzymes, metabolism, electrolytes and clinical laboratory panels.","Biochemistry Lab"),
+        ("💊","Pharmacology lab","Explore dose-response, receptors, kinetics, interactions and adverse effects.","Pharmacology Lab"),
+        ("🩻","Radiology lab","Practise a systematic approach to imaging and anatomy orientation.","Radiology Lab"),
+        ("💓","ECG lab","Learn ECG waves, intervals, rhythm interpretation and common patterns.","ECG Lab"),
+        ("🧬","Simulation center","Use safe, fictional patient data to practise integrated clinical reasoning.","Simulation Center"),
         ("🩺","Clinical reasoning","Work through structured cases and explain your differential.","Clinical Cases"),
         ("👩‍⚕️","OSCE studio","Practise structured history, examination, and communication.","OSCE Studio"),
         ("📊","Research & EBM","Explore PICO, study design, diagnostic tests, and critical appraisal.","Research & EBM"),
@@ -342,6 +351,145 @@ elif page == "Anatomy Lab":
                     st.session_state.anatomy_system = {"2":"Cardiovascular","3":"Respiratory","4":"Renal","5":"Nervous"}.get(num, system_name)
                     st.rerun()
     st.caption("Next pathway suggestion: revise a structure, answer its recall check, then practise related questions in Exam Arena. Content is educational and should be checked against trusted anatomy resources.")
+
+elif page in ["Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center"]:
+    lab_configs = {
+      "Physiology Lab": {
+        "icon":"🧪","subtitle":"Virtual experiments: change a variable, observe the response, and explain the mechanism.",
+        "experiments":{
+          "Cardiovascular response to exercise":("Heart rate (beats/min)",40,180,90,"As workload rises, sympathetic drive generally increases heart rate and contractility. Actual responses vary with fitness, medications, temperature and disease."),
+          "Ventilation and carbon dioxide":("Alveolar ventilation (L/min)",2,12,5,"For a constant CO₂ production rate, increasing alveolar ventilation lowers arterial CO₂; reducing ventilation raises it. This is a simplified teaching model."),
+          "Renal clearance explorer":("Urine concentration factor",1,5,3,"Urine concentration depends on the medullary osmotic gradient, tubular function, and ADH. A single slider cannot represent the full renal physiology.")
+        }},
+      "Histology Lab": {
+        "icon":"🔬","subtitle":"Virtual microscopy and tissue identification practice. Schematic descriptions are educational, not diagnostic slides.",
+        "experiments":{
+          "Cardiac muscle":("Identify the key feature",["Striations with branching fibres and intercalated discs","Parallel non-striated spindle-shaped cells","Chondrocytes in lacunae"],0,"Cardiac muscle has striations, branching cells, central nuclei and intercalated discs that support coordinated contraction."),
+          "Kidney cortex":("Identify the key feature",["Glomeruli and convoluted tubules","Alveoli and thin septa","Hepatic lobules with central veins"],0,"The renal cortex contains glomeruli and proximal/distal convoluted tubules. The medulla lacks renal corpuscles."),
+          "Respiratory epithelium":("Choose the typical conducting-airway lining",["Pseudostratified ciliated columnar epithelium with goblet cells","Simple squamous epithelium throughout","Transitional epithelium"],0,"Much of the conducting airway is lined by pseudostratified ciliated columnar epithelium; the alveoli are predominantly lined by thin type I pneumocytes.")
+        }},
+      "Pathology Lab": {
+        "icon":"🧫","subtitle":"Practise morphological pattern recognition and connect findings to mechanisms.",
+        "experiments":{
+          "Cell injury pattern":("Which finding is most consistent with reversible cell injury?",["Cellular swelling and fatty change","Complete membrane rupture with karyolysis","Caseous necrosis"],0,"Cellular swelling and fatty change can occur in reversible injury. Severe irreversible injury may cause membrane disruption and nuclear changes."),
+          "Inflammation pattern":("Which cell predominates early in many acute bacterial infections?",["Neutrophil","Plasma cell","Eosinophil"],0,"Neutrophils commonly predominate early in acute bacterial inflammation, although patterns depend on cause, site and timing."),
+          "Thrombus vs postmortem clot":("Which feature supports an antemortem thrombus?",["Attachment to vessel wall and lines of Zahn when present","Uniform jelly-like clot without attachment","Presence only after death"],0,"Antemortem thrombi may attach to the vessel wall and show laminations (lines of Zahn), especially in flowing blood. Morphology must be interpreted in context.")
+        }},
+      "Microbiology Lab": {
+        "icon":"🦠","subtitle":"Virtual bench exercises in staining, culture logic and diagnostic test selection. No real specimens are involved.",
+        "experiments":{
+          "Gram stain reasoning":("A Gram-positive organism typically appears:",["Purple due to retention of crystal violet–iodine complex","Pink because it loses crystal violet","Green due to acid-fast stain"],0,"Gram-positive bacteria retain the crystal violet–iodine complex after decolorisation and appear purple."),
+          "Acid-fast staining":("Why can Mycobacterium retain carbol fuchsin?",["Lipid-rich, mycolic-acid-containing cell envelope","A bacterial nucleus","Absence of a cell wall"],0,"The mycolic-acid-rich envelope contributes to acid-fastness. Staining results need appropriate controls and clinical interpretation."),
+          "Diagnostic test choice":("For suspected bloodstream infection, which sample is commonly collected before antibiotics when feasible?",["Blood cultures using appropriate sets and technique","A swab of intact skin only","A urine dipstick alone"],0,"Blood cultures are collected with aseptic technique and adequate volume before antibiotics when this does not dangerously delay urgent treatment.")
+        }},
+      "Biochemistry Lab": {
+        "icon":"⚗️","subtitle":"Interpret simplified laboratory scenarios and explore biochemical mechanisms.",
+        "experiments":{
+          "Enzyme interpretation":("A markedly increased ALT most directly suggests injury involving:",["Hepatocytes (interpreted with the full panel and context)","Red cells only","Bone mineral exclusively"],0,"ALT is associated with hepatocellular injury, but magnitude and pattern must be interpreted alongside AST, ALP, bilirubin, history and other findings."),
+          "Acid-base basics":("A low pH with elevated PaCO₂ most directly indicates:",["Primary respiratory acidosis (check compensation and context)","Primary respiratory alkalosis","Isolated metabolic alkalosis"],0,"A low pH and raised PaCO₂ support respiratory acidosis; assess bicarbonate, compensation, timing and mixed disorders."),
+          "Glucose regulation":("Which hormone generally lowers blood glucose by promoting uptake and storage?",["Insulin","Glucagon","Cortisol"],0,"Insulin promotes glucose uptake in insulin-sensitive tissues and supports glycogen, lipid and protein synthesis.")
+        }},
+      "Pharmacology Lab": {
+        "icon":"💊","subtitle":"Explore pharmacodynamics and pharmacokinetics using simplified teaching models.",
+        "experiments":{
+          "Dose-response":("Increasing agonist concentration usually increases response until:",["A maximal effect is approached","All receptors disappear immediately","The drug becomes an antagonist by definition"],0,"A graded dose-response curve rises toward an Emax. Potency and efficacy are distinct; curves depend on system and experimental conditions."),
+          "Half-life":("After approximately five half-lives, the fraction remaining after a single dose is about:",["3%","50%","25%"],0,"After five half-lives, about 1/32 (3.1%) remains under first-order elimination assumptions."),
+          "Receptor antagonism":("A reversible competitive antagonist commonly causes which effect on an agonist curve?",["Rightward shift that can often be overcome by more agonist","A guaranteed increase in Emax","Irreversible destruction of all receptors"],0,"A reversible competitive antagonist often shifts the agonist curve rightward without reducing Emax if sufficient agonist can be given.")
+        }},
+      "Radiology Lab": {
+        "icon":"🩻","subtitle":"Imaging interpretation framework: verify modality, orientation, anatomy and image quality before interpretation.",
+        "experiments":{
+          "Chest X-ray sequence":("Which is a sensible first step when reviewing a chest radiograph?",["Confirm patient, projection, orientation and image quality","Immediately name a diagnosis without checking the image","Ignore rotation and inspiration"],0,"A systematic review starts with identity/context, projection, rotation, inspiration, exposure and then proceeds through structures."),
+          "CT density":("On a typical non-contrast CT, which structure is usually higher attenuation?",["Cortical bone","Air in the lung","Fat"],0,"Cortical bone is usually high attenuation, air is very low attenuation, and fat is lower attenuation than soft tissue. Windowing matters."),
+          "Ultrasound principle":("Most diagnostic ultrasound images are formed from:",["Reflected sound waves at tissue interfaces","Ionising radiation absorption","Magnetic resonance signals"],0,"Ultrasound forms images from returning echoes; operator technique and acoustic windows strongly affect image quality.")
+        }},
+      "ECG Lab": {
+        "icon":"💓","subtitle":"Learn a systematic ECG approach. Educational examples only; not for real-time diagnosis or emergency triage.",
+        "experiments":{
+          "ECG intervals":("The PR interval represents conduction from:",["Atrial depolarisation onset to ventricular depolarisation onset","Start to end of ventricular repolarisation","Only ventricular depolarisation"],0,"The PR interval extends from the beginning of the P wave to the beginning of the QRS complex, reflecting atrial-to-ventricular conduction."),
+          "Rate estimation":("For a regular rhythm on standard 25 mm/s ECG paper, the 300 rule estimates rate using:",["300 divided by the number of large squares between R waves","Large squares multiplied by 10","PR interval divided by QT"],0,"For a regular rhythm, rate ≈ 300 divided by large squares between successive R waves; confirm with the full tracing."),
+          "ST elevation":("ST elevation in contiguous leads may indicate:",["Acute myocardial injury among other causes; urgent clinical context matters","A diagnosis that can be made from one isolated lead in every case","Always normal repolarisation"],0,"ST elevation requires assessment of lead distribution, symptoms, reciprocal changes, mimics and urgent clinical context. Never use this teaching tool to assess a real emergency.")
+        }},
+      "Simulation Center": {
+        "icon":"🧬","subtitle":"A fictional case simulator for structured reasoning. Never enter real patient identifiers or use this for clinical decisions.",
+        "experiments":{
+          "Fever and tachycardia":("Which additional information is most useful to assess severity?",["Mental status, blood pressure, respiratory status, perfusion and clinical context","Only the patient's favourite food","A single temperature value without context"],0,"Severity assessment uses the whole clinical picture, including haemodynamics, breathing, mental status, perfusion, history and relevant investigations."),
+          "Dyspnoea framework":("Which first-pass approach is most appropriate for a fictional acute dyspnoea case?",["Assess immediate stability and organise airway, breathing, circulation before focused history","Start with a detailed remote family tree","Assume anxiety before checking danger signs"],0,"Clinical teaching prioritises immediate stability and ABC assessment, then focused history, examination and investigations. Real acute symptoms require professional assessment."),
+          "Evidence and uncertainty":("When findings do not fit one diagnosis, the safest reasoning habit is to:",["Reassess data quality, keep a differential, and seek appropriate supervision","Force every finding into the first hypothesis","Ignore contradictory evidence"],0,"Good reasoning tests hypotheses against all findings, acknowledges uncertainty and seeks supervision when needed.")
+        }}
+    }
+    cfg = lab_configs[page]
+    st.title(f"{cfg['icon']} {page}")
+    st.caption(cfg["subtitle"])
+    topic = st.selectbox("Choose a virtual practical", list(cfg["experiments"].keys()), key=f"lab_topic_{page}")
+    label, options, correct_index, explanation = cfg["experiments"][topic]
+    st.markdown('<div class="panel"><div class="eyebrow">VIRTUAL PRACTICAL</div><h3>'+topic+'</h3><p class="muted">Read the prompt, choose your answer, submit it, then review the mechanism.</p></div>',unsafe_allow_html=True)
+    if page == "Physiology Lab":
+        st.markdown("### Experiment controls")
+        value_label, minimum, maximum, default, mechanism = cfg["experiments"][topic]
+        value = st.slider(value_label, minimum, maximum, default, key=f"phys_slider_{topic}")
+        if topic == "Cardiovascular response to exercise":
+            response = max(40, min(210, round(55 + 0.85 * value)))
+            st.metric("Illustrative response estimate", f"{response} beats/min", help="Toy relationship for learning only; not a physiological prediction for an individual.")
+            st.caption("Model: a deliberately simplified trend illustrating that heart rate usually rises with workload.")
+        elif topic == "Ventilation and carbon dioxide":
+            co2 = round(40 * 5 / value, 1)
+            st.metric("Illustrative PaCO₂ trend", f"{co2} mmHg", help="Simplified inverse relationship assuming constant CO₂ production and idealised steady state.")
+            st.caption("Teaching relationship only: PaCO₂ is approximately proportional to CO₂ production divided by alveolar ventilation.")
+        else:
+            st.metric("Selected concentration factor", f"{value}×")
+            st.caption("The slider is a conceptual control, not a prediction of a person's urine osmolality.")
+        st.info(mechanism)
+    elif page == "Histology Lab":
+        st.markdown("### Microscopy concept card")
+        st.markdown(f"**What to look for:** {explanation}")
+        st.caption("This version uses text-based virtual microscopy prompts; licensed high-resolution slide collections can be integrated in a later content pass.")
+    elif page == "Radiology Lab":
+        st.markdown("### Image-reading checklist")
+        st.write("1. Confirm modality, patient/context and orientation.  2. Assess image quality.  3. Review anatomy systematically.  4. Describe findings before forming an impression.  5. State limitations and uncertainty.")
+        st.warning("This lab currently teaches interpretation workflow and modality principles; it does not contain a validated radiology image library.")
+    elif page == "ECG Lab":
+        st.markdown("### ECG systematic approach")
+        st.write("Rate → rhythm → axis → intervals (PR, QRS, QT) → P waves → QRS morphology → ST segments/T waves → comparison with prior ECG and clinical context.")
+        st.warning("Do not use educational examples to interpret symptoms or delay emergency care.")
+    elif page == "Microbiology Lab":
+        st.markdown("### Bench workflow")
+        st.write("Clinical question → appropriate specimen → correct collection and transport → microscopy/stain → culture or validated assay → organism identification → susceptibility interpretation → clinical correlation.")
+    elif page == "Pharmacology Lab":
+        st.markdown("### Model assumptions")
+        st.write("All examples are simplified. Real dosing depends on indication, age, organ function, interactions, formulation, pregnancy status and local guidance. Do not use this module to select or change a patient's medication.")
+    else:
+        st.markdown("### Practical interpretation")
+        st.write("Use the mechanism, pattern, limitations and clinical context together. Avoid interpreting any isolated result as a diagnosis.")
+    st.markdown("### Knowledge check")
+    response = st.radio(label, options, key=f"lab_answer_{page}_{topic}")
+    if st.button("Submit practical", type="primary", key=f"lab_submit_{page}_{topic}"):
+        ok = options.index(response) == correct_index
+        st.session_state[f"lab_result_{page}_{topic}"] = {"ok":ok,"answer":response}
+        record_answer({"id":f"{page}:{topic}","subject":page},ok,response)
+    result = st.session_state.get(f"lab_result_{page}_{topic}")
+    if result:
+        if result["ok"]:
+            st.success("Correct — good reasoning.")
+        else:
+            st.error(f"Not quite. Best answer: {options[correct_index]}")
+        st.write(explanation)
+        st.caption("Educational simulation only. Content should be checked against current textbooks, laboratory standards and qualified faculty.")
+    st.markdown("---")
+    c1,c2,c3 = st.columns(3)
+    with c1:
+        if st.button("Ask teacher to explain", key=f"lab_teacher_{page}", use_container_width=True):
+            st.session_state.tutor_prefill = f"Teach me {topic} from {page} at {st.session_state.profile_level}, with mechanisms, clinical relevance and exam traps."
+            st.session_state.navigation = "Teacher AI"
+            st.rerun()
+    with c2:
+        if st.button("Open exam arena", key=f"lab_exam_{page}", use_container_width=True):
+            st.session_state.navigation = "Exam Arena"
+            st.rerun()
+    with c3:
+        if st.button("View progress", key=f"lab_progress_{page}", use_container_width=True):
+            st.session_state.navigation = "Progress & Goals"
+            st.rerun()
 
 elif page == "Visual Lab":
     st.title("🩻 Visual lab")
