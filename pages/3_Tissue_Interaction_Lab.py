@@ -91,6 +91,11 @@ with roadmap_tab:
         "not a drop-in JavaScript library."
     )
 st.caption(
-    "Current state: interactive visual prototype plus an embedded anatomy reference. "
+    "External body mesh source: UMRAM-Bilkent/supine-human-model, CC0 1.0. "
+    "This is a static external body-surface reference, not internal anatomy and not a deformable surgical model. "
+    "The mesh loads on demand from GitHub; internet access is required."
+)
+st.caption(
+    "Current state: interactive visual prototype with an optional external body mesh and an embedded anatomy reference. "
     "No finite-element tissue physics, calibrated cutting forces, or clinical validation yet."
 )
