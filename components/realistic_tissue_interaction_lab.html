@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedStudy — Tissue Interaction Lab</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#08121b;color:#e7f2f8;font:14px system-ui,-apple-system,Segoe UI,sans-serif}
+.shell{padding:14px;display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:12px}.viewport{min-height:570px;position:relative;border:1px solid #284352;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#17303b,#071018 75%)}canvas{display:block;width:100%;height:570px;touch-action:none}
+.hud{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:80%}.pill{padding:6px 9px;background:#0b1b27dd;border:1px solid #345262;border-radius:999px;font-size:11px;color:#bde5ee}.side{background:#0e1d28;border:1px solid #284352;border-radius:16px;padding:15px}.eyebrow{font-size:10px;letter-spacing:1.7px;color:#69d8cb;font-weight:800}.side h2{font-size:17px;margin:7px 0 10px}.side p{line-height:1.55;color:#a9c1ce;font-size:12px}.tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.tools button,.action{background:#152c3a;color:#e9faff;border:1px solid #355665;border-radius:9px;padding:10px 8px;cursor:pointer;font-weight:650;font-size:12px}.tools button.active{background:#126a70;border-color:#56d7ce}.action{width:100%;background:#0f666a;margin-top:7px}.status{padding:10px;border-radius:10px;background:#09151e;border:1px solid #263d49;margin:10px 0;color:#c1d8e2;font-size:12px;line-height:1.5}.metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #243944;color:#9fb7c4;font-size:12px}.metric b{color:#eafaff}.disclaimer{grid-column:1/-1;border:1px solid #705b36;background:#241e13;color:#f1d9a7;border-radius:12px;padding:11px 13px;font-size:11px;line-height:1.5}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#a9c1ce;padding:8px 2px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+@media(max-width:850px){.shell{grid-template-columns:1fr}.viewport{min-height:420px}canvas{height:420px}.disclaimer{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="shell">
+<div><div class="viewport" id="viewport"><div class="hud"><span class="pill">INTERACTIVE TISSUE MODEL</span><span class="pill" id="modePill">Mode: Explore</span><span class="pill" id="cameraPill">Drag to orbit · pinch/scroll to zoom</span></div><canvas id="scene"></canvas></div>
+<div class="legend"><span><i class="dot" style="background:#d9a18c"></i>Skin</span><span><i class="dot" style="background:#dfbd77"></i>Subcutaneous layer</span><span><i class="dot" style="background:#b65e58"></i>Fascia / muscle</span><span><i class="dot" style="background:#e5d3b6"></i>Practice suture</span></div></div>
+<aside class="side"><div class="eyebrow">MEDSTUDY · SIMULATION</div><h2>Layered Tissue Lab</h2><p>Practise instrument control, a simulated surface incision, and point-to-point closure on a generated training model.</p>
+<div class="tools"><button class="active" data-mode="explore">Explore</button><button data-mode="palpate">Probe</button><button data-mode="incise">Incision</button><button data-mode="suture">Suture</button></div>
+<div class="status" id="status" aria-live="polite">Explore mode: orbit the field and inspect the layered training surface.</div>
+<div class="metric"><span>Incision segments</span><b id="incisionCount">0</b></div><div class="metric"><span>Closure stitches</span><b id="stitchCount">0</b></div><div class="metric"><span>Probe contacts</span><b id="probeCount">0</b></div><div class="metric"><span>Model integrity</span><b id="integrity">100%</b></div>
+<button class="action" id="reset">Reset training field</button><button class="action" id="layers">Toggle tissue layers</button>
+<p><b>Learning objective</b><br>Understand tool positioning and spatial relationships. The model gives visual feedback only; it does not assess safe technique.</p>
+</aside>
+<div class="disclaimer"><b>Prototype / safety notice:</b> This is a procedural graphics demonstration, not clinically realistic tissue simulation. The layers, incision, probe response and stitches are visual approximations; there is no validated anatomy, tissue-force model, bleeding physiology, haptic feedback, sterilisation workflow, or clinical scoring. Do not use it to learn or perform an operation without qualified supervision.</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script>
+(()=>{
+const canvas=document.getElementById('scene'), viewport=document.getElementById('viewport');
+if(!window.THREE){document.getElementById('status').textContent='3D engine did not load. Check the internet connection and reload.';return;}
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(viewport.clientWidth,viewport.clientHeight,false);renderer.outputEncoding=THREE.sRGBEncoding;
+const scene=new THREE.Scene();scene.fog=new THREE.Fog(0x08121b,10,24);
+const camera=new THREE.PerspectiveCamera(42,viewport.clientWidth/viewport.clientHeight,.1,100);camera.position.set(0,4.5,9.5);
+scene.add(new THREE.HemisphereLight(0xcbefff,0x432c2b,2));const key=new THREE.DirectionalLight(0xffe3c9,2.2);key.position.set(-3,7,5);scene.add(key);const rim=new THREE.DirectionalLight(0x4cbed0,1.3);rim.position.set(5,3,-5);scene.add(rim);
+const root=new THREE.Group();scene.add(root);const tissueGroup=new THREE.Group();root.add(tissueGroup);const overlayGroup=new THREE.Group();root.add(overlayGroup);const toolGroup=new THREE.Group();root.add(toolGroup);
+const mat=(color,roughness=.82)=>new THREE.MeshStandardMaterial({color,roughness,side:THREE.DoubleSide});
+const skinMat=mat(0xd9a18c),fatMat=mat(0xdfbd77),fasciaMat=mat(0xb65e58),deepMat=mat(0x7e4143),groundMat=mat(0x162a32);
+const planeGeo=new THREE.PlaneGeometry(5.8,4.1,54,38);planeGeo.rotateX(-Math.PI/2);
+const basePos=planeGeo.attributes.position.array.slice();const tissueMesh=new THREE.Mesh(planeGeo,skinMat);tissueMesh.position.y=1.55;tissueMesh.name='skin';tissueGroup.add(tissueMesh);
+function slab(w,h,d,material,y){const m=new THREE.Mesh(new THREE.BoxGeometry(w,d,h),material);m.position.set(0,y,0);tissueGroup.add(m);return m;}
+const fat=slab(5.8,4.1,.22,fatMat,1.28), fascia=slab(5.8,4.1,.12,fasciaMat,1.10), muscle=slab(5.8,4.1,.34,deepMat,.86);
+const bed=new THREE.Mesh(new THREE.BoxGeometry(6.3,.28,4.6),groundMat);bed.position.y=.56;tissueGroup.add(bed);
+const grid=new THREE.GridHelper(8,20,0x34515b,0x213942);grid.position.y=.41;root.add(grid);
+const edges=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(5.9,.045,4.2)),new THREE.LineBasicMaterial({color:0xe4c1b1,transparent:true,opacity:.48}));edges.position.y=1.58;tissueGroup.add(edges);
+const toolMat=new THREE.MeshStandardMaterial({color:0xc8d8e2,metalness:.75,roughness:.24});const tool=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,2.15,12),toolMat);shaft.rotation.z=Math.PI/2;shaft.position.x=-.75;tool.add(shaft);const grip=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.55,12),mat(0x197d85,.45));grip.rotation.z=Math.PI/2;grip.position.x=-1.95;tool.add(grip);const tip=new THREE.Mesh(new THREE.ConeGeometry(.07,.2,12),mat(0xe7f4fa,.35));tip.rotation.z=-Math.PI/2;tip.position.x=.36;tool.add(tip);tool.position.set(0,2.5,0);toolGroup.add(tool);
+const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();let mode='explore',down=false,lastPoint=null,hidden=false,integrity=100,probeCount=0;const cuts=[],stitches=[],probeDots=[];const targetY=1.58;
+function setStatus(s){document.getElementById('status').textContent=s;}
+function updateMetrics(){document.getElementById('incisionCount').textContent=cuts.length;document.getElementById('stitchCount').textContent=stitches.length;document.getElementById('probeCount').textContent=probeCount;document.getElementById('integrity').textContent=integrity+'%';}
+function clearGroup(g){while(g.children.length){const o=g.children.pop();if(o.geometry)o.geometry.dispose();if(o.material&&o.material.dispose)o.material.dispose();}}
+function worldPoint(e){const r=canvas.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObject(tissueMesh,false);if(hits.length)return hits[0].point;const plane=new THREE.Plane(new THREE.Vector3(0,1,0),-targetY);const p=new THREE.Vector3();return raycaster.ray.intersectPlane(plane,p)?p:null;}
+function addDot(p,color=0xf6d5bc,r=.07){const m=new THREE.Mesh(new THREE.SphereGeometry(r,12,8),new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.08}));m.position.copy(p);m.y+=.025;overlayGroup.add(m);return m;}
+function addCut(a,b){const pts=[new THREE.Vector3(a.x,targetY+.025,a.z),new THREE.Vector3(b.x,targetY+.025,b.z)];const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x6f2429,linewidth:3}));overlayGroup.add(line);cuts.push(line);addDot(pts[0],0x9c3d43,.035);addDot(pts[1],0x9c3d43,.035);integrity=Math.max(0,integrity-2);updateMetrics();}
+function addStitch(a,b){const p1=new THREE.Vector3(a.x,targetY+.07,a.z),p2=new THREE.Vector3(b.x,targetY+.07,b.z),mid=p1.clone().add(p2).multiplyScalar(.5);mid.y+=.11;const curve=new THREE.QuadraticBezierCurve3(p1,mid,p2);const line=new THREE.Mesh(new THREE.TubeGeometry(curve,18,.018,6,false),mat(0xe5d3b6,.42));overlayGroup.add(line);stitches.push(line);updateMetrics();}
+function setMode(m){mode=m;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));document.getElementById('modePill').textContent='Mode: '+m[0].toUpperCase()+m.slice(1);if(m==='incise')setStatus('Incision practice: drag across the surface to draw a simulated incision trace.');else if(m==='suture')setStatus('Closure practice: click one side of a visible incision, then the opposite side to place a visual stitch.');else if(m==='palpate')setStatus('Probe mode: click the surface to record a contact point.');else setStatus('Explore mode: drag to orbit the camera; scroll or pinch to zoom.');}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+let sutA=null;
+canvas.addEventListener('pointerdown',e=>{if(mode==='explore')return;down=true;canvas.setPointerCapture(e.pointerId);const p=worldPoint(e);if(!p)return;tool.position.set(p.x,2.5,p.z);if(mode==='incise'){lastPoint=p;addDot(p,0xa33e47,.045);}else if(mode==='palpate'){probeCount++;probeDots.push(addDot(p,0x42d6c7,.075));setStatus('Probe contact recorded. This is a visual marker, not a force or tissue assessment.');updateMetrics();}else if(mode==='suture'){if(!sutA){sutA=p;addDot(p,0xe5d3b6,.08);setStatus('First closure point selected. Select the opposite wound edge to place a stitch.');}else{addStitch(sutA,p);addDot(p,0xe5d3b6,.08);sutA=null;setStatus('Visual stitch placed. Spacing, tension and tissue purchase are not measured.');}}});
+canvas.addEventListener('pointermove',e=>{const p=worldPoint(e);if(p){tool.position.x+=(p.x-tool.position.x)*.22;tool.position.z+=(p.z-tool.position.z)*.22;}if(down&&mode==='incise'&&p&&lastPoint&&p.distanceTo(lastPoint)>.12){addCut(lastPoint,p);lastPoint=p;}});
+canvas.addEventListener('pointerup',()=>{down=false;lastPoint=null;});
+let dragging=false,px=0,py=0,az=0,el=.42,dist=10;canvas.addEventListener('pointerdown',e=>{if(mode==='explore'){dragging=true;px=e.clientX;py=e.clientY;}});window.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointermove',e=>{if(dragging&&mode==='explore'){az-=(e.clientX-px)*.008;el=Math.max(.08,Math.min(1.15,el+(e.clientY-py)*.006));px=e.clientX;py=e.clientY;}});canvas.addEventListener('wheel',e=>{dist=Math.max(6,Math.min(15,dist+e.deltaY*.008));e.preventDefault();},{passive:false});
+document.getElementById('reset').addEventListener('click',()=>{clearGroup(overlayGroup);cuts.length=0;stitches.length=0;probeDots.length=0;probeCount=0;integrity=100;sutA=null;updateMetrics();setStatus('Training field reset. Choose a mode to begin.');});
+document.getElementById('layers').addEventListener('click',()=>{hidden=!hidden;fat.visible=!hidden;fascia.visible=!hidden;muscle.visible=!hidden;setStatus(hidden?'Deeper layers hidden. The skin surface remains visible.':'All generated tissue layers are visible.');});
+function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}new ResizeObserver(resize).observe(viewport);
+function animate(){requestAnimationFrame(animate);camera.position.set(Math.sin(az)*dist,2.2+Math.sin(el)*5,Math.cos(az)*dist);camera.lookAt(0,1.05,0);renderer.render(scene,camera);}animate();updateMetrics();
+})();
+</script>
+</body></html>
