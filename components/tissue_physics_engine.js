@@ -105,12 +105,8 @@
             this.nextVelocity[i] = velocity;
           }
         }
-        const oldDisplacement = this.displacement;
-        this.displacement = this.nextDisplacement;
-        this.nextDisplacement = oldDisplacement;
-        const oldVelocity = this.velocity;
-        this.velocity = this.nextVelocity;
-        this.nextVelocity = oldVelocity;
+        this.displacement.set(this.nextDisplacement);
+        this.velocity.set(this.nextVelocity);
         this.stepCount++;
       }
       return this._measure();
