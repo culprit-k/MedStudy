@@ -93,7 +93,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Exam Arena", "Visual Lab", "Clinical Cases", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Learning Library", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -125,6 +125,8 @@ if page == "Home":
         ("🧠","Learning library","Build strong foundations, then review mechanisms and clinical correlations.","Learning Library"),
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
         ("🩺","Clinical reasoning","Work through structured cases and explain your differential.","Clinical Cases"),
+        ("👩‍⚕️","OSCE studio","Practise structured history, examination, and communication.","OSCE Studio"),
+        ("📊","Research & EBM","Explore PICO, study design, diagnostic tests, and critical appraisal.","Research & EBM"),
         ("👩‍🏫","Personal teacher","Ask for a lesson, a Socratic hint, or a revision plan.","Teacher AI"),
     ]
     cols = st.columns(2)
@@ -312,6 +314,90 @@ elif page == "Clinical Cases":
         st.info("Exam pearl: "+case["pearl"])
         st.markdown("**Stretch question:** What additional finding would strengthen or weaken your leading explanation?")
         st.text_area("Write a one-sentence rationale (optional)",key="rationale_"+selected,placeholder="I chose this because…")
+
+elif page == "OSCE Studio":
+    st.title("👩‍⚕️ OSCE studio")
+    st.caption("Practise a structured approach. These are educational checklists, not a substitute for supervised clinical skills training.")
+    station = st.selectbox("Choose a station",["Focused history: chest discomfort","Respiratory examination: verbalised sequence","Communication: explaining a new investigation"])
+    stations = {
+      "Focused history: chest discomfort":{"time":"6 minutes","aim":"Explore symptoms, associated features, risk factors, and red flags in a systematic, patient-centred way.","steps":[("Introduction","Hand hygiene, introduce yourself, confirm identity, obtain consent."),("Presenting symptom","Clarify onset, site, character, radiation, associated symptoms, timing, exacerbating/relieving factors, and severity."),("Associated symptoms","Ask about dyspnoea, sweating, nausea, palpitations, syncope, fever, and relevant associated features."),("Relevant background","Ask about cardiovascular risk factors, past history, medications, allergies, family history, and social history."),("Red flags and summary","Identify instability or emergency warning signs, summarise back to the patient, ask what they are most concerned about, and explain next steps.")],"pitfall":"Do not assume all chest pain is cardiac or use a study checklist to triage a real person. Acute severe chest pain or associated collapse/breathlessness needs emergency assessment."},
+      "Respiratory examination: verbalised sequence":{"time":"7 minutes","aim":"Describe a safe, systematic respiratory examination and connect signs to physiology.","steps":[("Preparation","Hand hygiene, introduce yourself, confirm identity, explain, gain consent, position appropriately, and expose only as needed."),("General inspection","Assess work of breathing, ability to speak, respiratory rate, oxygen delivery, cyanosis, and relevant devices."),("Hands and face","Look for peripheral signs and assess the trachea and relevant head/neck findings when appropriate."),("Chest examination","Inspect chest shape and movement; palpate expansion and tracheal position; percuss systematically; auscultate comparable zones."),("Completion","Thank the patient, ensure comfort and privacy, state further examinations or investigations you would consider, and summarise findings.")],"pitfall":"A real examination requires consent, supervision when learning, appropriate infection control, and escalation for clinical instability."},
+      "Communication: explaining a new investigation":{"time":"5 minutes","aim":"Explain purpose, practical steps, likely benefits, limitations, and patient questions in plain language.","steps":[("Establish understanding","Ask what the patient has already been told and what they would like to know."),("Explain clearly","Use plain language to describe why the test is being offered and what will happen."),("Benefits and limitations","Discuss likely benefits, discomforts or risks, alternatives, and uncertainty without promising a result."),("Check understanding","Use teach-back: ask the patient to explain in their own words what they understand."),("Shared decision and close","Invite questions, check preferences and consent, and explain how and when results will be communicated.")],"pitfall":"Do not pressure a patient or present uncertain findings as a guaranteed diagnosis."}
+    }
+    st.markdown(f'<div class="panel"><span class="pill">{stations[station]["time"]}</span><h3>Station objective</h3><p>{stations[station]["aim"]}</p></div>',unsafe_allow_html=True)
+    st.markdown("### Candidate checklist")
+    checked=[]
+    for i,(title,desc) in enumerate(stations[station]["steps"]):
+        if st.checkbox(f"{i+1}. {title} — {desc}",key=f"osce_{station}_{i}"):
+            checked.append(title)
+    score=round(100*len(checked)/len(stations[station]["steps"]))
+    st.progress(score/100)
+    st.metric("Self-check completion",f"{score}%")
+    st.info("Safety / communication pearl: "+stations[station]["pitfall"])
+    reflection=st.text_area("Examiner reflection",placeholder="What did I do well? What would I improve on the next attempt?",key="osce_reflection_"+station)
+    if st.button("Save reflection for this session",key="osce_save_"+station):
+        st.session_state.setdefault("osce_reflections",{})[station]={"score":score,"reflection":reflection}
+        st.toast("Reflection saved for this session")
+    with st.expander("View previous reflections"):
+        st.write(st.session_state.get("osce_reflections",{}))
+
+elif page == "Research & EBM":
+    st.title("📊 Research methods & evidence-based medicine")
+    st.caption("A starter workspace for clinical research literacy. Results are teaching calculations, not a substitute for statistical review.")
+    tab1,tab2,tab3,tab4=st.tabs(["PICO builder","Study design","Diagnostic tests","Critical appraisal"])
+    with tab1:
+        st.markdown("### Turn a clinical uncertainty into a searchable question")
+        population=st.text_input("P · Population / problem",placeholder="Adults with newly diagnosed hypertension")
+        intervention=st.text_input("I · Intervention / exposure",placeholder="Home blood-pressure monitoring")
+        comparison=st.text_input("C · Comparison",placeholder="Usual clinic follow-up")
+        outcome=st.text_input("O · Outcome",placeholder="Change in systolic blood pressure at 6 months")
+        if st.button("Build PICO question",type="primary"):
+            st.session_state["pico_question"]=f"In {population or '[population]'}, does {intervention or '[intervention/exposure]'} compared with {comparison or '[comparison]'} improve or change {outcome or '[outcome]'}?"
+        if st.session_state.get("pico_question"):
+            st.success(st.session_state["pico_question"])
+            st.caption("Next: define eligibility criteria, select databases, and plan search terms before choosing a study design.")
+    with tab2:
+        st.markdown("### Match the question to a design")
+        kind=st.selectbox("What are you trying to learn?",["Effect of an intervention","Association between exposure and outcome","Prevalence of a condition","Diagnostic accuracy","Rare adverse effect","Patient experience or meaning"])
+        design={
+          "Effect of an intervention":("Randomised controlled trial, when ethical and feasible","Random allocation helps balance confounding; assess allocation concealment, blinding where possible, attrition, and intention-to-treat analysis."),
+          "Association between exposure and outcome":("Cohort or case-control study","Choose cohort for incidence and temporal follow-up; case-control can be efficient for rare outcomes. Address confounding and selection bias."),
+          "Prevalence of a condition":("Cross-sectional study with representative sampling","Sampling frame, non-response, case definition, and confidence intervals are central."),
+          "Diagnostic accuracy":("Prospective or well-designed diagnostic accuracy study","Compare index test with an appropriate reference standard; consider spectrum, verification, and incorporation bias."),
+          "Rare adverse effect":("Often case-control, registry, or pharmacovigilance approaches","Randomised trials may be underpowered for rare harms; assess confounding, reporting bias, and denominator quality."),
+          "Patient experience or meaning":("Qualitative interviews, focus groups, or ethnographic approaches","Assess sampling rationale, reflexivity, analytic transparency, and whether interpretations are grounded in data.")
+        }[kind]
+        st.markdown(f'<div class="panel"><h3>Possible design: {design[0]}</h3><p>{design[1]}</p></div>',unsafe_allow_html=True)
+        st.caption("No single design is automatically best; feasibility, ethics, causal aims, and available data matter.")
+    with tab3:
+        st.markdown("### Diagnostic-test calculator")
+        st.caption("Enter counts from a 2×2 table. Use integer counts from a defined reference standard.")
+        c1,c2=st.columns(2)
+        with c1:
+            tp=st.number_input("True positives (TP)",min_value=0,value=80,step=1)
+            fn=st.number_input("False negatives (FN)",min_value=0,value=20,step=1)
+        with c2:
+            fp=st.number_input("False positives (FP)",min_value=0,value=15,step=1)
+            tn=st.number_input("True negatives (TN)",min_value=0,value=85,step=1)
+        sensitivity=100*tp/(tp+fn) if tp+fn else None
+        specificity=100*tn/(tn+fp) if tn+fp else None
+        ppv=100*tp/(tp+fp) if tp+fp else None
+        npv=100*tn/(tn+fn) if tn+fn else None
+        m1,m2,m3,m4=st.columns(4)
+        m1.metric("Sensitivity",f"{sensitivity:.1f}%" if sensitivity is not None else "N/A")
+        m2.metric("Specificity",f"{specificity:.1f}%" if specificity is not None else "N/A")
+        m3.metric("PPV",f"{ppv:.1f}%" if ppv is not None else "N/A")
+        m4.metric("NPV",f"{npv:.1f}%" if npv is not None else "N/A")
+        st.info("Positive and negative predictive values depend on prevalence in the tested population. These calculations do not validate the test or its reference standard.")
+    with tab4:
+        st.markdown("### Critical-appraisal checklist")
+        prompts=["Is the research question focused and clinically relevant?","Was the design appropriate to the question?","Were participants selected in a way that limits selection bias?","Were exposure, intervention, and outcomes measured reliably?","Were important confounders addressed?","Are effect estimates reported with confidence intervals?","Are benefits, harms, and absolute effects considered?","Do the findings apply to the population I care for?","Are funding and conflicts of interest disclosed?"]
+        checked=[st.checkbox(p,key="ebm_"+p) for p in prompts]
+        st.progress(sum(checked)/len(prompts))
+        st.caption(f"{sum(checked)} of {len(prompts)} appraisal prompts considered.")
+        st.text_area("Paper notes",placeholder="Study design, sample, primary outcome, effect estimate, key bias, applicability…",key="ebm_notes")
+    st.markdown("---")
+    st.markdown("**Research integrity:** do not invent data, fabricate citations, upload identifiable patient records, or treat statistical association as proof of causation. Verify methods and conclusions against the original paper.")
 
 elif page == "Teacher AI":
     st.title("👩‍🏫 Your personal medical teacher")
