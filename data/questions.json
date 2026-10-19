@@ -1,0 +1,230 @@
+{
+  "Anatomy": [
+    {
+      "id": "anat-001",
+      "question": "Which structure passes through the foramen magnum?",
+      "options": [
+        "Optic nerve",
+        "Medulla oblongata",
+        "Facial nerve",
+        "Maxillary nerve"
+      ],
+      "answer": "Medulla oblongata",
+      "explanation": "The medulla continues into the spinal cord through the foramen magnum. The vertebral arteries and spinal roots of the accessory nerve also pass through it."
+    },
+    {
+      "id": "anat-002",
+      "question": "Which is the largest bone in the human body?",
+      "options": [
+        "Tibia",
+        "Humerus",
+        "Femur",
+        "Pelvis"
+      ],
+      "answer": "Femur",
+      "explanation": "The femur is the longest and strongest bone in the human body."
+    },
+    {
+      "id": "anat-003",
+      "question": "The deltoid muscle is primarily supplied by which nerve?",
+      "options": [
+        "Radial nerve",
+        "Axillary nerve",
+        "Median nerve",
+        "Musculocutaneous nerve"
+      ],
+      "answer": "Axillary nerve",
+      "explanation": "The axillary nerve arises from the posterior cord of the brachial plexus and supplies the deltoid and teres minor."
+    }
+  ],
+  "Physiology": [
+    {
+      "id": "phys-001",
+      "question": "Which ion is primarily responsible for the rapid depolarization phase of a typical neuronal action potential?",
+      "options": [
+        "Potassium entering the cell",
+        "Sodium entering the cell",
+        "Chloride leaving the cell",
+        "Calcium leaving the cell"
+      ],
+      "answer": "Sodium entering the cell",
+      "explanation": "Opening of voltage-gated sodium channels allows sodium influx, producing rapid depolarization in many neurons."
+    },
+    {
+      "id": "phys-002",
+      "question": "Which hormone lowers blood glucose concentration?",
+      "options": [
+        "Glucagon",
+        "Cortisol",
+        "Insulin",
+        "Adrenaline"
+      ],
+      "answer": "Insulin",
+      "explanation": "Insulin promotes glucose uptake in insulin-sensitive tissues and supports glycogen synthesis, lowering circulating glucose."
+    },
+    {
+      "id": "phys-003",
+      "question": "What is the main site of gas exchange in the lungs?",
+      "options": [
+        "Trachea",
+        "Main bronchi",
+        "Alveoli",
+        "Larynx"
+      ],
+      "answer": "Alveoli",
+      "explanation": "Thin alveolar-capillary membranes provide a large surface area for oxygen and carbon dioxide diffusion."
+    }
+  ],
+  "Biochemistry": [
+    {
+      "id": "bio-001",
+      "question": "Which molecule carries genetic information in most living organisms?",
+      "options": [
+        "ATP",
+        "DNA",
+        "Triglyceride",
+        "Glycogen"
+      ],
+      "answer": "DNA",
+      "explanation": "DNA stores hereditary information in its nucleotide sequence. Some viruses use RNA as their genetic material."
+    },
+    {
+      "id": "bio-002",
+      "question": "Which vitamin is required to form the coenzyme NAD⁺?",
+      "options": [
+        "Vitamin B1",
+        "Vitamin B2",
+        "Vitamin B3",
+        "Vitamin B12"
+      ],
+      "answer": "Vitamin B3",
+      "explanation": "Niacin (vitamin B3) is a precursor of NAD⁺ and NADP⁺, coenzymes involved in oxidation-reduction reactions."
+    },
+    {
+      "id": "bio-003",
+      "question": "Which enzyme begins starch digestion in the mouth?",
+      "options": [
+        "Pepsin",
+        "Salivary amylase",
+        "Trypsin",
+        "Lipase"
+      ],
+      "answer": "Salivary amylase",
+      "explanation": "Salivary amylase begins hydrolysis of internal alpha-1,4 glycosidic bonds in starch."
+    }
+  ],
+  "Pathology": [
+    {
+      "id": "path-001",
+      "question": "Which type of necrosis is classically associated with most solid-organ infarctions, except those in the brain?",
+      "options": [
+        "Liquefactive",
+        "Coagulative",
+        "Caseous",
+        "Fat"
+      ],
+      "answer": "Coagulative",
+      "explanation": "Ischemia in most solid organs causes coagulative necrosis. Cerebral infarction typically produces liquefactive necrosis."
+    },
+    {
+      "id": "path-002",
+      "question": "Which cells are especially important in acute inflammation?",
+      "options": [
+        "Neutrophils",
+        "Erythrocytes",
+        "Osteocytes",
+        "Adipocytes"
+      ],
+      "answer": "Neutrophils",
+      "explanation": "Neutrophils are prominent early responders in many forms of acute inflammation, although the cell pattern varies with cause and tissue."
+    },
+    {
+      "id": "path-003",
+      "question": "Atherosclerosis primarily affects which layer of medium and large arteries?",
+      "options": [
+        "Tunica intima",
+        "Tunica media only",
+        "Tunica adventitia only",
+        "Endocardium"
+      ],
+      "answer": "Tunica intima",
+      "explanation": "Atherosclerotic plaques develop in the intima and contain lipid, inflammatory cells, connective tissue, and often a fibrous cap."
+    }
+  ],
+  "Microbiology": [
+    {
+      "id": "micro-001",
+      "question": "Which stain is commonly used to differentiate Gram-positive and Gram-negative bacteria?",
+      "options": [
+        "Ziehl-Neelsen stain",
+        "Gram stain",
+        "India ink",
+        "Giemsa stain"
+      ],
+      "answer": "Gram stain",
+      "explanation": "Gram staining differentiates bacteria based largely on cell-wall properties and retention of the crystal violet-iodine complex."
+    },
+    {
+      "id": "micro-002",
+      "question": "Which organism causes tuberculosis?",
+      "options": [
+        "Streptococcus pneumoniae",
+        "Mycobacterium tuberculosis",
+        "Escherichia coli",
+        "Clostridium tetani"
+      ],
+      "answer": "Mycobacterium tuberculosis",
+      "explanation": "Mycobacterium tuberculosis is an acid-fast bacillus and the principal cause of tuberculosis."
+    },
+    {
+      "id": "micro-003",
+      "question": "Which method can amplify a selected DNA sequence in vitro?",
+      "options": [
+        "ELISA",
+        "PCR",
+        "Agglutination only",
+        "Gram staining"
+      ],
+      "answer": "PCR",
+      "explanation": "Polymerase chain reaction uses repeated cycles of denaturation, primer annealing, and extension to amplify target DNA."
+    }
+  ],
+  "Pharmacology": [
+    {
+      "id": "pharm-001",
+      "question": "Which drug class inhibits bacterial cell-wall synthesis?",
+      "options": [
+        "Beta-lactam antibiotics",
+        "Statins",
+        "Antihistamines",
+        "Loop diuretics"
+      ],
+      "answer": "Beta-lactam antibiotics",
+      "explanation": "Beta-lactams inhibit penicillin-binding proteins involved in peptidoglycan cross-linking. Clinical use depends on organism susceptibility and patient factors."
+    },
+    {
+      "id": "pharm-002",
+      "question": "Which receptor is blocked by common non-sedating antihistamines such as cetirizine?",
+      "options": [
+        "H1 histamine receptor",
+        "Beta-1 receptor",
+        "Muscarinic M2 receptor",
+        "Dopamine D2 receptor"
+      ],
+      "answer": "H1 histamine receptor",
+      "explanation": "Cetirizine is a peripheral H1-receptor inverse agonist used for allergic symptoms."
+    },
+    {
+      "id": "pharm-003",
+      "question": "Paracetamol (acetaminophen) is primarily used for which effects at usual therapeutic doses?",
+      "options": [
+        "Anticoagulation and thrombolysis",
+        "Analgesia and antipyresis",
+        "Broad-spectrum antibacterial action",
+        "Strong platelet inhibition"
+      ],
+      "answer": "Analgesia and antipyresis",
+      "explanation": "Paracetamol reduces pain and fever. It has little peripheral anti-inflammatory activity compared with NSAIDs."
+    }
+  ]
+}
