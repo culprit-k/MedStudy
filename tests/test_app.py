@@ -84,7 +84,7 @@ class AppSmokeTests(unittest.TestCase):
             "Suture target alignment",
             "Operating-room instrument identification",
             "THREE.Raycaster",
-            "Virtual instrument repositioned",
+            "repositioned.",
             "Return to Surgery Simulator"
         ]:
             self.assertIn(label, source)
