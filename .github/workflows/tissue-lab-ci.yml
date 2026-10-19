@@ -5,6 +5,8 @@ on:
     branches: ["main"]
     paths:
       - "components/realistic_tissue_interaction_lab.html"
+      - "components/tissue_physics_engine.js"
+      - "tests/tissue_physics_engine.test.js"
       - "pages/3_Tissue_Interaction_Lab.py"
       - "app.py"
       - "tests/test_tissue_interaction_lab.py"
@@ -33,6 +35,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Run deterministic physics engine tests
+        run: node --test tests/tissue_physics_engine.test.js
       - name: Run tissue-lab smoke tests
         run: python -m unittest discover -s tests -p 'test_tissue_interaction_lab.py' -v
       - name: Check Streamlit page Python syntax
