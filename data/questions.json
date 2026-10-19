@@ -107,6 +107,78 @@
       ],
       "answer": "Perineal membrane",
       "explanation": "The perineal membrane spans the pubic arch and is a key boundary of the deep perineal region. The terminology and compartment descriptions should be interpreted with current anatomical references."
+    },
+    {
+      "id": "anat-010",
+      "question": "Which structure is most at risk in a midshaft humeral fracture?",
+      "options": [
+        "Radial nerve",
+        "Axillary nerve",
+        "Musculocutaneous nerve",
+        "Long thoracic nerve"
+      ],
+      "answer": "Radial nerve",
+      "explanation": "The radial nerve travels in the spiral groove with the profunda brachii artery. Injury can impair wrist and finger extension and alter sensation over part of the dorsum of the hand."
+    },
+    {
+      "id": "anat-011",
+      "question": "The portal triad within the hepatoduodenal ligament contains the:",
+      "options": [
+        "Proper hepatic artery, portal vein, and common bile duct",
+        "Hepatic veins, inferior vena cava, and cystic duct",
+        "Splenic artery, portal vein, and pancreatic duct",
+        "Aorta, inferior vena cava, and bile duct"
+      ],
+      "answer": "Proper hepatic artery, portal vein, and common bile duct",
+      "explanation": "The portal triad comprises the bile duct, proper hepatic artery, and portal vein. In the usual arrangement, the bile duct is to the right, artery to the left, and portal vein posterior."
+    },
+    {
+      "id": "anat-012",
+      "question": "Which muscle initiates the first approximately 15 degrees of shoulder abduction?",
+      "options": [
+        "Supraspinatus",
+        "Deltoid",
+        "Teres major",
+        "Latissimus dorsi"
+      ],
+      "answer": "Supraspinatus",
+      "explanation": "Supraspinatus initiates abduction and contributes to glenohumeral stability; the deltoid becomes a major abductor thereafter."
+    },
+    {
+      "id": "anat-013",
+      "question": "A lesion of the recurrent laryngeal nerve most directly threatens which function?",
+      "options": [
+        "Movement of most intrinsic laryngeal muscles and voice",
+        "Taste from the anterior two-thirds of the tongue",
+        "Tongue protrusion",
+        "Elevation of the soft palate only"
+      ],
+      "answer": "Movement of most intrinsic laryngeal muscles and voice",
+      "explanation": "The recurrent laryngeal nerve supplies most intrinsic laryngeal muscles. Injury can cause hoarseness; bilateral injury can compromise the airway."
+    },
+    {
+      "id": "anat-014",
+      "question": "Which vessel is the usual direct continuation of the axillary artery beyond the inferior border of teres major?",
+      "options": [
+        "Brachial artery",
+        "Radial artery",
+        "Subclavian artery",
+        "Posterior interosseous artery"
+      ],
+      "answer": "Brachial artery",
+      "explanation": "The axillary artery becomes the brachial artery at the inferior border of teres major. The brachial artery typically divides into radial and ulnar arteries near the cubital fossa."
+    },
+    {
+      "id": "anat-015",
+      "question": "Which cranial nerve carries parasympathetic fibres to the parotid gland after synapsing in the otic ganglion?",
+      "options": [
+        "Glossopharyngeal nerve (CN IX)",
+        "Facial nerve (CN VII)",
+        "Vagus nerve (CN X)",
+        "Hypoglossal nerve (CN XII)"
+      ],
+      "answer": "Glossopharyngeal nerve (CN IX)",
+      "explanation": "Preganglionic fibres travel via CN IX and the tympanic/lesser petrosal nerves to the otic ganglion; postganglionic fibres reach the parotid via the auriculotemporal nerve."
     }
   ],
   "Physiology": [
@@ -217,6 +289,78 @@
       ],
       "answer": "Reduced venous return and stroke volume",
       "explanation": "Loss of circulating volume lowers mean systemic filling pressure and venous return, reducing preload and stroke volume. Baroreflex-mediated tachycardia and vasoconstriction are compensatory responses."
+    },
+    {
+      "id": "phys-010",
+      "question": "Which variable is the primary determinant of alveolar ventilation when dead-space ventilation is considered?",
+      "options": [
+        "Tidal volume minus dead space, multiplied by respiratory rate",
+        "Respiratory rate alone",
+        "Total lung capacity alone",
+        "Arterial oxygen content alone"
+      ],
+      "answer": "Tidal volume minus dead space, multiplied by respiratory rate",
+      "explanation": "Alveolar ventilation equals (tidal volume − physiological dead space) × respiratory rate. At steady state, arterial CO₂ is inversely related to alveolar ventilation for a given CO₂ production."
+    },
+    {
+      "id": "phys-011",
+      "question": "Which ECG interval most closely represents ventricular depolarisation?",
+      "options": [
+        "QRS duration",
+        "PR interval",
+        "QT interval alone",
+        "TP segment"
+      ],
+      "answer": "QRS duration",
+      "explanation": "The QRS complex reflects ventricular depolarisation. The PR interval reflects conduction from atrial depolarisation through the AV conduction system to the ventricles."
+    },
+    {
+      "id": "phys-012",
+      "question": "In the kidney, macula densa cells primarily sense changes in tubular:",
+      "options": [
+        "Sodium chloride delivery",
+        "Glucose concentration only",
+        "Albumin concentration only",
+        "Urea production in the liver"
+      ],
+      "answer": "Sodium chloride delivery",
+      "explanation": "Macula densa cells sense distal tubular NaCl delivery and participate in tubuloglomerular feedback and regulation of renin release."
+    },
+    {
+      "id": "phys-013",
+      "question": "Which change shifts the pressure-volume loop to a higher end-systolic volume, all else equal?",
+      "options": [
+        "Reduced contractility",
+        "Increased contractility",
+        "Increased preload alone",
+        "Reduced afterload alone"
+      ],
+      "answer": "Reduced contractility",
+      "explanation": "Reduced contractility increases end-systolic volume and decreases stroke volume. Increased contractility generally shifts the end-systolic pressure-volume relation leftward."
+    },
+    {
+      "id": "phys-014",
+      "question": "Which hormone increases collecting-duct water permeability by promoting aquaporin-2 insertion?",
+      "options": [
+        "Vasopressin (ADH)",
+        "Aldosterone only",
+        "Atrial natriuretic peptide",
+        "Calcitonin"
+      ],
+      "answer": "Vasopressin (ADH)",
+      "explanation": "Vasopressin binds V2 receptors on collecting-duct principal cells, activates cAMP/PKA signalling, and promotes aquaporin-2 insertion into the apical membrane."
+    },
+    {
+      "id": "phys-015",
+      "question": "A decrease in arterial pH due to primary metabolic acidosis should normally trigger:",
+      "options": [
+        "Compensatory increase in alveolar ventilation",
+        "Immediate reduction in ventilation",
+        "An increase in bicarbonate loss by the lungs",
+        "No respiratory response"
+      ],
+      "answer": "Compensatory increase in alveolar ventilation",
+      "explanation": "Respiratory compensation lowers PaCO₂ to limit the fall in pH. Compensation does not usually fully normalise pH, and the underlying cause still requires evaluation."
     }
   ],
   "Biochemistry": [
@@ -327,6 +471,78 @@
       ],
       "answer": "HMG-CoA reductase",
       "explanation": "HMG-CoA reductase converts HMG-CoA to mevalonate and is regulated by sterol feedback, phosphorylation, and transcription. Statins inhibit this enzyme and lower hepatic cholesterol synthesis."
+    },
+    {
+      "id": "bio-010",
+      "question": "Which enzyme converts pyruvate to acetyl-CoA in the mitochondrial matrix?",
+      "options": [
+        "Pyruvate dehydrogenase complex",
+        "Pyruvate carboxylase",
+        "Lactate dehydrogenase",
+        "Phosphofructokinase-1"
+      ],
+      "answer": "Pyruvate dehydrogenase complex",
+      "explanation": "The pyruvate dehydrogenase complex links glycolysis to the TCA cycle by oxidative decarboxylation of pyruvate. It requires TPP, lipoate, CoA, FAD, and NAD⁺."
+    },
+    {
+      "id": "bio-011",
+      "question": "Which laboratory marker is commonly used to assess average glycaemia over roughly the preceding 2–3 months?",
+      "options": [
+        "HbA1c",
+        "Single random glucose only",
+        "Serum amylase",
+        "Urinary ketones alone"
+      ],
+      "answer": "HbA1c",
+      "explanation": "HbA1c reflects glycation over the erythrocyte lifespan and is used in diabetes assessment, but conditions affecting red-cell survival or haemoglobin can distort interpretation."
+    },
+    {
+      "id": "bio-012",
+      "question": "Which apolipoprotein is the principal structural protein of LDL and is recognised by the LDL receptor?",
+      "options": [
+        "ApoB-100",
+        "ApoA-I",
+        "ApoC-II",
+        "ApoE only"
+      ],
+      "answer": "ApoB-100",
+      "explanation": "ApoB-100 is the major structural protein of VLDL, IDL, and LDL and participates in LDL-receptor recognition. ApoA-I is the major apolipoprotein of HDL."
+    },
+    {
+      "id": "bio-013",
+      "question": "Which enzyme is deficient in classic phenylketonuria in most cases?",
+      "options": [
+        "Phenylalanine hydroxylase",
+        "Tyrosinase",
+        "Homogentisate oxidase",
+        "Branched-chain alpha-ketoacid dehydrogenase"
+      ],
+      "answer": "Phenylalanine hydroxylase",
+      "explanation": "Classic PKU most often results from phenylalanine hydroxylase deficiency; tetrahydrobiopterin-related disorders are important alternative causes of hyperphenylalaninaemia."
+    },
+    {
+      "id": "bio-014",
+      "question": "Which process generates most ATP during aerobic glucose oxidation?",
+      "options": [
+        "Oxidative phosphorylation",
+        "Glycogenolysis alone",
+        "The pentose phosphate pathway",
+        "Conversion of glucose to lactate alone"
+      ],
+      "answer": "Oxidative phosphorylation",
+      "explanation": "Most ATP is generated by the mitochondrial electron transport chain and ATP synthase, using the proton gradient created by electron transfer."
+    },
+    {
+      "id": "bio-015",
+      "question": "Which vitamin-derived cofactor is required by transaminases?",
+      "options": [
+        "Pyridoxal phosphate (vitamin B6)",
+        "Biotin (vitamin B7)",
+        "Cobalamin (vitamin B12)",
+        "Ascorbate (vitamin C)"
+      ],
+      "answer": "Pyridoxal phosphate (vitamin B6)",
+      "explanation": "Pyridoxal phosphate participates in amino-group transfer reactions catalysed by aminotransferases and is derived from vitamin B6."
     }
   ],
   "Pathology": [
@@ -437,6 +653,78 @@
       ],
       "answer": "Widespread coagulation activation with consumption of platelets and clotting factors",
       "explanation": "DIC involves systemic coagulation activation, microvascular fibrin formation, and consumption of platelets and factors, potentially causing both thrombosis and bleeding. Laboratory findings vary with timing and cause."
+    },
+    {
+      "id": "path-010",
+      "question": "Which feature most strongly supports apoptosis rather than typical necrosis?",
+      "options": [
+        "Cell shrinkage with chromatin condensation and apoptotic bodies",
+        "Marked cell swelling with membrane rupture in every cell",
+        "Extensive enzyme leakage as the defining early event",
+        "Uncontrolled inflammation in all cases"
+      ],
+      "answer": "Cell shrinkage with chromatin condensation and apoptotic bodies",
+      "explanation": "Apoptosis involves regulated cell death with cell shrinkage, chromatin condensation, and apoptotic bodies; it usually provokes less inflammation than membrane-disruptive necrosis."
+    },
+    {
+      "id": "path-011",
+      "question": "Which type of necrosis is classically associated with an infarct in most solid organs, except the brain?",
+      "options": [
+        "Coagulative necrosis",
+        "Liquefactive necrosis",
+        "Caseous necrosis",
+        "Fat necrosis"
+      ],
+      "answer": "Coagulative necrosis",
+      "explanation": "Ischaemia in most solid organs causes coagulative necrosis, preserving tissue architecture initially. Cerebral infarction typically produces liquefactive necrosis."
+    },
+    {
+      "id": "path-012",
+      "question": "Which finding is a defining feature of malignant neoplasia compared with benign neoplasia?",
+      "options": [
+        "Ability to invade surrounding tissue and potentially metastasise",
+        "A capsule in every tumour",
+        "Uniformly slow growth",
+        "Absence of atypia in every case"
+      ],
+      "answer": "Ability to invade surrounding tissue and potentially metastasise",
+      "explanation": "Invasion is a key feature of malignancy; metastasis is definitive evidence of malignant behaviour. Histological grade and clinical behaviour vary by tumour type."
+    },
+    {
+      "id": "path-013",
+      "question": "Which mediator is a potent early vasodilator and increases vascular permeability in acute inflammation?",
+      "options": [
+        "Histamine",
+        "Haemoglobin",
+        "Albumin",
+        "Insulin"
+      ],
+      "answer": "Histamine",
+      "explanation": "Histamine from mast cells and other cells contributes to arteriolar dilation and increased venular permeability early in acute inflammation."
+    },
+    {
+      "id": "path-014",
+      "question": "Which laboratory pattern is commonly associated with iron-deficiency anaemia?",
+      "options": [
+        "Low ferritin with increased total iron-binding capacity",
+        "High ferritin with low TIBC in every case",
+        "High MCV with normal iron stores",
+        "High serum iron with suppressed transferrin"
+      ],
+      "answer": "Low ferritin with increased total iron-binding capacity",
+      "explanation": "Iron deficiency commonly causes low ferritin, low serum iron, and increased TIBC. Ferritin can be normal or high in inflammation, so interpretation requires context."
+    },
+    {
+      "id": "path-015",
+      "question": "Which immune mechanism is primarily responsible for immediate IgE-mediated hypersensitivity?",
+      "options": [
+        "Cross-linking of IgE on mast cells with mediator release",
+        "Immune-complex deposition only",
+        "CD8-mediated direct cytotoxicity only",
+        "Antibody-independent complement deficiency"
+      ],
+      "answer": "Cross-linking of IgE on mast cells with mediator release",
+      "explanation": "Allergen-mediated cross-linking of mast-cell-bound IgE triggers degranulation and newly synthesised mediators. Clinical manifestations range from local allergy to anaphylaxis."
     }
   ],
   "Microbiology": [
@@ -547,6 +835,78 @@
       ],
       "answer": "Measuring inhibition-zone diameters around antimicrobial disks on agar",
       "explanation": "Standardised disk diffusion measures inhibition zones and interprets them using organism-specific breakpoints and current standards. Inoculum, medium, incubation, and quality control must be standardised."
+    },
+    {
+      "id": "micro-010",
+      "question": "Which stain is classically used to demonstrate acid-fast bacilli in a clinical specimen?",
+      "options": [
+        "Ziehl–Neelsen stain",
+        "India ink only",
+        "Albert stain",
+        "Endospore stain only"
+      ],
+      "answer": "Ziehl–Neelsen stain",
+      "explanation": "The Ziehl–Neelsen method uses carbol fuchsin and acid-alcohol decolorisation to demonstrate acid-fast organisms. Fluorescent stains and molecular methods are also used in modern workflows."
+    },
+    {
+      "id": "micro-011",
+      "question": "Which viral genome is used by influenza A virus?",
+      "options": [
+        "Segmented negative-sense single-stranded RNA",
+        "Circular double-stranded DNA",
+        "Non-segmented positive-sense RNA",
+        "Double-stranded RNA without segments"
+      ],
+      "answer": "Segmented negative-sense single-stranded RNA",
+      "explanation": "Influenza A has an eight-segment negative-sense RNA genome. Segmentation permits reassortment when compatible viruses infect the same cell."
+    },
+    {
+      "id": "micro-012",
+      "question": "Which organism is the usual cause of pseudomembranous colitis after antibiotic exposure?",
+      "options": [
+        "Clostridioides difficile",
+        "Vibrio cholerae",
+        "Shigella dysenteriae in all cases",
+        "Helicobacter pylori"
+      ],
+      "answer": "Clostridioides difficile",
+      "explanation": "C. difficile toxins can cause colitis after disruption of gut microbiota by antibiotics. Diagnosis depends on symptoms and an appropriate testing algorithm."
+    },
+    {
+      "id": "micro-013",
+      "question": "What is the principal purpose of a positive and negative control in a PCR assay?",
+      "options": [
+        "To assess whether the run behaved as expected and identify contamination or failure",
+        "To determine the patient's blood group",
+        "To replace sample quality checks in all cases",
+        "To measure antibiotic minimum inhibitory concentration"
+      ],
+      "answer": "To assess whether the run behaved as expected and identify contamination or failure",
+      "explanation": "Controls help identify amplification failure and contamination and support interpretation of assay validity; exact controls depend on assay design."
+    },
+    {
+      "id": "micro-014",
+      "question": "Which bacterial structure is a major target of beta-lactam antibiotics?",
+      "options": [
+        "Penicillin-binding proteins involved in peptidoglycan cross-linking",
+        "The human 80S ribosome",
+        "Mitochondrial ATP synthase in the host",
+        "Viral capsid proteins"
+      ],
+      "answer": "Penicillin-binding proteins involved in peptidoglycan cross-linking",
+      "explanation": "Beta-lactams bind penicillin-binding proteins and interfere with peptidoglycan cross-linking. Resistance mechanisms include beta-lactamases and altered targets."
+    },
+    {
+      "id": "micro-015",
+      "question": "Which route is most associated with transmission of hepatitis A virus?",
+      "options": [
+        "Faecal–oral transmission",
+        "Mosquito vectors only",
+        "Aerosol transmission as the main route",
+        "Vertical transmission as the only route"
+      ],
+      "answer": "Faecal–oral transmission",
+      "explanation": "HAV spreads mainly by the faecal–oral route, often through contaminated food or water or close contact. Vaccination is an important prevention measure."
     }
   ],
   "Pharmacology": [
@@ -657,6 +1017,78 @@
       ],
       "answer": "A rightward shift of the agonist curve that can be overcome by more agonist",
       "explanation": "A surmountable competitive antagonist typically increases the agonist concentration needed for a given response (reduced apparent potency) while preserving maximal efficacy in the ideal model."
+    },
+    {
+      "id": "pharm-010",
+      "question": "Which adverse effect is a recognised concern with aminoglycosides?",
+      "options": [
+        "Nephrotoxicity and ototoxicity",
+        "Severe hypoglycaemia in every patient",
+        "Permanent inhibition of vitamin K recycling as the main effect",
+        "Universal bone-marrow aplasia"
+      ],
+      "answer": "Nephrotoxicity and ototoxicity",
+      "explanation": "Aminoglycosides can cause renal tubular injury and ototoxicity. Risk depends on exposure, patient factors, co-medications, and monitoring."
+    },
+    {
+      "id": "pharm-011",
+      "question": "Which receptor does salbutamol primarily stimulate to produce bronchodilation?",
+      "options": [
+        "Beta-2 adrenergic receptor",
+        "Alpha-1 adrenergic receptor",
+        "Muscarinic M3 receptor",
+        "Dopamine D2 receptor"
+      ],
+      "answer": "Beta-2 adrenergic receptor",
+      "explanation": "Beta-2 receptor activation increases cAMP in airway smooth muscle and promotes relaxation. Tremor and tachycardia can occur as adverse effects."
+    },
+    {
+      "id": "pharm-012",
+      "question": "Warfarin reduces synthesis of functional vitamin K-dependent clotting factors by inhibiting:",
+      "options": [
+        "Vitamin K epoxide reductase complex",
+        "Thrombin directly at its active site",
+        "Cyclooxygenase-1 irreversibly",
+        "Platelet P2Y12 receptors"
+      ],
+      "answer": "Vitamin K epoxide reductase complex",
+      "explanation": "Warfarin inhibits VKORC1, reducing regeneration of active vitamin K and gamma-carboxylation of factors II, VII, IX, X and proteins C and S."
+    },
+    {
+      "id": "pharm-013",
+      "question": "Which principle best describes zero-order elimination over a concentration range?",
+      "options": [
+        "A constant amount is eliminated per unit time",
+        "A constant fraction is eliminated per unit time at all concentrations",
+        "Elimination stops when concentration rises",
+        "The drug has no metabolism"
+      ],
+      "answer": "A constant amount is eliminated per unit time",
+      "explanation": "Zero-order elimination occurs when elimination pathways are saturated over the relevant range, so a constant amount rather than a constant fraction is removed per unit time."
+    },
+    {
+      "id": "pharm-014",
+      "question": "Which drug class reduces gastric acid secretion by irreversibly inhibiting the gastric H+/K+-ATPase?",
+      "options": [
+        "Proton-pump inhibitors",
+        "H1 antihistamines",
+        "Antimuscarinics only",
+        "Antacids only"
+      ],
+      "answer": "Proton-pump inhibitors",
+      "explanation": "Proton-pump inhibitors suppress acid secretion by inhibiting active proton pumps in parietal cells. Timing and duration differ among agents."
+    },
+    {
+      "id": "pharm-015",
+      "question": "Which reaction is most consistent with a type A adverse drug reaction?",
+      "options": [
+        "Dose-related and predictable from the drug's pharmacology",
+        "Always immune-mediated and unrelated to dose",
+        "Only occurring after years of exposure",
+        "Impossible to anticipate from known effects"
+      ],
+      "answer": "Dose-related and predictable from the drug's pharmacology",
+      "explanation": "Type A reactions are augmented pharmacological effects, generally dose-related and more predictable; type B reactions are less predictable and not simply dose-dependent."
     }
   ]
 }
