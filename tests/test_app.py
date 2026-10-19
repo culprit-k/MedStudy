@@ -69,6 +69,20 @@ class AppSmokeTests(unittest.TestCase):
             self.assertIn(label, source)
         self.assertNotIn("def render_3d_anatomy_viewer", source)
 
+    def test_hands_on_skills_lab_is_integrated(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for label in [
+            "Hands-on Skills Lab",
+            "Laparoscopic camera orientation",
+            "Instrument targeting and hand-eye coordination",
+            "Suture target alignment",
+            "Operating-room instrument identification",
+            "THREE.Raycaster",
+            "Virtual instrument repositioned",
+            "Return to Surgery Simulator"
+        ]:
+            self.assertIn(label, source)
+
     def test_surgery_simulator_has_full_theatre_run(self):
         source = APP_FILE.read_text(encoding="utf-8")
         for label in [
