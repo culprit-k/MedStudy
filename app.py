@@ -79,6 +79,46 @@ div.stButton > button { border-radius:12px; font-weight:700; min-height:2.65rem;
 [data-testid="stProgressBar"] > div > div { background:linear-gradient(90deg,#0d9298,#62c6b6); }
 div[data-testid="stChatMessage"] { background:white; border:1px solid var(--line); border-radius:16px; }
 footer {visibility:hidden;}
+
+/* Professional polish: responsive spacing, clearer hierarchy, focus states and mobile usability */
+.stApp { min-width: 320px; }
+.block-container { max-width: 1500px; padding-top: 1.35rem; padding-bottom: 3rem; }
+[data-testid="stHeader"] { background: rgba(248,250,252,.86); backdrop-filter: blur(12px); }
+[data-testid="stSidebar"] [data-testid="stRadio"] label:hover { background: #1a314b; border-radius: 10px; }
+[data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) { background: #17485a; border-radius: 10px; }
+.stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] > button {
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.stButton > button:hover, .stDownloadButton > button:hover, [data-testid="stFormSubmitButton"] > button:hover {
+  transform: translateY(-1px); box-shadow: 0 7px 18px #0d34421a; border-color: #39a9ad;
+}
+.stButton > button:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid #39b9b3 !important; outline-offset: 2px !important;
+}
+[data-testid="stSelectbox"] [role="combobox"], [data-testid="stTextInput"] input,
+[data-testid="stTextArea"] textarea, [data-testid="stNumberInput"] input {
+  border-radius: 12px;
+}
+[data-testid="stTabs"] [role="tab"] { font-weight: 700; padding-top: .7rem; padding-bottom: .7rem; }
+[data-testid="stTabs"] [role="tab"][aria-selected="true"] { color: #087f8c; border-bottom-color: #087f8c; }
+[data-testid="stAlert"] { border-radius: 14px; }
+[data-testid="stExpander"] summary { font-weight: 650; }
+.hero { position: relative; overflow: hidden; }
+.hero:after { content:""; position:absolute; width:220px; height:220px; right:-65px; bottom:-125px; border:1px solid #ffffff26; border-radius:50%; box-shadow:0 0 0 24px #ffffff0b,0 0 0 50px #ffffff08; pointer-events:none; }
+.panel { transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.panel:hover { border-color:#c7dfe5; box-shadow:0 12px 30px #172d4214; }
+@media (max-width: 760px) {
+  .block-container { padding: .75rem .75rem 2rem; }
+  .hero { padding: 1.4rem 1.2rem; border-radius: 19px; }
+  .hero p { font-size: .96rem; }
+  h1 { font-size: clamp(1.65rem, 7vw, 2.25rem) !important; }
+  div[data-testid="stMetric"] { padding: .75rem; }
+  [data-testid="stHorizontalBlock"] { gap: .55rem; }
+  [data-testid="stSidebar"] { min-width: 260px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
