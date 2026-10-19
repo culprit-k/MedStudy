@@ -110,7 +110,7 @@ if page == "Home":
     st.markdown("""
     <div class="hero">
       <div class="eyebrow">Your personal medical learning space</div>
-      <h1>Understand the science.<br>Think like a clinician.</h1>
+      <h1>Learn medicine.<br>Think like a clinician.</h1>
       <p>Move beyond memorisation with image-based anatomy, clinical reasoning cases, exam-level questions, and a tutor that adapts to your goals.</p>
       <span class="pill">MBBS</span><span class="pill">Postgraduate revision</span><span class="pill">Research-minded learning</span>
     </div>
