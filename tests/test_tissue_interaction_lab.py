@@ -72,6 +72,16 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("node --test tests/tissue_physics_engine.test.js", (ROOT / ".github" / "workflows" / "tissue-lab-ci.yml").read_text(encoding="utf-8"))
         self.assertIn("bounded under repeated large contacts", tests)
 
+    def test_collision_engine_and_labelled_proxy_feedback_are_integrated(self):
+        self.assertIn("anatomy_collision_engine.js", self.html)
+        self.assertIn("AnatomyCollisionEngine.deepestProxyContact", self.html)
+        self.assertIn('id="contactState"', self.html)
+        self.assertIn('id="structureState"', self.html)
+        engine = (ROOT / "components" / "anatomy_collision_engine.js").read_text(encoding="utf-8")
+        self.assertIn("function pointPlaneContact", engine)
+        self.assertIn("function pointSphereContact", engine)
+        self.assertIn("illustrative collision proxy", self.html)
+
     def test_reset_and_layer_controls_exist(self):
         self.assertIn('id="reset"', self.html)
         self.assertIn('id="layers"', self.html)
