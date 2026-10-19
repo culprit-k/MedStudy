@@ -9,6 +9,7 @@ MedStudy is an interactive medical learning project built for medical students w
 - **Learning library:** 90 starter MCQs across anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology, with explanations and adjustable learning depth.
 - **Visual lab:** original heart, nephron, neuron, alveolar-interface, and ECG teaching schematics with image-based questions and clinical/exam pearls.
 - **Medical Image Library:** searchable image catalogue across 30 medical subjects, live Wikimedia Commons previews, original source pages, creator credits, per-file licence metadata, session-saved references, and curated collection links.
+- **Surgery Simulator:** four fictional surgical/operative training cases (appendectomy, laparoscopic cholecystectomy, wound-assessment/closure decisions, and hip-fracture theatre safety), with staged decisions, anatomy orientation, explanations, scores, missed-answer review, restart controls, and links to the detailed 3D anatomy atlas. This is a safety-focused educational simulation, not a surgical procedural guide or credentialing tool.
 - **Virtual Hospital:** immersive teaching workspace with an animated conceptual organ map, fictional bedside-monitor values, structured patient-assessment scenarios, operating-theatre safety workflow, virtual microbiology test interpretation, and fictional diagnostic laboratory panels.
 - **Immersive visual scenes:** animated fictional bedside monitor/organ map, illustrated operating-theatre environment, and microscopy bench with clearly labelled teaching-only visual specimens.
 - **Detailed 3D Anatomy Atlas:** embeds the externally hosted Z-Anatomy-derived browser atlas, with thousands of individually selectable structures, touch rotation, pinch zoom, isolate/hide/transparent controls and anatomical detail panels. Requires internet access. The upstream atlas has mixed CC BY-SA and non-commercial model licence terms; the atlas is externally hosted and not copied into this repository.
@@ -59,6 +60,7 @@ Every question should have a unique ID, question, options, answer matching one o
 - Progress and bookmarks are stored in the active Streamlit session and may reset.
 - The starter question bank is small; it must be expanded and faculty-reviewed before claiming comprehensive exam coverage.
 - Visuals are original schematic teaching diagrams, not radiology, histopathology, or diagnostic-grade clinical images.
+- Surgery Simulator cases use fictional patients and high-level safety/decision questions; they do not teach hands-on surgical technique and are not a substitute for simulation-lab training or direct supervision.
 - The detailed 3D atlas is a third-party project hosted at https://nqwrc.github.io/3d-anatomy/ and documented at https://github.com/nqwrc/3d-anatomy. Its model set includes non-commercial components; review upstream attribution and licence terms before redistribution or commercial use. It is for education, not clinical use.
 - AI tutor output can be inaccurate. An API key is optional and usage may incur charges.
 - No licence has been added yet; public visibility does not automatically grant reuse rights.
