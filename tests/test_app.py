@@ -69,6 +69,26 @@ class AppSmokeTests(unittest.TestCase):
             self.assertIn(label, source)
         self.assertNotIn("def render_3d_anatomy_viewer", source)
 
+    def test_surgery_simulator_has_full_theatre_run(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for label in [
+            "Full operating-room run",
+            "Pre-operative assessment",
+            "Team briefing and time-out",
+            "Anaesthesia and monitoring handoff",
+            "Positioning and pressure-point safety",
+            "Sterile field and equipment readiness",
+            "Intraoperative anatomy and judgement",
+            "Unexpected deterioration",
+            "Specimens, counts and sign-out",
+            "Recovery handover",
+            "Post-operative review",
+            "End-of-case debrief",
+            "Restart full theatre run"
+        ]:
+            self.assertIn(label, source)
+        self.assertIn("surgery_full_run_", source)
+
     def test_surgery_simulator_has_multiple_cases_and_safety_guardrails(self):
         source = APP_FILE.read_text(encoding="utf-8")
         for label in [
