@@ -59,7 +59,7 @@ class AppSmokeTests(unittest.TestCase):
 
     def test_virtual_hospital_workspace_is_integrated(self):
         source = APP_FILE.read_text(encoding="utf-8")
-        for label in ["Virtual Hospital", "Operating theatre", "Microbiology bench", "Diagnostics lab", "render_hospital_monitor", "Patient scenario"]:
+        for label in ["Virtual Hospital", "Operating theatre", "Microbiology bench", "Diagnostics lab", "render_hospital_monitor", "render_simulation_scene", "Patient scenario", "Team safety view"]:
             self.assertIn(label, source)
 
     def test_medical_image_library_catalog_is_complete_and_local_assets_exist(self):
