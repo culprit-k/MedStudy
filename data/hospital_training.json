@@ -1,0 +1,367 @@
+{
+  "version": 1,
+  "notice": "Fictional scenarios for education only. Not for real-patient care, diagnosis, treatment, prescribing, or procedural decision-making.",
+  "patient_cases": [
+    {
+      "id": "ward-stable",
+      "name": "Post-operative ward check",
+      "location": "Surgical ward · Bay 3",
+      "level": "Foundation",
+      "presentation": "A fictional adult is recovering after an uncomplicated operation. Practise a structured bedside review and recognise that one set of observations is not the whole clinical picture.",
+      "vitals": {
+        "hr": 84,
+        "systolic_bp": 122,
+        "diastolic_bp": 76,
+        "spo2": 98,
+        "rr": 16,
+        "temperature": 37,
+        "pain": 3,
+        "gcs": 15
+      },
+      "observations": [
+        "Introduce yourself, confirm the simulated patient identity and explain what you are checking.",
+        "Assess general appearance, breathing effort, circulation and level of consciousness.",
+        "Review observations as a trend rather than interpreting a single number in isolation.",
+        "Ask about pain, nausea, fluids, urine output and any new symptoms.",
+        "Summarise your findings and state when you would ask the supervising clinician to review."
+      ],
+      "debrief": "A reassuring observation set does not exclude every complication. Context, baseline observations, procedure, medicines, trends and the patient's concerns matter."
+    },
+    {
+      "id": "resp-distress",
+      "name": "Respiratory deterioration",
+      "location": "Emergency assessment · Bed 2",
+      "level": "Intermediate",
+      "presentation": "A fictional patient has increasing breathlessness and cough. Your task is to assess immediate stability, interpret observations, and organise a focused handover. This is a teaching case, not a triage tool.",
+      "vitals": {
+        "hr": 116,
+        "systolic_bp": 104,
+        "diastolic_bp": 68,
+        "spo2": 90,
+        "rr": 30,
+        "temperature": 38.2,
+        "pain": 2,
+        "gcs": 15
+      },
+      "observations": [
+        "Look for increased work of breathing and ability to speak.",
+        "Review respiratory rate, oxygen saturation, heart rate, blood pressure, temperature and consciousness together.",
+        "Use an airway–breathing–circulation–disability–exposure structure under supervision.",
+        "Collect relevant history and focused examination findings without delaying escalation for instability.",
+        "Give a concise handover with situation, background, assessment, and recommendation."
+      ],
+      "debrief": "Marked respiratory distress or worsening observations require urgent clinical assessment in real life. The simulator cannot diagnose the cause or safely recommend oxygen or medication settings."
+    },
+    {
+      "id": "infection-review",
+      "name": "Fever with possible infection",
+      "location": "Acute medical unit · Bay 1",
+      "level": "Intermediate",
+      "presentation": "A fictional adult has fever, tachycardia and malaise. Practise recognising possible deterioration, identifying information needed, and communicating concern promptly.",
+      "vitals": {
+        "hr": 122,
+        "systolic_bp": 92,
+        "diastolic_bp": 58,
+        "spo2": 95,
+        "rr": 26,
+        "temperature": 39.1,
+        "pain": 4,
+        "gcs": 14
+      },
+      "observations": [
+        "Assess airway, breathing, circulation and mental status immediately in the simulated scenario.",
+        "Review perfusion, blood pressure, pulse, respiratory rate, temperature, oxygen saturation and urine-output history.",
+        "Gather recent infection history, medicines, allergies, comorbidities and relevant exposure history.",
+        "Discuss the purpose and limitations of appropriately collected cultures and other tests with a supervisor.",
+        "Escalate concern and communicate the observed changes clearly; do not use this exercise to make real treatment decisions."
+      ],
+      "debrief": "This is an educational deterioration scenario. Sepsis cannot be confirmed or excluded from a single sign or this mock score. Real suspected sepsis requires immediate professional assessment and local protocols."
+    },
+    {
+      "id": "post-op-bleeding",
+      "name": "Post-operative bleeding concern",
+      "location": "Recovery area · Bay 4",
+      "level": "Advanced",
+      "presentation": "A fictional post-operative patient becomes pale and tachycardic, with a falling blood pressure trend. Practise recognising a concerning pattern and escalating to the clinical team.",
+      "vitals": {
+        "hr": 128,
+        "systolic_bp": 86,
+        "diastolic_bp": 54,
+        "spo2": 96,
+        "rr": 24,
+        "temperature": 36.1,
+        "pain": 5,
+        "gcs": 14
+      },
+      "observations": [
+        "Recognise that the combination of tachycardia and falling blood pressure can be concerning in context.",
+        "Check the simulated patient, monitor quality, recent trend and relevant post-operative background.",
+        "Use a structured ABCDE approach and summon the appropriate supervising/emergency team in the scenario.",
+        "Communicate observations and the time course; do not delay escalation to complete a checklist.",
+        "Reflect on why trends and context are important."
+      ],
+      "debrief": "This case represents a potentially time-critical deterioration pattern. In real clinical practice, follow emergency escalation procedures immediately; the tool does not recommend treatments."
+    }
+  ],
+  "organ_systems": [
+    {
+      "name": "Heart & circulation",
+      "icon": "💓",
+      "focus": "Heart, great vessels, coronary circulation and perfusion",
+      "concept": "Cardiac output depends on heart rate and stroke volume. Arterial pressure also reflects vascular resistance and circulating volume.",
+      "caseLink": "Look at the pulse waveform and blood-pressure trend together; do not assume the monitor alone explains the cause."
+    },
+    {
+      "name": "Lungs & airway",
+      "icon": "🫁",
+      "focus": "Upper airway, lungs, alveoli and respiratory muscles",
+      "concept": "Gas exchange depends on ventilation, perfusion, diffusion and haemoglobin-mediated transport.",
+      "caseLink": "Respiratory rate, work of breathing, oxygen saturation and clinical appearance are complementary rather than interchangeable."
+    },
+    {
+      "name": "Brain & nervous system",
+      "icon": "🧠",
+      "focus": "Brain, spinal cord, peripheral nerves and consciousness",
+      "concept": "Neural function depends on electrical signalling, synaptic communication and adequate oxygen/glucose delivery.",
+      "caseLink": "A change in consciousness is important and should be interpreted with the rest of the assessment."
+    },
+    {
+      "name": "Kidneys & fluid balance",
+      "icon": "🫘",
+      "focus": "Kidneys, nephron, bladder and fluid regulation",
+      "concept": "The kidneys regulate water, electrolytes, acid–base balance and excretion; urine output is one part of the wider picture.",
+      "caseLink": "Review intake/output trends and relevant labs with supervision; one number is not a diagnosis."
+    },
+    {
+      "name": "Liver & metabolism",
+      "icon": "🟤",
+      "focus": "Liver, portal circulation and hepatobiliary system",
+      "concept": "The liver participates in nutrient processing, protein synthesis, bile production and metabolism of many substances.",
+      "caseLink": "Liver assessment requires history, examination and a pattern of laboratory results rather than a single score."
+    },
+    {
+      "name": "GI tract & pancreas",
+      "icon": "🫃",
+      "focus": "Stomach, intestines, pancreas and biliary system",
+      "concept": "Digestion, absorption, motility and endocrine secretion are coordinated by neural and hormonal signalling.",
+      "caseLink": "Symptoms, hydration, abdominal findings and biochemical results must be integrated."
+    },
+    {
+      "name": "Blood & immune system",
+      "icon": "🩸",
+      "focus": "Blood cells, bone marrow, immune tissues and lymphatics",
+      "concept": "Blood transports gases and nutrients; immune pathways respond to pathogens and tissue injury.",
+      "caseLink": "A blood count or inflammatory marker supports a clinical assessment but does not independently establish a diagnosis."
+    },
+    {
+      "name": "Endocrine system",
+      "icon": "🦋",
+      "focus": "Pituitary, thyroid, adrenals, pancreas and gonads",
+      "concept": "Hormone axes use feedback loops to regulate metabolism, stress responses, growth and reproduction.",
+      "caseLink": "Interpret endocrine labs with symptoms, timing, medication and the appropriate reference range."
+    },
+    {
+      "name": "Skin & musculoskeletal",
+      "icon": "🦴",
+      "focus": "Skin, muscles, bones, joints and soft tissues",
+      "concept": "Skin contributes to barrier function and thermoregulation; musculoskeletal tissues support movement and protect organs.",
+      "caseLink": "Inspect the whole clinical context and avoid anchoring on one visible feature."
+    },
+    {
+      "name": "Reproductive system",
+      "icon": "🧬",
+      "focus": "Reproductive organs and hypothalamic–pituitary–gonadal signalling",
+      "concept": "Reproductive function depends on anatomy, endocrine feedback, age and individual physiology.",
+      "caseLink": "Use respectful communication, consent, privacy and appropriate supervision in clinical scenarios."
+    }
+  ],
+  "microbiology_tests": [
+    {
+      "name": "Gram stain",
+      "specimen": "Appropriate specimen for the clinical question (for example, a validated clinical sample)",
+      "principle": "Differential staining reflects cell-envelope properties; Gram-positive organisms commonly retain crystal violet and appear purple, while Gram-negative organisms are counterstained pink/red.",
+      "learning_task": "Choose a teaching interpretation for purple cocci in clusters.",
+      "options": [
+        "Suggests staphylococcal morphology; identification needs confirmatory testing",
+        "Proves a specific species without further tests",
+        "Rules out infection"
+      ],
+      "answer": 0,
+      "explanation": "Gram reaction and morphology narrow possibilities but do not establish species or susceptibility. Interpret the result with specimen quality and the clinical context.",
+      "limitations": "Mixed flora, staining quality, prior antibiotics and specimen source can affect interpretation."
+    },
+    {
+      "name": "Culture and colony morphology",
+      "specimen": "A properly collected specimen selected for the suspected infection and laboratory protocol",
+      "principle": "Viable organisms may grow on appropriate media; colony appearance is a clue, not a stand-alone identification.",
+      "learning_task": "What is the safest interpretation of an unusual colony appearance?",
+      "options": [
+        "Use it as a clue and continue validated identification/workflow",
+        "Name the organism from colour alone",
+        "Assume it is always contamination"
+      ],
+      "answer": 0,
+      "explanation": "Colony morphology is presumptive. Identification may require validated biochemical, mass-spectrometry or molecular methods, with appropriate quality control.",
+      "limitations": "Media, incubation conditions, mixed growth and contamination affect results. Real bench work requires trained staff and laboratory SOPs."
+    },
+    {
+      "name": "Antimicrobial susceptibility testing",
+      "specimen": "A pure, correctly identified isolate selected according to the laboratory's approved workflow",
+      "principle": "Standardised methods estimate how an organism responds to selected antimicrobial agents; interpretation uses current standards and quality control.",
+      "learning_task": "What is required before interpreting a susceptibility result?",
+      "options": [
+        "A validated method, quality control and current interpretive standard",
+        "Only the size of any zone without method or standard",
+        "The patient's symptoms alone"
+      ],
+      "answer": 0,
+      "explanation": "A result must be generated and interpreted using validated methods and the applicable current standards; clinical relevance depends on site, patient factors and stewardship guidance.",
+      "limitations": "Do not infer treatment choices from this exercise. Laboratory standards and breakpoints are updated and vary by organism/drug."
+    },
+    {
+      "name": "Acid-fast stain",
+      "specimen": "A clinical specimen selected by a qualified service when acid-fast organisms are suspected",
+      "principle": "Acid-fast staining exploits a lipid-rich cell envelope; microscopy is a screening clue and does not alone confirm or exclude tuberculosis.",
+      "learning_task": "What can a positive acid-fast smear establish by itself?",
+      "options": [
+        "Acid-fast organisms are seen; further validated tests and clinical assessment are needed",
+        "It definitively identifies the organism and drug resistance",
+        "It proves every respiratory symptom is tuberculosis"
+      ],
+      "answer": 0,
+      "explanation": "Smear microscopy has limitations and cannot confirm species or drug susceptibility. Molecular tests, culture and public-health pathways may be needed according to guidance.",
+      "limitations": "Sensitivity depends on specimen quality and organism burden; follow biosafety procedures and official laboratory protocols."
+    },
+    {
+      "name": "KOH microscopy",
+      "specimen": "A suitable skin, hair, nail or other specimen collected by trained personnel",
+      "principle": "Potassium hydroxide clears keratinous material to help visualise fungal elements in selected specimens.",
+      "learning_task": "What does seeing fungal elements on microscopy mean?",
+      "options": [
+        "Supports a fungal cause but must be correlated with specimen, morphology and context",
+        "Always identifies the species and the ideal treatment",
+        "Excludes every other diagnosis"
+      ],
+      "answer": 0,
+      "explanation": "KOH microscopy can support recognition of fungal structures, but its sensitivity depends on sampling and interpretation; culture or other tests may be needed.",
+      "limitations": "False negatives can occur with poor sampling or low organism burden. This is a virtual interpretation exercise, not a bench protocol."
+    },
+    {
+      "name": "Blood culture workflow",
+      "specimen": "Blood collected by trained personnel using the institution's approved collection process",
+      "principle": "Cultures are used to detect bloodstream infection; collection quality, adequate sampling and timing are important.",
+      "learning_task": "What is a core pre-analytical priority?",
+      "options": [
+        "Correct patient/specimen identification and aseptic collection under local SOPs",
+        "Reuse a labelled specimen container for another patient",
+        "Delay urgent clinical escalation until results return"
+      ],
+      "answer": 0,
+      "explanation": "Correct identification, collection technique, transport and communication of critical results are central. Cultures take time and cannot replace immediate care for an unstable patient.",
+      "limitations": "False positives and negatives occur; results must be interpreted clinically and with microbiology advice."
+    },
+    {
+      "name": "Urinalysis",
+      "specimen": "A correctly collected urine specimen appropriate to the clinical question",
+      "principle": "Dipsticks assess selected chemical properties; microscopy and culture may add information depending on the situation.",
+      "learning_task": "Which is the best way to interpret leukocyte esterase or nitrite?",
+      "options": [
+        "As supportive findings interpreted with symptoms, collection quality and other results",
+        "As proof of urinary infection in every patient",
+        "As a direct measure of renal filtration"
+      ],
+      "answer": 0,
+      "explanation": "Urinalysis findings are not definitive in isolation; contamination, asymptomatic bacteriuria and organism characteristics affect interpretation.",
+      "limitations": "Reference ranges and follow-up depend on patient group and clinical context; seek appropriate guidance."
+    },
+    {
+      "name": "ELISA / immunoassay",
+      "specimen": "The validated specimen type for the specific assay",
+      "principle": "Antigen–antibody binding with an enzyme-linked detection system produces a measurable signal.",
+      "learning_task": "What does an assay result need before clinical interpretation?",
+      "options": [
+        "The assay's validated cut-off, controls, pre-test context and confirmatory pathway if applicable",
+        "A colour change viewed without controls",
+        "Assuming all kits detect every strain/variant equally"
+      ],
+      "answer": 0,
+      "explanation": "Controls, assay performance, cut-offs and the target analyte matter. Positive and negative predictive values also depend on context and prevalence.",
+      "limitations": "Assays differ. Follow current manufacturer instructions, laboratory validation and the relevant diagnostic guideline."
+    },
+    {
+      "name": "PCR / nucleic-acid test",
+      "specimen": "The assay-specific validated specimen collected and transported correctly",
+      "principle": "Nucleic-acid amplification detects a selected genetic target.",
+      "learning_task": "What is an important limitation of a positive PCR result?",
+      "options": [
+        "It detects the target nucleic acid but may not by itself prove viable organism or active disease",
+        "It always proves viable organisms and infectiousness",
+        "It gives antimicrobial susceptibility for every organism"
+      ],
+      "answer": 0,
+      "explanation": "Molecular assays are target-specific; results require assessment of sample, timing, assay limitations and clinical context. Resistance testing is only available when the assay targets relevant markers.",
+      "limitations": "Contamination, timing, target variation and residual nucleic acid may affect interpretation."
+    },
+    {
+      "name": "Peripheral blood film",
+      "specimen": "A correctly collected blood sample prepared and reviewed by trained personnel",
+      "principle": "Cell morphology may reveal patterns involving red cells, white cells and platelets.",
+      "learning_task": "What is appropriate when an abnormal cell pattern is noticed?",
+      "options": [
+        "Describe the morphology and correlate with blood count, context and expert review",
+        "Make a final diagnosis from one field alone",
+        "Ignore sample quality and artefacts"
+      ],
+      "answer": 0,
+      "explanation": "Blood films are interpreted with counts, indices, history and sometimes additional tests. Morphology is a powerful clue but not a complete diagnosis.",
+      "limitations": "Preparation artefacts, sampling, observer experience and clinical context matter."
+    }
+  ],
+  "or_workflow": [
+    {
+      "stage": "Pre-operative verification",
+      "items": [
+        "Confirm the simulated patient's identity using the approved identifiers.",
+        "Verify planned procedure, site/side and relevant documentation.",
+        "Confirm consent, allergies and relevant risks are documented.",
+        "Review airway, monitoring, equipment and anticipated concerns with the supervising team."
+      ]
+    },
+    {
+      "stage": "Team time-out",
+      "items": [
+        "Pause for the whole team to introduce roles and agree the patient/procedure/site.",
+        "Confirm relevant imaging, blood availability or special equipment if applicable.",
+        "Invite concerns from any team member and resolve them before proceeding.",
+        "Use the local checklist; do not substitute this educational list for institutional policy."
+      ]
+    },
+    {
+      "stage": "Sterile field & infection prevention",
+      "items": [
+        "Perform surgical hand antisepsis according to the local approved protocol.",
+        "Use appropriate sterile gowning/gloving under supervision and maintain the sterile field.",
+        "Identify breaks in sterility and communicate them immediately.",
+        "Confirm skin preparation, draping and equipment checks according to local policy."
+      ]
+    },
+    {
+      "stage": "Intra-operative safety",
+      "items": [
+        "Maintain clear communication and closed-loop confirmation for key requests.",
+        "Complete instrument, needle and swab counts at the required stages according to policy.",
+        "Label and communicate any specimens correctly using the required process.",
+        "Escalate equipment problems, unexpected findings or safety concerns promptly."
+      ]
+    },
+    {
+      "stage": "Sign-out & handover",
+      "items": [
+        "Confirm the procedure performed and any specimens that require tracking.",
+        "Confirm counts, equipment concerns and post-operative plans according to the team checklist.",
+        "Provide a structured handover, including airway, breathing, circulation, pain, fluids and concerns.",
+        "Document learning points and receive supervisor feedback."
+      ]
+    }
+  ]
+}
