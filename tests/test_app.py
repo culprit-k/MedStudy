@@ -59,7 +59,7 @@ class AppSmokeTests(unittest.TestCase):
 
     def test_interactive_3d_anatomy_viewer_is_integrated(self):
         source = APP_FILE.read_text(encoding="utf-8")
-        for label in ["render_3d_anatomy_viewer", "THREE.OrbitControls", "Animate physiology", "Transparent body", "renderer.intersectObjects"]:
+        for label in ["render_3d_anatomy_viewer", "THREE.OrbitControls", "Touch anatomy", "Pull organ out", "Isolate organ", "ray.intersectObjects"]:
             self.assertIn(label, source)
 
     def test_virtual_hospital_workspace_is_integrated(self):
