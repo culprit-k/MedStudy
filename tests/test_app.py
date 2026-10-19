@@ -41,6 +41,27 @@ class AppSmokeTests(unittest.TestCase):
         for label in ["Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI"]:
             self.assertIn(label, source)
 
+    def test_hospital_training_catalog_has_all_lab_curricula(self):
+        data = json.loads((ROOT / "data" / "hospital_training.json").read_text(encoding="utf-8"))
+        self.assertGreaterEqual(len(data.get("patient_cases", [])), 4)
+        self.assertGreaterEqual(len(data.get("organ_systems", [])), 8)
+        self.assertGreaterEqual(len(data.get("microbiology_tests", [])), 8)
+        self.assertGreaterEqual(len(data.get("or_workflow", [])), 4)
+        self.assertGreaterEqual(len(data.get("diagnostic_panels", [])), 5)
+        for test in data["microbiology_tests"]:
+            self.assertTrue(test.get("name"))
+            self.assertGreaterEqual(len(test.get("options", [])), 2)
+            self.assertIn(test.get("answer"), range(len(test["options"])))
+            self.assertTrue(test.get("explanation"))
+        for panel in data["diagnostic_panels"]:
+            self.assertTrue(panel.get("results"))
+            self.assertIn(panel.get("answer"), range(len(panel.get("options", []))))
+
+    def test_virtual_hospital_workspace_is_integrated(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for label in ["Virtual Hospital", "Operating theatre", "Microbiology bench", "Diagnostics lab", "render_hospital_monitor", "Patient scenario"]:
+            self.assertIn(label, source)
+
     def test_medical_image_library_catalog_is_complete_and_local_assets_exist(self):
         catalog = json.loads((ROOT / "data" / "image_library.json").read_text(encoding="utf-8"))
         subjects = catalog.get("subjects", [])
