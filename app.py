@@ -817,6 +817,71 @@ elif page == "Surgery Simulator":
     st.markdown("### Practice another skill")
     st.caption("Next modules can add simulated instrument recognition, knot-tying concepts, laparoscopic camera orientation, bleeding-response teamwork, and postoperative complications. These should remain clearly labelled educational simulations, not real procedural instructions.")
 
+    st.markdown("---")
+    st.markdown("## Full operating-room run")
+    st.caption("A longer, end-to-end simulated theatre session. You will move through pre-op checks, team briefing, anaesthesia handoff, positioning, sterile-field checks, intraoperative judgement, sign-out, recovery and handover. This teaches workflow and safety decisions—not the technical steps for performing an operation.")
+    full_run = [
+        {"phase":"1 · Pre-operative assessment","scene":"The patient arrives for the planned operation. The chart, consent form and imaging are available, but the team has not yet completed its checks.","prompt":"What is the safest first action?","options":["Start because the case is on the list","Verify identity, consent/capacity, procedure and site; review allergies, relevant risks and the plan with the team","Ask the patient to confirm only their name, then proceed"],"answer":1,"feedback":"Correct: verify the patient and planned procedure/site, confirm consent, and review relevant risks and documentation before proceeding."},
+        {"phase":"2 · Team briefing and time-out","scene":"The patient is in the operating room. The surgeon, anaesthesia professional and nursing team are present.","prompt":"What should the team time-out establish?","options":["Only the surgeon's name","Shared confirmation of patient, procedure/site, imaging, anticipated critical events, equipment and team concerns","That everyone has seen the schedule"],"answer":1,"feedback":"A structured time-out builds a shared mental model and gives all team members a chance to raise concerns."},
+        {"phase":"3 · Anaesthesia and monitoring handoff","scene":"The anaesthesia team reports that monitoring is attached. A monitor value differs from the expected baseline and needs assessment.","prompt":"How should the surgical team respond?","options":["Ignore it because the anaesthesia team owns the monitor","Pause the simulated start, communicate with anaesthesia and confirm the patient is ready before proceeding","Continue and review after the procedure"],"answer":1,"feedback":"Readiness is shared. Communicate concerns and confirm stability with the anaesthesia professional; this simulation does not provide real-time clinical advice."},
+        {"phase":"4 · Positioning and pressure-point safety","scene":"The patient is anaesthetised in this fictional scenario. The team is preparing for the planned position.","prompt":"Which check is most appropriate?","options":["Check alignment, pressure points, limb protection, access to monitoring and that positioning is compatible with the planned procedure","Assume positioning is safe if the patient is on the table","Prioritise speed over checking"],"answer":0,"feedback":"Positioning checks help prevent pressure, nerve and other positioning-related injuries and preserve safe access."},
+        {"phase":"5 · Sterile field and equipment readiness","scene":"The team is ready to begin, but a team member notices a possible break in sterility and an item that may not be available.","prompt":"What is the safest response?","options":["Continue if the item looks clean","Stop and resolve the sterility or equipment concern using the institution's process before proceeding","Cover the issue and document it later"],"answer":1,"feedback":"Sterility and equipment concerns should be addressed before proceeding, using approved local processes."},
+        {"phase":"6 · Intraoperative anatomy and judgement","scene":"During the fictional operation, the view does not match the expected anatomy. A critical structure cannot be identified confidently.","prompt":"What should the operator do in this simulation?","options":["Proceed from memory","Pause, state the concern, reassess with the team and seek appropriate senior help or a safer alternative","Ask a junior observer to guess"],"answer":1,"feedback":"Never treat uncertain anatomy as confirmed. Stop, communicate and use experienced judgement; this module intentionally does not teach operative manoeuvres."},
+        {"phase":"7 · Unexpected deterioration","scene":"The fictional monitor changes abruptly and the anaesthesia professional calls attention to a concerning trend.","prompt":"What is the safest team behaviour?","options":["Keep operating until the planned task is complete","Pause the simulated procedure, respond as a coordinated team under the responsible clinicians' lead, and follow the institution's emergency protocol","Change several settings without communication"],"answer":1,"feedback":"A concerning change requires coordinated communication and response led by qualified clinicians and local emergency protocols. Values in this app are fictional."},
+        {"phase":"8 · Specimens, counts and sign-out","scene":"The procedure is ending. The team must account for any applicable specimens, instruments and swabs and agree on the immediate plan.","prompt":"What belongs in sign-out?","options":["Only the procedure name","Confirm procedure performed, specimen labelling where applicable, counts and equipment concerns, complications, and postoperative plan","Leave sign-out to the next shift without discussion"],"answer":1,"feedback":"Structured sign-out reduces omissions and confirms that specimens, counts, events and plans are communicated."},
+        {"phase":"9 · Recovery handover","scene":"The patient is transferred to the recovery team. The next team needs a clear picture of the operation and what to monitor.","prompt":"Which handover is best?","options":["A concise structured handover of procedure, key findings, complications, current status, relevant fluids/blood loss if applicable, monitoring and escalation plan","Say only that the patient is stable","Wait for the recovery team to read the entire chart"],"answer":0,"feedback":"A complete structured handover supports continuity, surveillance and timely escalation."},
+        {"phase":"10 · Post-operative review","scene":"The patient is in recovery. The team is documenting the case and planning ongoing care.","prompt":"What is the best final step in this educational run?","options":["End the record once the patient leaves theatre","Document the course and outstanding issues, ensure the postoperative plan is communicated, and review any safety learning points","Skip documentation if no complication occurred"],"answer":1,"feedback":"Documentation, explicit plans and debriefing are part of safe peri-operative care, even when no complication is identified."}
+    ]
+    full_key = "surgery_full_run_" + procedure_name
+    full_answers_key = full_key + "_answers"
+    if full_key not in st.session_state:
+        st.session_state[full_key] = 0
+    if full_answers_key not in st.session_state:
+        st.session_state[full_answers_key] = {}
+    phase = st.session_state[full_key]
+    st.progress(min(1.0, (phase + 1) / len(full_run)))
+    if phase < len(full_run):
+        item = full_run[phase]
+        st.markdown(f"### {item['phase']}")
+        st.info(item["scene"])
+        st.markdown(f"**{item['prompt']}**")
+        run_choice = st.radio("Your theatre decision", item["options"], key=f"{full_key}_choice_{phase}", index=None)
+        if st.button("Record decision", type="primary", key=f"{full_key}_submit_{phase}"):
+            if run_choice is None:
+                st.warning("Choose a response first.")
+            else:
+                idx = item["options"].index(run_choice)
+                st.session_state[full_answers_key][phase] = idx
+                st.session_state[f"{full_key}_feedback_{phase}"] = True
+                if idx == item["answer"]:
+                    st.success("Best answer.")
+                else:
+                    st.warning("Review the safer response below.")
+                st.info(item["feedback"])
+        if st.session_state.get(f"{full_key}_feedback_{phase}", False):
+            if st.button("Next phase →", key=f"{full_key}_next_{phase}"):
+                st.session_state[full_key] += 1
+                st.rerun()
+    else:
+        score = sum(st.session_state[full_answers_key].get(i) == item["answer"] for i, item in enumerate(full_run))
+        st.markdown("### End-of-case debrief")
+        st.metric("Theatre workflow score", f"{round(100 * score / len(full_run))}%", f"{score}/{len(full_run)} decisions")
+        st.write("Review each phase below. This score reflects performance on a fictional educational scenario, not surgical competence or clinical credentialing.")
+        for i, item in enumerate(full_run):
+            chosen = st.session_state[full_answers_key].get(i)
+            with st.expander(f"{item['phase']} · {'Best answer' if chosen == item['answer'] else 'Review'}"):
+                st.write(item["prompt"])
+                st.write("Your response: " + (item["options"][chosen] if chosen is not None else "Not answered"))
+                st.write("Best response: " + item["options"][item["answer"]])
+                st.caption(item["feedback"])
+        if st.button("Restart full theatre run", type="primary", key=full_key + "_restart"):
+            st.session_state[full_key] = 0
+            st.session_state[full_answers_key] = {}
+            for i in range(len(full_run)):
+                st.session_state.pop(f"{full_key}_feedback_{i}", None)
+            st.rerun()
+
+
 elif page == "Learning Library":
     st.title("📚 Learning library")
     st.caption("Start with the core idea, then use the explanation to connect mechanism to clinical relevance.")
