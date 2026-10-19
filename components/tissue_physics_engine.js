@@ -15,6 +15,8 @@
       this.size = columns * rows;
       this.displacement = new Float32Array(this.size);
       this.velocity = new Float32Array(this.size);
+      this.nextDisplacement = new Float32Array(this.size);
+      this.nextVelocity = new Float32Array(this.size);
       this.stiffness = options.stiffness ?? 34;
       this.damping = options.damping ?? 9;
       this.coupling = options.coupling ?? 5.5;
@@ -68,12 +70,14 @@
       const steps = Math.max(1, Math.ceil(dt / (1 / 120)));
       const h = Math.min(dt, 0.1) / steps;
       for (let s = 0; s < steps; s++) {
+        // Jacobi update: every node reads the same previous state, avoiding
+        // order-dependent in-place neighbor updates.
         for (let y = 0; y < this.rows; y++) {
           for (let x = 0; x < this.columns; x++) {
             const i = y * this.columns + x;
             if (this._fixed(x, y)) {
-              this.displacement[i] = 0;
-              this.velocity[i] = 0;
+              this.nextDisplacement[i] = 0;
+              this.nextVelocity[i] = 0;
               continue;
             }
             let sum = 0, count = 0;
@@ -84,21 +88,29 @@
             const average = sum / count;
             const acceleration = -this.stiffness * this.displacement[i] -
               this.damping * this.velocity[i] + this.coupling * (average - this.displacement[i]);
-            this.velocity[i] += acceleration * h;
-            this.displacement[i] += this.velocity[i] * h;
-            if (this.displacement[i] < 0) {
-              this.displacement[i] = 0;
-              if (this.velocity[i] < 0) this.velocity[i] = 0;
+            let velocity = this.velocity[i] + acceleration * h;
+            let displacement = this.displacement[i] + velocity * h;
+            if (displacement < 0) {
+              displacement = 0;
+              if (velocity < 0) velocity = 0;
             }
-            if (this.displacement[i] > this.maxDisplacement) {
-              this.displacement[i] = this.maxDisplacement;
-              if (this.velocity[i] > 0) this.velocity[i] = 0;
+            if (displacement > this.maxDisplacement) {
+              displacement = this.maxDisplacement;
+              if (velocity > 0) velocity = 0;
             }
-            if (!Number.isFinite(this.displacement[i]) || !Number.isFinite(this.velocity[i])) {
+            if (!Number.isFinite(displacement) || !Number.isFinite(velocity)) {
               throw new Error("Physics solver became non-finite at node " + i);
             }
+            this.nextDisplacement[i] = displacement;
+            this.nextVelocity[i] = velocity;
           }
         }
+        const oldDisplacement = this.displacement;
+        this.displacement = this.nextDisplacement;
+        this.nextDisplacement = oldDisplacement;
+        const oldVelocity = this.velocity;
+        this.velocity = this.nextVelocity;
+        this.nextVelocity = oldVelocity;
         this.stepCount++;
       }
       return this._measure();
@@ -119,6 +131,8 @@
     reset() {
       this.displacement.fill(0);
       this.velocity.fill(0);
+      this.nextDisplacement.fill(0);
+      this.nextVelocity.fill(0);
       this.lastMaxDisplacement = 0;
       this.stepCount = 0;
     }
