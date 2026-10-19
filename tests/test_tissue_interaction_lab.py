@@ -52,7 +52,7 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("function deformAt", self.html)
         self.assertIn("function recoverSurface", self.html)
         self.assertIn("deformAt(p,.19,.52)", self.html)
-        self.assertIn("pos.getZ(i)-local.z", self.html)
+        self.assertIn("const gx=(local.x+2.9)/5.8*segmentX,gz=(local.z+2.05)/4.1*segmentZ", self.html)
         self.assertIn("pos.setY(i,target)", self.html)
         self.assertNotIn("pos.setZ(i,basePos[i*3+2]-indent[i])", self.html)
 
@@ -68,7 +68,7 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         engine = (ROOT / "components" / "tissue_physics_engine.js").read_text(encoding="utf-8")
         tests = (ROOT / "tests" / "tissue_physics_engine.test.js").read_text(encoding="utf-8")
         self.assertIn("TissuePhysicsEngine", engine)
-        self.assertIn("substep large frame times", engine)
+        self.assertIn("Substep large frame times", engine)
         self.assertIn("node --test tests/tissue_physics_engine.test.js", (ROOT / ".github" / "workflows" / "tissue-lab-ci.yml").read_text(encoding="utf-8"))
         self.assertIn("bounded under repeated large contacts", tests)
 
