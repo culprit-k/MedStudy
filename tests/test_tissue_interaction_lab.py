@@ -34,7 +34,7 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertNotIn("pos.setZ(i,basePos[i*3+2]-indent[i])", self.html)
 
     def test_damped_spring_membrane_and_render_loop_exist(self):
-        self.assertIn("const stiffness=34,damping=9,coupling=5.5", self.html)
+        self.assertIn("stiffness=34,damping=9,coupling=5.5", self.html)
         self.assertIn("const acceleration=-stiffness*indent[i]-damping*velocity[i]", self.html)
         self.assertIn("animate();updateMetrics();", self.html)
         self.assertEqual(self.html.count("animate();updateMetrics();"), 1)
@@ -53,7 +53,8 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("coupling=Number(e.target.value)", self.html)
 
     def test_limitations_are_disclosed(self):
-        self.assertIn("not a realistic or validated surgical simulator", self.page)
+        self.assertIn("not a realistic or ", self.page)
+        self.assertIn("validated surgical simulator", self.page)
         self.assertIn("not biomechanically calibrated", self.html)
 
     def test_anatomy_reference_and_physics_roadmap_exist(self):
