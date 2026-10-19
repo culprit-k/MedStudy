@@ -6,15 +6,18 @@ MedStudy is an interactive medical learning project built for medical students w
 
 ## What is included
 
-- **Learning library:** six starter subjects, searchable questions, explanations, and adjustable learning depth.
-- **Visual lab:** original schematic diagrams with image-based questions and clinical/exam pearls.
+- **Learning library:** 90 starter MCQs across anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology, with explanations and adjustable learning depth.
+- **Visual lab:** original heart, nephron, neuron, alveolar-interface, and ECG teaching schematics with image-based questions and clinical/exam pearls.
 - **Clinical cases:** structured case vignettes with explanations and stretch prompts.
+- **Exam arena:** configurable mixed-question sessions, immediate feedback, score summaries, and missed-question review.
+- **OSCE studio:** self-checklists for focused history, respiratory examination, and patient communication.
+- **Research & EBM:** PICO builder, study-design guide, diagnostic-test calculator, and critical-appraisal checklist.
 - **Personal teacher:** adapts tone and level to the learner's goal; guided tutor prompts work without an API key.
 - **Optional AI tutor:** configure an OpenAI API key in Streamlit Community Cloud Secrets as `OPENAI_API_KEY = "your-key"` to enable open-ended AI responses. API usage may incur charges. Never commit keys to GitHub.
 - **Active-recall flashcards, bookmarks, and progress charts.**
 - **Automated checks** through GitHub Actions.
 
-The question bank is a growing educational starter set, not a comprehensive MBBS, postgraduate, or PhD curriculum. Advanced learning depth changes the style of prompts, but it does not replace validated specialist-level content or research supervision.
+The question bank is a growing educational starter set, not a comprehensive MBBS, postgraduate, or PhD curriculum. Advanced learning depth changes the style of prompts, but it does not replace validated specialist-level content or research supervision. The current question set is deliberately a foundation for expansion and should be faculty-reviewed before formal exam use.
 
 ## Deploy publicly
 
