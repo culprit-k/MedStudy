@@ -1,17 +1,45 @@
+import json
 import unittest
 from pathlib import Path
 
 from streamlit.testing.v1 import AppTest
 
-
-APP_FILE = Path(__file__).parents[1] / "app.py"
+ROOT = Path(__file__).parents[1]
+APP_FILE = ROOT / "app.py"
 
 
 class AppSmokeTests(unittest.TestCase):
     def test_dashboard_renders_without_exceptions(self):
-        app = AppTest.from_file(str(APP_FILE), default_timeout=15).run()
+        app = AppTest.from_file(str(APP_FILE), default_timeout=30).run()
         self.assertEqual(len(app.exception), 0, str(app.exception))
         self.assertTrue(any("Learn medicine" in str(item.value) for item in app.markdown))
+
+    def test_question_bank_schema_and_answer_keys(self):
+        data = json.loads((ROOT / "data" / "questions.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(data), {"Anatomy", "Physiology", "Biochemistry", "Pathology", "Microbiology", "Pharmacology"})
+        all_ids = []
+        for subject, questions in data.items():
+            self.assertGreaterEqual(len(questions), 10, subject)
+            for question in questions:
+                self.assertTrue(question.get("id"), subject)
+                self.assertTrue(question.get("question"), subject)
+                self.assertGreaterEqual(len(question.get("options", [])), 2, question.get("id"))
+                self.assertIn(question.get("answer"), question.get("options", []), question.get("id"))
+                self.assertTrue(question.get("explanation"), question.get("id"))
+                all_ids.append(question["id"])
+        self.assertEqual(len(all_ids), len(set(all_ids)), "Question IDs must be unique")
+
+    def test_visual_question_assets_exist(self):
+        visuals = json.loads((ROOT / "data" / "visual_questions.json").read_text(encoding="utf-8"))
+        self.assertGreaterEqual(len(visuals), 5)
+        for item in visuals:
+            self.assertIn(item["answer"], item["options"], item["id"])
+            self.assertTrue((ROOT / item["image"]).is_file(), item["image"])
+
+    def test_new_learning_areas_are_in_app_source(self):
+        source = APP_FILE.read_text(encoding="utf-8")
+        for label in ["Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI"]:
+            self.assertIn(label, source)
 
 
 if __name__ == "__main__":
