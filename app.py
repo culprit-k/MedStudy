@@ -394,7 +394,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Virtual Hospital", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Virtual Hospital", "Surgery Simulator", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -690,6 +690,132 @@ elif page == "Real 3D Anatomy Atlas":
         if st.button("Open Virtual Hospital", use_container_width=True):
             st.session_state.navigation = "Virtual Hospital"
             st.rerun()
+
+elif page == "Surgery Simulator":
+    st.markdown("""
+    <div style="background:linear-gradient(120deg,#071827,#15384b 60%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px;color:#effcff;margin-bottom:14px">
+      <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · VIRTUAL OPERATING THEATRE</div>
+      <h1 style="color:white;margin:.45rem 0">Surgery Simulator</h1>
+      <p style="color:#ccebed;margin:0">A branching, fictional operating-room simulation for anatomy recognition, patient safety, team communication and clinical decision-making.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.warning("TRAINING ONLY — not a surgical guide or credentialing tool. No real patient is involved. Procedures are represented at a high educational level; do not use this simulation as instructions for performing surgery. Real procedures require formal training, institutional protocols and direct supervision.")
+    procedures = {
+        "Appendectomy (acute appendicitis)": {
+            "case":"A 22-year-old fictional patient has migratory right-lower-quadrant pain, fever and local tenderness. Imaging is reported as consistent with acute appendicitis.",
+            "goal":"Recognise the likely diagnosis, verify the patient and planned procedure, identify relevant anatomy, respond safely to a simulated intraoperative change, and complete a handover.",
+            "anatomy":"Appendix and caecum; ileocaecal region; terminal ileum; caecal taeniae as an anatomical landmark; nearby ureter and iliac vessels as structures to respect.",
+            "questions":[
+                {"stage":"Pre-operative planning","prompt":"Which safety action must be confirmed before the simulated procedure begins?","options":["Proceed because the imaging is positive","Confirm identity, consent, procedure/site, allergies and required checks with the team","Skip the briefing to reduce anaesthetic time"],"answer":1,"why":"A team time-out and confirmation of identity, consent, intended procedure/site and relevant risks are core safety checks."},
+                {"stage":"Anatomy recognition","prompt":"The appendix typically arises from which structure?","options":["The greater curvature of the stomach","The caecum near the convergence of the taeniae coli","The sigmoid colon"],"answer":1,"why":"The appendix arises from the caecum; the taeniae coli converge at its base and are a useful anatomical concept."},
+                {"stage":"Simulated intraoperative event","prompt":"The simulated view is unexpectedly unclear and anatomy cannot be confidently identified. What is the safest response?","options":["Continue based on the expected anatomy","Pause, communicate the concern, reassess exposure and obtain senior help as appropriate","Ignore the monitor and continue quickly"],"answer":1,"why":"When anatomy or conditions are unclear, pausing and communicating is safer than proceeding on an assumption."},
+                {"stage":"Recovery and handover","prompt":"Which information belongs in the structured handover?","options":["Only the procedure name","Procedure summary, relevant findings, blood loss/fluids if applicable, complications, current status and postoperative plan","Only the patient's age"],"answer":1,"why":"A structured handover communicates the clinical course, current condition, issues requiring attention and the agreed plan."}
+            ]},
+        "Laparoscopic cholecystectomy (gallbladder)": {
+            "case":"A fictional adult has recurrent biliary colic and investigations support symptomatic gallstones. The team has planned a simulated laparoscopic cholecystectomy.",
+            "goal":"Practise pre-operative safety, biliary anatomy recognition, responding to uncertainty and structured handover.",
+            "anatomy":"Gallbladder, cystic duct, common hepatic duct, common bile duct, liver and hepatocystic triangle. The relationship between structures must be clearly established by the operating team before division.",
+            "questions":[
+                {"stage":"Pre-operative planning","prompt":"Which briefing is most appropriate before the simulated case?","options":["Confirm patient, consent, allergies, intended procedure, imaging and team readiness","Assume all checks were completed by someone else","Begin before the equipment and team are ready"],"answer":0,"why":"A reliable pre-operative briefing and team time-out confirm shared understanding and readiness."},
+                {"stage":"Biliary anatomy","prompt":"Why is careful identification of biliary anatomy essential in this operation?","options":["The ducts have no important neighbouring structures","Anatomical variation and misidentification can cause serious bile-duct or vascular injury","It is only needed for the written exam"],"answer":1,"why":"Biliary anatomy varies, and misidentification can cause major injury. This is a key reason for a deliberate, safe critical view and senior judgement in real surgery."},
+                {"stage":"Simulated intraoperative event","prompt":"The anatomy remains uncertain in the simulation. What is the safest decision?","options":["Divide the structure that looks most likely","Stop and reassess; communicate, seek experienced assistance and consider a safer alternative strategy","Continue because the planned operation cannot change"],"answer":1,"why":"Do not proceed when critical anatomy is uncertain. Real operative choices depend on the patient, findings, local protocols and experienced surgical judgement."},
+                {"stage":"Recovery and handover","prompt":"What should the recovery team be told?","options":["Only that the operation is finished","Relevant operative findings, any concerns or complications, current condition, analgesia/monitoring plan and escalation criteria","Nothing if the patient is awake"],"answer":1,"why":"Clear handover supports continuity, monitoring and early recognition of postoperative problems."}
+            ]},
+        "Skin wound closure (simulation)": {
+            "case":"A fictional patient has a clean, superficial forearm laceration. This is a decision-making and wound-assessment exercise, not a practical suturing tutorial.",
+            "goal":"Assess wound-related red flags, confirm consent and neurovascular assessment, choose an appropriate escalation pathway and plan aftercare.",
+            "anatomy":"Skin layers, superficial fascia, nearby tendons, nerves and vessels; the hand and distal limb require careful functional and neurovascular assessment.",
+            "questions":[
+                {"stage":"Initial assessment","prompt":"Before deciding on closure, what must be considered?","options":["Only the wound length","Mechanism, contamination, time, depth, foreign body, tendon/nerve/vessel involvement, tetanus status and patient factors","Whether the wound looks small in a photo"],"answer":1,"why":"Wound management depends on mechanism, contamination, depth, associated injury and patient factors—not size alone."},
+                {"stage":"Safety check","prompt":"A patient has new numbness and reduced finger movement distal to the wound. What should happen?","options":["Close the skin first and reassess later","Treat as possible deeper neurovascular or tendon injury and obtain urgent qualified assessment","Assume anxiety explains it"],"answer":1,"why":"New sensory or motor deficit may indicate important injury and requires prompt assessment before a simple closure pathway is chosen."},
+                {"stage":"Decision point","prompt":"The wound is heavily contaminated and the injury involves a high-risk structure. What is the best next step?","options":["Follow a generic closure recipe","Escalate for appropriate clinical assessment and wound-management planning","Use the shortest possible appointment"],"answer":1,"why":"Contamination and suspected deeper injury change management; qualified assessment and local protocols are required."},
+                {"stage":"Aftercare","prompt":"Which discharge teaching is most useful when closure is appropriate?","options":["No follow-up is ever needed","Explain wound care, activity advice, follow-up/removal if relevant, and warning signs such as spreading redness, fever, worsening pain or loss of function","Keep all wounds hidden from review"],"answer":1,"why":"Clear aftercare and warning signs help patients seek timely review if complications develop."}
+            ]},
+        "Hip fracture: theatre safety and fixation planning": {
+            "case":"A fictional older adult has a painful shortened, externally rotated leg after a fall. Imaging reports a hip fracture; the fixation choice is intentionally left to the treating team.",
+            "goal":"Practise peri-operative risk recognition, correct-site checks, anatomical orientation, safe team communication and postoperative handover.",
+            "anatomy":"Proximal femur, femoral head and neck, greater and lesser trochanters, acetabulum, and nearby femoral neurovascular structures.",
+            "questions":[
+                {"stage":"Pre-operative planning","prompt":"Which safety factors should be reviewed with the team?","options":["Identity, consent/capacity, correct side, imaging, allergies, anticoagulation, comorbidities and peri-operative plan","Only the patient's height","Only the operating-room schedule"],"answer":0,"why":"Safe peri-operative planning includes patient-specific risks, imaging, correct side, consent and shared team readiness."},
+                {"stage":"Anatomy recognition","prompt":"Which structure is part of the proximal femur?","options":["Acromion","Greater trochanter","Olecranon"],"answer":1,"why":"The greater trochanter is a prominent landmark on the proximal femur."},
+                {"stage":"Simulated change","prompt":"The team notices that the displayed side and the planned side do not match. What should happen?","options":["Proceed using memory","Stop the process and resolve the discrepancy with the team and source documentation before continuing","Ask the patient after anaesthesia"],"answer":1,"why":"Any wrong-side discrepancy is a stop signal. It must be resolved before proceeding."},
+                {"stage":"Recovery and handover","prompt":"Which issue is especially important in the postoperative plan?","options":["Mobilisation/weight-bearing instructions as prescribed, pain control, VTE prevention plan, wound review and delirium-risk monitoring","Only the implant brand","No plan until the next day"],"answer":0,"why":"The postoperative plan should clearly communicate the treating team's mobility instructions, thromboprophylaxis and monitoring priorities."}
+            ]}
+    }
+    procedure_name = st.selectbox("Choose a practice case", list(procedures.keys()), key="surgery_procedure")
+    case = procedures[procedure_name]
+    st.markdown("### Patient brief")
+    st.info(case["case"])
+    st.markdown("**Learning objectives:** " + case["goal"])
+    top1, top2, top3 = st.columns(3)
+    top1.metric("Training case", "Fictional")
+    top2.metric("Stages", "4")
+    top3.metric("Scoring", "Safety + reasoning")
+    st.markdown("### Anatomy orientation")
+    st.write(case["anatomy"])
+    if st.button("Open 3D Anatomy Atlas", use_container_width=True):
+        st.session_state.navigation = "Real 3D Anatomy Atlas"
+        st.rerun()
+    st.divider()
+    st.markdown("### Operating theatre workflow")
+    st.caption("Work through each stage in order. Select an answer, review the rationale, and then continue to the next stage.")
+    progress_key = "surgery_progress_" + procedure_name
+    answers_key = "surgery_answers_" + procedure_name
+    if progress_key not in st.session_state:
+        st.session_state[progress_key] = 0
+    if answers_key not in st.session_state:
+        st.session_state[answers_key] = {}
+    questions = case["questions"]
+    current = st.session_state[progress_key]
+    st.progress((current + 1) / len(questions) if current < len(questions) else 1.0)
+    if current < len(questions):
+        q = questions[current]
+        st.markdown(f"#### Stage {current + 1} of {len(questions)} · {q['stage']}")
+        st.markdown(f"**{q['prompt']}**")
+        selected = st.radio("Choose the safest / most appropriate response", q["options"], key=f"surgery_choice_{procedure_name}_{current}", index=None)
+        if st.button("Submit decision", type="primary", key=f"surgery_submit_{procedure_name}_{current}"):
+            if selected is None:
+                st.warning("Choose an answer before submitting.")
+            else:
+                choice = q["options"].index(selected)
+                st.session_state[answers_key][current] = choice
+                if choice == q["answer"]:
+                    st.success("Correct — safe and appropriate decision.")
+                else:
+                    st.error("Not quite. Review the rationale before continuing.")
+                st.info(q["why"])
+                st.session_state[f"surgery_feedback_{procedure_name}_{current}"] = True
+        if st.session_state.get(f"surgery_feedback_{procedure_name}_{current}", False):
+            if st.button("Continue to next stage →", key=f"surgery_next_{procedure_name}_{current}"):
+                st.session_state[progress_key] += 1
+                st.rerun()
+    else:
+        correct = sum(1 for i, q in enumerate(questions) if st.session_state[answers_key].get(i) == q["answer"])
+        score = round(100 * correct / len(questions))
+        st.markdown("### Debrief")
+        st.metric("Decision score", f"{score}%")
+        st.write(f"You selected {correct} of {len(questions)} best answers for **{procedure_name}**.")
+        if score == 100:
+            st.success("Excellent performance on this learning case. Repeat with another procedure to practise transfer of safety principles.")
+        elif score >= 75:
+            st.info("Good foundation. Review the explanations for missed decisions and repeat the case.")
+        else:
+            st.warning("Review the rationales, then repeat the case. Prioritise identity/site checks, clear anatomy, escalation and handover.")
+        st.markdown("#### Your review")
+        for i, q in enumerate(questions):
+            chosen = st.session_state[answers_key].get(i)
+            st.markdown(f"**{i+1}. {q['stage']}**")
+            st.write(f"Your answer: {q['options'][chosen] if chosen is not None else 'Not answered'}")
+            st.write(f"Best answer: {q['options'][q['answer']]}")
+            st.caption(q["why"])
+        if st.button("Restart this case", type="primary", key=f"surgery_restart_{procedure_name}"):
+            st.session_state[progress_key] = 0
+            st.session_state[answers_key] = {}
+            for i in range(len(questions)):
+                st.session_state.pop(f"surgery_feedback_{procedure_name}_{i}", None)
+            st.rerun()
+    st.markdown("### Practice another skill")
+    st.caption("Next modules can add simulated instrument recognition, knot-tying concepts, laparoscopic camera orientation, bleeding-response teamwork, and postoperative complications. These should remain clearly labelled educational simulations, not real procedural instructions.")
 
 elif page == "Learning Library":
     st.title("📚 Learning library")
