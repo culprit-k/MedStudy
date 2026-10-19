@@ -58,10 +58,19 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
 
     def test_damped_spring_membrane_and_render_loop_exist(self):
         self.assertIn("stiffness=34,damping=9,coupling=5.5", self.html)
-        self.assertIn("const acceleration=-stiffness*indent[i]-damping*velocity[i]", self.html)
+        self.assertIn("physicsEngine.step(dt)", self.html)
+        self.assertIn("TissuePhysicsEngine", self.html)
         self.assertIn("animate();updateMetrics();", self.html)
         self.assertEqual(self.html.count("animate();updateMetrics();"), 1)
         self.assertNotIn("\\\\nfunction", self.html)
+
+    def test_shared_physics_engine_is_loaded_and_tested(self):
+        engine = (ROOT / "components" / "tissue_physics_engine.js").read_text(encoding="utf-8")
+        tests = (ROOT / "tests" / "tissue_physics_engine.test.js").read_text(encoding="utf-8")
+        self.assertIn("TissuePhysicsEngine", engine)
+        self.assertIn("substep large frame times", engine)
+        self.assertIn("node --test tests/tissue_physics_engine.test.js", (ROOT / ".github" / "workflows" / "tissue-lab-ci.yml").read_text(encoding="utf-8"))
+        self.assertIn("bounded under repeated large contacts", tests)
 
     def test_reset_and_layer_controls_exist(self):
         self.assertIn('id="reset"', self.html)
@@ -87,9 +96,9 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("No finite-element tissue physics", self.page)
 
     def test_membrane_has_bounded_deformation_and_fixed_rim(self):
-        self.assertIn("if(indent[i]>.18)", self.html)
-        self.assertIn("ix<2||ix>columns-3||iz<2||iz>rows-3", self.html)
-        self.assertIn("Math.min(.033", self.html)
+        self.assertIn("maxDisplacement:.18", self.html)
+        self.assertIn("boundaryWidth:2", self.html)
+        self.assertIn("applyIndentation(gx,gz,amount", self.html)
 
     def test_external_body_mesh_has_loader_focus_and_disclosure(self):
         self.assertIn("GLTFLoader.js", self.html)
