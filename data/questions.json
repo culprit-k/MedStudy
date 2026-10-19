@@ -71,6 +71,42 @@
       ],
       "answer": "Frontal bone",
       "explanation": "The frontal bone forms the forehead and contributes to the roof of the orbits and the anterior cranial floor."
+    },
+    {
+      "id": "anat-007",
+      "question": "A fracture at the surgical neck of the humerus most directly places which nerve at risk?",
+      "options": [
+        "Axillary nerve",
+        "Ulnar nerve",
+        "Median nerve",
+        "Long thoracic nerve"
+      ],
+      "answer": "Axillary nerve",
+      "explanation": "The axillary nerve and posterior circumflex humeral vessels wind around the surgical neck. Injury may weaken deltoid function and impair sensation over the regimental-badge area."
+    },
+    {
+      "id": "anat-008",
+      "question": "A posterior communicating artery aneurysm classically may compress which cranial nerve?",
+      "options": [
+        "Oculomotor nerve (CN III)",
+        "Abducens nerve (CN VI)",
+        "Hypoglossal nerve (CN XII)",
+        "Olfactory nerve (CN I)"
+      ],
+      "answer": "Oculomotor nerve (CN III)",
+      "explanation": "A posterior communicating artery aneurysm can compress CN III, causing ptosis, a dilated pupil, and impaired eye movements. Suspected aneurysmal symptoms require urgent clinical assessment."
+    },
+    {
+      "id": "anat-009",
+      "question": "Which structure forms the principal anatomical boundary between the superficial and deep perineal pouches in the traditional description?",
+      "options": [
+        "Perineal membrane",
+        "Inguinal ligament",
+        "Sacrotuberous ligament",
+        "Obturator membrane"
+      ],
+      "answer": "Perineal membrane",
+      "explanation": "The perineal membrane spans the pubic arch and is a key boundary of the deep perineal region. The terminology and compartment descriptions should be interpreted with current anatomical references."
     }
   ],
   "Physiology": [
@@ -145,6 +181,42 @@
       ],
       "answer": "Hemoglobin in erythrocytes",
       "explanation": "Hemoglobin within red blood cells binds and transports most oxygen in blood; a small amount is dissolved in plasma."
+    },
+    {
+      "id": "phys-007",
+      "question": "A rightward shift of the oxyhaemoglobin dissociation curve is promoted by which combination?",
+      "options": [
+        "Increased CO₂, increased H⁺, and increased temperature",
+        "Reduced CO₂, reduced H⁺, and reduced temperature",
+        "Reduced 2,3-BPG only",
+        "Carbon monoxide binding to haemoglobin as the sole change"
+      ],
+      "answer": "Increased CO₂, increased H⁺, and increased temperature",
+      "explanation": "Higher CO₂, lower pH, higher temperature, and increased 2,3-BPG reduce haemoglobin oxygen affinity and promote unloading in metabolically active tissues (Bohr effect)."
+    },
+    {
+      "id": "phys-008",
+      "question": "In a healthy person, an acute increase in arterial CO₂ primarily stimulates ventilation through which mechanism?",
+      "options": [
+        "Central chemoreceptor response to CSF pH changes",
+        "Direct stimulation of skeletal muscle spindles",
+        "Reduced medullary hydrogen ion concentration",
+        "Inhibition of peripheral chemoreceptors"
+      ],
+      "answer": "Central chemoreceptor response to CSF pH changes",
+      "explanation": "CO₂ crosses the blood–brain barrier and generates H⁺ in cerebrospinal fluid, stimulating central chemoreceptor pathways and increasing ventilation. Peripheral chemoreceptors also contribute, particularly in hypoxaemia."
+    },
+    {
+      "id": "phys-009",
+      "question": "Which change is expected immediately after an acute haemorrhage, before compensatory mechanisms fully restore volume?",
+      "options": [
+        "Reduced venous return and stroke volume",
+        "Increased preload and stroke volume",
+        "Increased arterial pressure in all cases",
+        "Immediate increase in total red-cell mass"
+      ],
+      "answer": "Reduced venous return and stroke volume",
+      "explanation": "Loss of circulating volume lowers mean systemic filling pressure and venous return, reducing preload and stroke volume. Baroreflex-mediated tachycardia and vasoconstriction are compensatory responses."
     }
   ],
   "Biochemistry": [
@@ -219,6 +291,42 @@
       ],
       "answer": "ATP",
       "explanation": "ATP transfers usable free energy to many cellular processes, including biosynthesis, transport, and muscle contraction."
+    },
+    {
+      "id": "bio-007",
+      "question": "Methylmalonic acid is increased in vitamin B12 deficiency because B12 is a cofactor for which enzyme?",
+      "options": [
+        "Methylmalonyl-CoA mutase",
+        "Pyruvate carboxylase",
+        "Glucose-6-phosphate dehydrogenase",
+        "Phenylalanine hydroxylase"
+      ],
+      "answer": "Methylmalonyl-CoA mutase",
+      "explanation": "Adenosylcobalamin is required by methylmalonyl-CoA mutase. Impaired activity increases methylmalonic acid; this can help distinguish B12 deficiency from folate deficiency, interpreted with clinical findings."
+    },
+    {
+      "id": "bio-008",
+      "question": "A deficiency of glucose-6-phosphate dehydrogenase reduces erythrocyte capacity to generate which protective molecule?",
+      "options": [
+        "Reduced glutathione via NADPH generation",
+        "Creatine phosphate",
+        "Bile salts",
+        "Acetyl-CoA from ketone bodies"
+      ],
+      "answer": "Reduced glutathione via NADPH generation",
+      "explanation": "The pentose phosphate pathway generates NADPH, which supports glutathione reduction and protects erythrocytes from oxidative injury. G6PD deficiency can cause episodic haemolysis after oxidative stress."
+    },
+    {
+      "id": "bio-009",
+      "question": "Which regulatory enzyme catalyses the committed, rate-limiting step of cholesterol synthesis?",
+      "options": [
+        "HMG-CoA reductase",
+        "Hormone-sensitive lipase",
+        "Lipoprotein lipase",
+        "Acetyl-CoA carboxylase"
+      ],
+      "answer": "HMG-CoA reductase",
+      "explanation": "HMG-CoA reductase converts HMG-CoA to mevalonate and is regulated by sterol feedback, phosphorylation, and transcription. Statins inhibit this enzyme and lower hepatic cholesterol synthesis."
     }
   ],
   "Pathology": [
@@ -293,6 +401,42 @@
       ],
       "answer": "HDL",
       "explanation": "High-density lipoprotein participates in reverse cholesterol transport, moving cholesterol from peripheral tissues toward the liver, although the process involves multiple pathways."
+    },
+    {
+      "id": "path-007",
+      "question": "A tumour suppressor gene is most commonly inactivated in the classic two-hit model by which pattern?",
+      "options": [
+        "Loss of function affecting both alleles in a cell",
+        "Activation of one allele by a gain-of-function mutation only",
+        "A reversible increase in normal protein expression",
+        "An isolated mitochondrial DNA deletion in every case"
+      ],
+      "answer": "Loss of function affecting both alleles in a cell",
+      "explanation": "The two-hit model describes loss of function of both tumour-suppressor alleles, often through different events. Some tumour suppressors and inherited cancer syndromes have additional mechanisms and exceptions."
+    },
+    {
+      "id": "path-008",
+      "question": "Which finding is most characteristic of a granulomatous inflammatory response?",
+      "options": [
+        "Aggregates of activated macrophages, often with epithelioid morphology",
+        "Only circulating erythrocytes outside vessels",
+        "Uniform replacement by mature adipocytes",
+        "Exclusive presence of platelets without leukocytes"
+      ],
+      "answer": "Aggregates of activated macrophages, often with epithelioid morphology",
+      "explanation": "Granulomas are organised collections of activated macrophages, often with epithelioid cells and sometimes multinucleated giant cells, with or without central necrosis depending on cause."
+    },
+    {
+      "id": "path-009",
+      "question": "In disseminated intravascular coagulation, the core pathophysiological process is:",
+      "options": [
+        "Widespread coagulation activation with consumption of platelets and clotting factors",
+        "Isolated increase in platelet production without clot formation",
+        "Selective loss of vitamin B12 absorption",
+        "Complete absence of fibrin formation in all vessels"
+      ],
+      "answer": "Widespread coagulation activation with consumption of platelets and clotting factors",
+      "explanation": "DIC involves systemic coagulation activation, microvascular fibrin formation, and consumption of platelets and factors, potentially causing both thrombosis and bleeding. Laboratory findings vary with timing and cause."
     }
   ],
   "Microbiology": [
@@ -367,6 +511,42 @@
       ],
       "answer": "Clostridioides difficile",
       "explanation": "Clostridioides difficile can overgrow after antibiotic-associated disruption of the intestinal microbiota and produce toxins that cause colitis."
+    },
+    {
+      "id": "micro-007",
+      "question": "A sputum NAAT is positive for Mycobacterium tuberculosis complex. Which interpretation is most appropriate?",
+      "options": [
+        "It supports TB diagnosis, but clinical context and drug-resistance testing may still be needed",
+        "It proves all first-line drugs will be effective",
+        "It replaces assessment of infectiousness in every patient",
+        "It identifies every possible nontuberculous mycobacterium"
+      ],
+      "answer": "It supports TB diagnosis, but clinical context and drug-resistance testing may still be needed",
+      "explanation": "Molecular assays can rapidly detect TB complex and, for some assays, selected resistance markers. Culture, susceptibility testing, clinical assessment, and public-health protocols may still be necessary."
+    },
+    {
+      "id": "micro-008",
+      "question": "Which mechanism is used by many bacterial beta-lactamases to inactivate penicillins and cephalosporins?",
+      "options": [
+        "Hydrolysis of the beta-lactam ring",
+        "Methylation of bacterial ribosomal RNA only",
+        "Blocking folate uptake by the host",
+        "Oxidation of bacterial DNA by reactive oxygen species"
+      ],
+      "answer": "Hydrolysis of the beta-lactam ring",
+      "explanation": "Beta-lactamases hydrolyse the beta-lactam ring, reducing antibiotic activity. Resistance may also arise through altered penicillin-binding proteins, reduced permeability, and efflux."
+    },
+    {
+      "id": "micro-009",
+      "question": "Which test principle underlies the Kirby–Bauer disk diffusion method?",
+      "options": [
+        "Measuring inhibition-zone diameters around antimicrobial disks on agar",
+        "Amplifying target DNA by thermal cycling",
+        "Detecting antibodies through enzyme-linked colour change",
+        "Visualising acid-fast cell walls by carbol fuchsin"
+      ],
+      "answer": "Measuring inhibition-zone diameters around antimicrobial disks on agar",
+      "explanation": "Standardised disk diffusion measures inhibition zones and interprets them using organism-specific breakpoints and current standards. Inoculum, medium, incubation, and quality control must be standardised."
     }
   ],
   "Pharmacology": [
@@ -441,6 +621,42 @@
       ],
       "answer": "ACE inhibitors",
       "explanation": "ACE inhibitors reduce angiotensin II formation and aldosterone secretion, lowering blood pressure. They have important contraindications and adverse effects."
+    },
+    {
+      "id": "pharm-007",
+      "question": "A patient taking an ACE inhibitor develops persistent dry cough. Which mediator is implicated in this adverse effect?",
+      "options": [
+        "Bradykinin",
+        "Dopamine",
+        "Histamine degradation product only",
+        "Acetylcholine at nicotinic receptors"
+      ],
+      "answer": "Bradykinin",
+      "explanation": "ACE degrades bradykinin. ACE inhibition can increase bradykinin and contribute to cough and, rarely, angioedema. Medication changes require clinician assessment."
+    },
+    {
+      "id": "pharm-008",
+      "question": "Which pharmacokinetic parameter most directly determines the loading dose needed to reach a target plasma concentration?",
+      "options": [
+        "Volume of distribution",
+        "Elimination half-life alone",
+        "Renal clearance alone",
+        "Fraction absorbed alone"
+      ],
+      "answer": "Volume of distribution",
+      "explanation": "Loading dose is approximately target concentration × volume of distribution / bioavailability. Maintenance dosing depends more directly on clearance and target exposure."
+    },
+    {
+      "id": "pharm-009",
+      "question": "A competitive antagonist is added to a reversible agonist in a simple dose-response system. What is the expected effect?",
+      "options": [
+        "A rightward shift of the agonist curve that can be overcome by more agonist",
+        "A reduction in maximal response that cannot be overcome in all cases",
+        "Permanent receptor destruction",
+        "An increase in agonist potency in every tissue"
+      ],
+      "answer": "A rightward shift of the agonist curve that can be overcome by more agonist",
+      "explanation": "A surmountable competitive antagonist typically increases the agonist concentration needed for a given response (reduced apparent potency) while preserving maximal efficacy in the ideal model."
     }
   ]
 }
