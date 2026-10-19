@@ -28,6 +28,13 @@ This is a small **mass-spring membrane approximation**, not finite-element analy
 - The mesh is a single static body-surface object. It does not include selectable organs, bones, vessel layers, or surgical collision geometry. The app does not copy the binary mesh into this repository.
 - The BodyParts3D/Z-Anatomy-based viewer has separate upstream terms, including ShareAlike and other restrictions. Its assets are embedded by reference and should not be copied or redistributed without checking the relevant notices.
 
+### Collision and anatomy proxy layer
+
+- The new dependency-free `components/anatomy_collision_engine.js` provides point-to-plane contact, point-to-sphere proxy contact, penetration depth, and a contact normal.
+- The scene displays two translucent labelled proxy volumes and reports whether a probe point overlaps a proxy.
+- Collision helpers are covered by Node regression tests for surface contact, non-contact, finite contact normals, deepest-proxy selection, and invalid inputs.
+- These are deliberately simple geometric proxies. Their labels are placeholders for interaction testing, not claims that the rendered objects match real vessels or organs. They are not a full instrument-vs-triangle collision system and do not provide force feedback.
+
 ### Current interactions
 
 - Camera orbit and zoom.
@@ -44,14 +51,15 @@ The incision marks do **not** split the mesh. Stitches do **not** measure tissue
 Run from the repository root:
 
 ```bash
+node --test tests/anatomy_collision_engine.test.js
 node --test tests/tissue_physics_engine.test.js
 python -m unittest discover -s tests -p 'test_tissue_interaction_lab.py' -v
 python -m py_compile pages/3_Tissue_Interaction_Lab.py
 ```
 
-The GitHub Actions workflow `.github/workflows/tissue-lab-ci.yml` runs the numerical physics regression suite, the simulator smoke tests, Python compilation, and inline JavaScript syntax validation.
+The GitHub Actions workflow `.github/workflows/tissue-lab-ci.yml` runs collision and physics regression suites, simulator smoke tests, Python compilation, and inline JavaScript syntax validation.
 
-The Node tests check numerical invariants for the mathematical model; they do not prove biomechanical accuracy. Source smoke tests and syntax checks do not validate visual output, anatomical correctness, or clinical training value. The simulator still needs live-browser testing.
+The Node tests check geometric collision and numerical invariants for these simplified models; they do not prove biomechanical accuracy. Source smoke tests and syntax checks do not validate visual output, anatomical correctness, or clinical training value. The simulator still needs live-browser testing.
 
 ## Recommended engineering sequence
 
