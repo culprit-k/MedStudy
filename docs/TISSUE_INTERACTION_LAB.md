@@ -11,8 +11,10 @@ This page is an educational software prototype inside the existing MedStudy Stre
 - Three.js 0.128.0 renders the surface, layered teaching slabs, practice instrument, incision traces, and visual closure stitches.
 - The surface is a 54 × 38 subdivided plane (55 × 39 vertices).
 - Probe contact applies a local radial displacement to the surface grid.
-- Each node has displacement and velocity state. A damped spring term pulls nodes back toward rest and a neighbor-coupling term smooths deformation across adjacent nodes.
-- Integration uses a bounded frame time step and a fixed boundary rim. Vertex normals update when the surface changes.
+- Physics is implemented in the shared, dependency-free `components/tissue_physics_engine.js` module and connected to the Three.js mesh.
+- Each grid node has displacement and velocity state. A damped restoring spring pulls nodes toward rest; neighbor coupling spreads deformation across adjacent nodes.
+- The solver substeps frame deltas at approximately 1/120 s, enforces a fixed boundary rim, clamps displacement to 0.18 arbitrary units, and checks for non-finite state. Vertex normals update when the surface changes.
+- Deterministic Node tests cover contact response, locality, boundary conditions, bounded displacement, large frame deltas, damping/recovery, invalid input, reset, and repeatability.
 - Stiffness, damping, and neighbor coupling can be adjusted using the UI sliders.
 - The maximum displacement readout is in **arbitrary scene units**, not millimetres or a measured material property.
 - The reset control removes visual practice markings and returns the membrane to its rest configuration.
@@ -42,13 +44,14 @@ The incision marks do **not** split the mesh. Stitches do **not** measure tissue
 Run from the repository root:
 
 ```bash
+node --test tests/tissue_physics_engine.test.js
 python -m unittest discover -s tests -p 'test_tissue_interaction_lab.py' -v
 python -m py_compile pages/3_Tissue_Interaction_Lab.py
 ```
 
-The GitHub Actions workflow `.github/workflows/tissue-lab-ci.yml` runs the smoke tests and Python compilation, extracts the inline JavaScript, and invokes `node --check` for syntax validation.
+The GitHub Actions workflow `.github/workflows/tissue-lab-ci.yml` runs the numerical physics regression suite, the simulator smoke tests, Python compilation, and inline JavaScript syntax validation.
 
-These tests validate presence and syntax, not visual output, numerical stability, anatomical correctness, or clinical training value. The simulator still needs live-browser testing.
+The Node tests check numerical invariants for the mathematical model; they do not prove biomechanical accuracy. Source smoke tests and syntax checks do not validate visual output, anatomical correctness, or clinical training value. The simulator still needs live-browser testing.
 
 ## Recommended engineering sequence
 
