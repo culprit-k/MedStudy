@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "note": "A starter index for a searchable, expandable MBBS image library. Live image results are retrieved from Wikimedia Commons at search time; check each file's individual licence and attribution before reuse.",
+  "subjects": [
+    {
+      "name": "All subjects",
+      "query": ""
+    },
+    {
+      "name": "Anatomy",
+      "query": "human anatomy organ anatomical diagram"
+    },
+    {
+      "name": "Physiology",
+      "query": "human physiology mechanism physiology diagram"
+    },
+    {
+      "name": "Histology",
+      "query": "human histology tissue microscopy"
+    },
+    {
+      "name": "Embryology",
+      "query": "human embryology development anatomy"
+    },
+    {
+      "name": "Biochemistry",
+      "query": "biochemistry metabolism pathway enzyme diagram"
+    },
+    {
+      "name": "Pathology",
+      "query": "surgical pathology gross pathology histopathology"
+    },
+    {
+      "name": "Microbiology",
+      "query": "medical microbiology bacteria microscopy"
+    },
+    {
+      "name": "Immunology",
+      "query": "immunology immune system cells diagram"
+    },
+    {
+      "name": "Pharmacology",
+      "query": "pharmacology receptor mechanism drug diagram"
+    },
+    {
+      "name": "Hematology",
+      "query": "hematology blood smear blood cells"
+    },
+    {
+      "name": "Parasitology",
+      "query": "medical parasitology parasite microscopy"
+    },
+    {
+      "name": "Radiology",
+      "query": "medical radiology CT MRI X-ray anatomy"
+    },
+    {
+      "name": "ECG & Cardiology",
+      "query": "electrocardiogram ECG cardiology heart"
+    },
+    {
+      "name": "Respiratory medicine",
+      "query": "respiratory lung anatomy pulmonary pathology"
+    },
+    {
+      "name": "Nephrology",
+      "query": "kidney nephron renal histology"
+    },
+    {
+      "name": "Neurology",
+      "query": "brain neuroanatomy nervous system"
+    },
+    {
+      "name": "Endocrinology",
+      "query": "endocrine glands hormone physiology"
+    },
+    {
+      "name": "Gastroenterology",
+      "query": "gastrointestinal tract liver pancreas anatomy histology"
+    },
+    {
+      "name": "Dermatology",
+      "query": "dermatology skin histology clinical lesion"
+    },
+    {
+      "name": "Ophthalmology",
+      "query": "eye anatomy ophthalmology fundus"
+    },
+    {
+      "name": "ENT",
+      "query": "ear nose throat anatomy otolaryngology"
+    },
+    {
+      "name": "Obstetrics & Gynecology",
+      "query": "obstetrics gynecology reproductive anatomy"
+    },
+    {
+      "name": "Pediatrics",
+      "query": "pediatrics child development anatomy medical"
+    },
+    {
+      "name": "Surgery",
+      "query": "surgical anatomy operative surgery instrument"
+    },
+    {
+      "name": "Orthopedics",
+      "query": "orthopedic anatomy bone fracture radiograph"
+    },
+    {
+      "name": "Psychiatry",
+      "query": "psychiatry brain neuroscience medical diagram"
+    },
+    {
+      "name": "Community Medicine & Public Health",
+      "query": "epidemiology public health infographic vaccination"
+    },
+    {
+      "name": "Forensic Medicine",
+      "query": "forensic medicine forensic pathology educational"
+    },
+    {
+      "name": "Clinical Skills & OSCE",
+      "query": "clinical examination medical education skills"
+    },
+    {
+      "name": "Research & EBM",
+      "query": "medical statistics forest plot Kaplan Meier diagram"
+    }
+  ],
+  "local_images": [
+    {
+      "title": "Heart and great vessels",
+      "path": "assets/heart.svg",
+      "caption": "Simplified schematic for cardiovascular anatomy. Not to scale.",
+      "subjects": [
+        "Anatomy",
+        "Physiology",
+        "ECG & Cardiology",
+        "Surgery"
+      ]
+    },
+    {
+      "title": "Nephron",
+      "path": "assets/nephron.svg",
+      "caption": "Simplified nephron schematic for renal physiology and histology. Not to scale.",
+      "subjects": [
+        "Anatomy",
+        "Physiology",
+        "Histology",
+        "Nephrology",
+        "Biochemistry"
+      ]
+    },
+    {
+      "title": "Neuron",
+      "path": "assets/neuron.svg",
+      "caption": "Simplified neuron schematic for neuroanatomy and neurophysiology. Not to scale.",
+      "subjects": [
+        "Anatomy",
+        "Physiology",
+        "Histology",
+        "Neurology",
+        "Pharmacology",
+        "Psychiatry"
+      ]
+    },
+    {
+      "title": "Alveolar-capillary interface",
+      "path": "assets/alveoli.svg",
+      "caption": "Simplified gas-exchange interface. Not to scale.",
+      "subjects": [
+        "Anatomy",
+        "Physiology",
+        "Histology",
+        "Respiratory medicine",
+        "Pathology"
+      ]
+    },
+    {
+      "title": "Illustrative ECG rhythm strip",
+      "path": "assets/ecg.svg",
+      "caption": "Simplified teaching tracing; not suitable for clinical interpretation.",
+      "subjects": [
+        "Physiology",
+        "ECG & Cardiology",
+        "Radiology",
+        "Clinical Skills & OSCE"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "name": "Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/",
+      "description": "Search for reusable images across anatomy, histology, pathology, organisms, imaging and other medical subjects. Check the licence and attribution on every file page.",
+      "licence": "Licences vary by file; verify individually."
+    },
+    {
+      "name": "CDC Public Health Image Library (PHIL)",
+      "url": "https://phil.cdc.gov/",
+      "description": "Large image collection covering infectious diseases, organisms, laboratory methods and public health. Select only items with suitable reuse permissions.",
+      "licence": "Each image's copyright status and attribution instructions must be checked."
+    },
+    {
+      "name": "OpenStax Anatomy & Physiology 2e",
+      "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction",
+      "description": "Open educational text with anatomy, physiology and supporting illustrations.",
+      "licence": "CC BY-NC-SA 4.0 for this book; non-commercial use with attribution and ShareAlike. Not a blanket licence for other OpenStax titles."
+    },
+    {
+      "name": "NCBI Bookshelf",
+      "url": "https://www.ncbi.nlm.nih.gov/books/",
+      "description": "Medical and life-science books and reviews useful for contextual learning. Individual works and images may have different reuse terms.",
+      "licence": "Check the copyright/licence notice for each work."
+    }
+  ]
+}
