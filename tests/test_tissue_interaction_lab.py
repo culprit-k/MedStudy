@@ -31,6 +31,8 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
     def test_main_navigation_routes_to_tissue_lab(self):
         self.assertIn('"Tissue Interaction Lab"', self.app)
         self.assertIn('st.switch_page("pages/3_Tissue_Interaction_Lab.py")', self.app)
+        self.assertIn("Tissue interaction lab", self.app)
+        self.assertIn("adjustable spring parameters", self.app)
 
     def test_page_embeds_component(self):
         self.assertIn("components.html", self.page)
