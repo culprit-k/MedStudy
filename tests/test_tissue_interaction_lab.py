@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 COMPONENT = ROOT / "components" / "realistic_tissue_interaction_lab.html"
 PAGE = ROOT / "pages" / "3_Tissue_Interaction_Lab.py"
 APP = ROOT / "app.py"
+README = ROOT / "README.md"
+DOCS = ROOT / "docs" / "TISSUE_INTERACTION_LAB.md"
 
 
 class TissueInteractionLabSmokeTests(unittest.TestCase):
@@ -17,6 +19,14 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         cls.html = COMPONENT.read_text(encoding="utf-8")
         cls.page = PAGE.read_text(encoding="utf-8")
         cls.app = APP.read_text(encoding="utf-8")
+        cls.readme = README.read_text(encoding="utf-8")
+        cls.docs = DOCS.read_text(encoding="utf-8")
+
+    def test_documentation_discloses_model_limits(self):
+        self.assertIn("Tissue Interaction Lab", self.readme)
+        self.assertIn("not a realistic or clinically validated surgical simulator", self.readme)
+        self.assertIn("mass-spring membrane approximation", self.docs)
+        self.assertIn("not literature-derived measurements", self.docs)
 
     def test_main_navigation_routes_to_tissue_lab(self):
         self.assertIn('"Tissue Interaction Lab"', self.app)
