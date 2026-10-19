@@ -394,7 +394,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Virtual Hospital", "Surgery Simulator", "Hands-on Skills Lab", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Virtual Hospital", "Surgery Simulator", "Hands-on Skills Lab", "Tissue Interaction Lab", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -406,6 +406,9 @@ with st.sidebar:
     st.caption(f"{attempts}/{st.session_state.daily_goal} questions attempted this session")
     st.markdown("---")
     st.caption("Study companion only · not for diagnosis or treatment decisions")
+
+if page == "Tissue Interaction Lab":
+    st.switch_page("pages/3_Tissue_Interaction_Lab.py")
 
 if page == "Home":
     st.markdown("""
