@@ -93,7 +93,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Learning Library", "Visual Lab", "Clinical Cases", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Learning Library", "Exam Arena", "Visual Lab", "Clinical Cases", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -163,6 +163,75 @@ elif page == "Learning Library":
                 if item["id"] not in st.session_state.bookmarks:
                     st.session_state.bookmarks.append(item["id"])
                 st.toast("Saved to your revision list")
+
+elif page == "Exam Arena":
+    st.title("🏁 Exam arena")
+    st.caption("Active recall with instant feedback. Choose your focus, attempt the question, then review the reasoning.")
+    c1,c2,c3=st.columns(3)
+    with c1:
+        quiz_subject=st.selectbox("Question pool",["All subjects"]+SUBJECTS,key="arena_subject")
+    with c2:
+        quiz_size=st.selectbox("Session length",[5,10,15,20],key="arena_size")
+    with c3:
+        quiz_mode=st.selectbox("Practice style",["Standard MCQ","Mechanism challenge","Clinical integration"],key="arena_mode")
+    if st.button("Start / restart exam",type="primary",use_container_width=True):
+        pool=ALL_CARDS if quiz_subject=="All subjects" else [q for q in ALL_CARDS if q["subject"]==quiz_subject]
+        if quiz_mode=="Clinical integration":
+            pool=[q for q in pool if q["subject"]=="Clinical reasoning"] or pool
+        chosen=random.sample(pool,k=min(quiz_size,len(pool)))
+        st.session_state.quiz_ids=[q["id"] for q in chosen]
+        st.session_state.quiz_index=0
+        st.session_state.quiz_feedback={}
+        st.rerun()
+    ids=st.session_state.quiz_ids
+    if not ids:
+        st.markdown('<div class="panel"><h3>Ready when you are</h3><p>Pick a subject and session length, then start. Treat every explanation as a mini-review.</p></div>',unsafe_allow_html=True)
+    elif st.session_state.quiz_index>=len(ids):
+        answers=list(st.session_state.quiz_feedback.values())
+        score=sum(1 for x in answers if x["correct"])
+        st.balloons()
+        st.success("Session complete — review your errors before starting another round.")
+        a,b,c=st.columns(3)
+        a.metric("Score",f"{score}/{len(answers)}")
+        b.metric("Accuracy",f"{round(100*score/max(len(answers),1))}%")
+        c.metric("Questions reviewed",len(answers))
+        misses=[x for x in answers if not x["correct"]]
+        if misses:
+            st.markdown("### Review missed questions")
+            for missed in misses:
+                item=find_question(missed["id"])
+                if item:
+                    with st.expander(item["question"]):
+                        st.write("Your answer: "+missed["chosen"])
+                        st.success("Correct answer: "+item["answer"])
+                        st.write(item["explanation"])
+    else:
+        qid=ids[st.session_state.quiz_index]
+        item=find_question(qid)
+        if item:
+            st.progress(st.session_state.quiz_index/len(ids))
+            st.caption(f"QUESTION {st.session_state.quiz_index+1} OF {len(ids)} · {item['subject']} · {quiz_mode}")
+            if item.get("image"):
+                st.image(str(ROOT/item["image"]),use_container_width=True)
+            st.markdown(f'<div class="panel"><h3>{item["question"]}</h3></div>',unsafe_allow_html=True)
+            feedback=st.session_state.quiz_feedback.get(qid)
+            if feedback:
+                st.write("Your answer: "+feedback["chosen"])
+                if feedback["correct"]: st.success("Correct.")
+                else: st.error("Correct answer: "+item["answer"])
+                st.write(item["explanation"])
+                if st.button("Next question →",type="primary",use_container_width=True):
+                    st.session_state.quiz_index+=1; st.rerun()
+            else:
+                choice=st.radio("Select one answer",item["options"],key=f"arena_choice_{qid}")
+                if st.button("Submit answer",type="primary",use_container_width=True):
+                    is_correct=choice==item["answer"]
+                    st.session_state.quiz_feedback[qid]={"id":qid,"chosen":choice,"correct":is_correct}
+                    record_answer(item,is_correct,choice)
+                    st.rerun()
+                if st.button("Bookmark this question",key=f"arena_bookmark_{qid}"):
+                    if qid not in st.session_state.bookmarks: st.session_state.bookmarks.append(qid)
+                    st.toast("Saved to revision list")
 
 elif page == "Visual Lab":
     st.title("🩻 Visual lab")
