@@ -38,6 +38,12 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("not a realistic or validated surgical simulator", self.page)
         self.assertIn("not biomechanically calibrated", self.html)
 
+    def test_anatomy_reference_and_physics_roadmap_exist(self):
+        self.assertIn("Anatomy reference", self.page)
+        self.assertIn("components.iframe", self.page)
+        self.assertIn("SOFA", self.page)
+        self.assertIn("No finite-element tissue physics", self.page)
+
 
 if __name__ == "__main__":
     unittest.main()
