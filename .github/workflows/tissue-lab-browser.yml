@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - "components/realistic_tissue_interaction_lab.html"
+      - "components/kidney_anatomy_lab.html"
+      - "app.py"
+      - "tests/test_kidney_anatomy_lab.py"
       - "components/tissue_physics_engine.js"
       - "components/anatomy_collision_engine.js"
       - "tests/tissue_lab_browser.spec.cjs"
@@ -13,6 +16,9 @@ on:
     branches: ["main"]
     paths:
       - "components/realistic_tissue_interaction_lab.html"
+      - "components/kidney_anatomy_lab.html"
+      - "app.py"
+      - "tests/test_kidney_anatomy_lab.py"
       - "components/tissue_physics_engine.js"
       - "components/anatomy_collision_engine.js"
       - "tests/tissue_lab_browser.spec.cjs"
