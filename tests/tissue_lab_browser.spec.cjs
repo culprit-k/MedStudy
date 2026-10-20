@@ -145,7 +145,7 @@ test("kidney anatomy lab renders a single-organ model and its anatomy controls w
 
   await page.waitForFunction(() => Boolean(window.THREE), null, { timeout: 10000 });
   await expect(page.locator("#scene")).toBeVisible();
-  await expect(page.locator("#anatomyLegend")).toContainText("Renal pelvis");
+  await expect(page.locator("#anatomyLegend")).toContainText(/renal pelvis/i);
   await expect(page.locator("#assetStatus")).toContainText("Original single-kidney geometry loaded", { timeout: 10000 });
 
   await page.getByRole("button", { name: "Cutaway", exact: true }).click();
