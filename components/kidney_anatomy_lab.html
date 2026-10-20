@@ -147,7 +147,7 @@ function loadExternalKidney(){
     let bounds=new THREE.Box3().setFromObject(model);
     const size=bounds.getSize(new THREE.Vector3());
     const scale=3.12/Math.max(size.y,.001);
-    model.scale.setScalar(scale);
+    model.scale.set(scale,scale,scale*.55); // Front-view display depth is compressed to improve anatomical proportions.
     model.updateMatrixWorld(true);
     bounds=new THREE.Box3().setFromObject(model);
     const center=bounds.getCenter(new THREE.Vector3());
