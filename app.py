@@ -1723,7 +1723,7 @@ elif page == "Image Quiz":
                         from openai import OpenAI
                         client = OpenAI(api_key=api_key)
                         prompt = (
-                            "Create exactly five accurate educational MBBS MCQs from the actual image, title, and source description. "
+                            "Create exactly " + str(quiz_size) + " accurate educational MBBS MCQs from the actual image, title, and source description. "
                             "Only claim features visible in the image; if uncertain, ask about image type or limitations. "
                             "Level: " + quiz_level + "; subject: " + quiz_subject + "; topic: " + (quiz_topic.strip() or quiz_subject) + ". "
                             "Learner observation: " + (observation.strip() or "not provided") + ". "
@@ -1746,7 +1746,7 @@ elif page == "Image Quiz":
                         if raw.startswith(fence):
                             raw = "\n".join(line for line in raw.splitlines() if not line.strip().startswith(fence))
                         payload = json.loads(raw)
-                        for i, q in enumerate(payload.get("questions", [])[:5]):
+                        for i, q in enumerate(payload.get("questions", [])[:quiz_size]):
                             options = q.get("options", [])
                             if q.get("question") and len(options) == 4 and q.get("answer") in options:
                                 generated.append({"id":"image-ai-" + str(i), "question":q["question"], "options":options, "answer":q["answer"], "explanation":q.get("explanation","Review with a trusted source."), "pearl":q.get("pearl","Interpret the image within its limitations.")})
