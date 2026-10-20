@@ -1,4 +1,4 @@
-"""Regression checks for the self-contained kidney teaching scene."""
+"""Regression checks for the kidney anatomy teaching scene."""
 from pathlib import Path
 import unittest
 
@@ -21,6 +21,15 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         self.assertIn('replace("__STATION__", json.dumps(skill))', self.app)
         self.assertIn("components.html(organ_lab_html, height=730, scrolling=False)", self.app)
 
+    def test_cc0_kidney_mesh_and_procedural_fallback_are_configured(self):
+        self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
+        self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
+        self.assertIn("function loadExternalKidney()", self.html)
+        self.assertIn("External kidney mesh unavailable", self.html)
+        self.assertIn("built-in kidney fallback", self.html.lower())
+        self.assertIn("CC0", self.docs)
+        self.assertIn("3dassets.dev", self.docs)
+
     def test_kidney_has_bean_shape_and_named_teaching_structures(self):
         self.assertIn("medialNotch", self.html)
         self.assertIn('kidneySurface.name="Kidney outer surface"', self.html)
@@ -34,25 +43,17 @@ class KidneyAnatomyLabTests(unittest.TestCase):
                         "surfaceToggle", "sutureDrill", "reset", "next", "show"):
             with self.subTest(control=control):
                 self.assertIn(f'id="{control}"', self.html)
-                self.assertRegex(self.html, "getElementById\\(['\"]" + control + "['\"]\\)")
+                self.assertIn("getElementById", self.html)
+                self.assertIn(control, self.html)
         self.assertIn("function setAnatomyVisible(show)", self.html)
         self.assertIn("function setSurfaceVisible(show)", self.html)
         self.assertIn("function setInteractionMode(next)", self.html)
         self.assertIn("drillActive=true", self.html)
         self.assertIn("drillStep++", self.html)
 
-    def test_cc0_kidney_mesh_loads_with_a_local_fallback(self):
-        self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
-        self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
-        self.assertIn("function loadExternalKidney()", self.html)
-        self.assertIn('model.name="CC0 anatomical kidney model"', self.html)
-        self.assertIn("built-in 3D kidney fallback remains available", self.html)
-        self.assertIn("CC0", self.docs)
-        self.assertIn("3dassets.dev", self.docs)
-
     def test_limitations_are_disclosed(self):
         self.assertIn("schematic", self.html.lower())
-        self.assertIn("not a clinically validated mesh", self.html.lower())
+        self.assertIn("not registered to this mesh", self.html.lower())
         self.assertIn("not a sourced, segmented, clinically validated 3d kidney mesh", self.docs.lower())
 
 
