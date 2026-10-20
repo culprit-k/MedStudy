@@ -54,7 +54,8 @@ class KidneyAnatomyLabTests(unittest.TestCase):
     def test_limitations_are_disclosed(self):
         self.assertIn("schematic", self.html.lower())
         self.assertIn("not registered to the source mesh", self.html.lower())
-        self.assertIn("not a sourced, segmented, clinically validated 3d kidney mesh", self.docs.lower())
+        self.assertIn("not a clinically validated anatomical reference", self.docs.lower())
+        self.assertIn("not registered to the mesh", self.docs.lower())
 
 
 if __name__ == "__main__":
