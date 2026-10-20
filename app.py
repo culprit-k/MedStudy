@@ -983,12 +983,12 @@ const cortex=new THREE.Mesh(new THREE.SphereGeometry(1.005,72,52),organMaterial(
 const cp=cortex.geometry.attributes.position;
 for(let i=0;i<cp.count;i++){
   const x0=cp.getX(i), y0=cp.getY(i), z0=cp.getZ(i);
-  const x=x0*1.13, y=y0*1.62;
-  cp.setXYZ(i,x-.43*Math.exp(-Math.pow(y/.53,2))*Math.max(0,x0),y,z0*.595*(1-.08*Math.max(0,y0)));
+  const x=x0*1.13*.86, y=y0*1.62*.86;
+  cp.setXYZ(i,x-.37*Math.exp(-Math.pow(y/.46,2))*Math.max(0,x0),y,z0*.595*.86*(1-.08*Math.max(0,y0)));
 }
 cortex.geometry.computeVertexNormals();
-cortex.material=organMaterial(0xc98278);
-cortex.name="Renal cortex";
+cortex.material=organMaterial(0xc98278);cortex.material.transparent=true;cortex.material.opacity=.34;cortex.material.depthWrite=false;
+cortex.name="Renal cortex · inner cutaway rim";
 anatomyGroup.add(cortex);
 const medullaMat=organMaterial(0x853a42), pyramidGroup=new THREE.Group();pyramidGroup.name="Renal pyramids";
 const pyramidSpecs=[
@@ -1023,7 +1023,7 @@ tube("Renal vein branch",[[.56,-.10,.55],[.29,.10,.51],[.00,.22,.43]],.047,0x467
 scene.add(vesselGroup);vesselGroup.visible=false;
 anatomyGroup.visible=false;
 const targets=[];const targetMat=new THREE.MeshStandardMaterial({color:0x3fe6d5,emissive:0x0b766f,emissiveIntensity:1.0});
-const pointPositions=[[-.55,.82,.29],[-.78,.33,.42],[-.79,-.24,.40],[-.52,-.82,.27],[.35,.43,.48]];
+const pointPositions=[[-.55,.82,.40],[-.78,.33,.44],[-.79,-.24,.43],[-.52,-.82,.43],[.35,.43,.55]];
 for(let i=0;i<pointPositions.length;i++){
   const ring=new THREE.Mesh(new THREE.TorusGeometry(.105,.022,10,32),targetMat.clone());
   ring.position.set(...pointPositions[i]);ring.userData.target=i;ring.name="Training target "+(i+1);scene.add(ring);targets.push(ring);
@@ -1038,7 +1038,7 @@ function setAnatomyVisible(show){
 }
 function setSurfaceVisible(show){
   surfaceVisible=show;kidneySurface.visible=show;
-  document.getElementById("surfaceToggle").classList.toggle("active",!show);
+  document.getElementById("surfaceToggle").classList.toggle("active",show);
 }
 function setInteractionMode(next){
   interactionMode=next;
