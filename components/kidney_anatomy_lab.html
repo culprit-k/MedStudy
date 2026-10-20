@@ -316,7 +316,7 @@ function applyView(){
  byId("pyramidsLayer").classList.toggle("active",layerState.pyramids);
  byId("collectingLayer").classList.toggle("active",layerState.collecting);
  byId("vesselsLayer").classList.toggle("active",layerState.vessels);
- setText("viewLabel",cutaway?"View: Cutaway · layers aligned to shared kidney coordinates":"View: External surface");
+ setText("viewLabel",cutaway?"View: Cutaway · schematic internal layers":"View: External surface");
  setText("assetStatus","Original single-kidney geometry loaded. No twin-kidney tray asset or remote organ mesh is required.");
 }
 function setView(mode){
