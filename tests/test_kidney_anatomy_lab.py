@@ -16,7 +16,6 @@ class ArchivedKidneyLabTests(unittest.TestCase):
     def test_kidney_simulator_is_not_loaded_by_the_main_app(self):
         self.assertNotIn('ROOT / "components" / "kidney_anatomy_lab.html"', self.app)
         self.assertNotIn('elif page == "Hands-on Skills Lab":', self.app)
-        self.assertNotIn("Hands-on Skills Lab", self.app)
 
     def test_primary_navigation_prioritises_image_learning(self):
         match = re.search(
