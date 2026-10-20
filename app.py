@@ -941,7 +941,7 @@ button.active{background:#12616b;border-color:#62e2d7;color:white}button:disable
 </style></head><body><div id="app">
 <div id="head"><div><div id="eyebrow">MEDSTUDY · TOUCH SKILLS SIMULATOR</div><div id="hint">Drag to move · tap to select · use the station controls</div></div><div id="status">● TRAINING MODE</div></div>
 <div id="scene"><div id="overlay"><div class="pill" id="station">Station</div><div class="pill" id="goal">Goal: interact with the highlighted target</div><div class="pill" id="count">Attempts: 0 · Successful: 0</div></div></div>
-<div id="bottom"><div id="tools"></div><div id="actions"><button id="reset">↻ Reset station</button><button id="next">Next target →</button><button id="show">Show target</button></div><div id="result">Loading 3D training scene…</div></div></div>
+<div id="bottom"><div id="tools"></div><div class="legend" id="anatomyLegend">Kidney teaching model · Renal artery · Renal vein · Renal pelvis · Ureter · Pyramids</div><div id="actions"><button id="cameraMode">Camera control</button><button id="instrumentMode" class="active">Instrument control</button><button id="anatomyToggle">Toggle anatomy</button><button id="surfaceToggle">Surface layer</button><button id="sutureDrill">Suture-alignment drill</button><button id="reset">Reset view</button><button id="next">Next target →</button><button id="show">Show target</button></div><div id="result">Loading kidney anatomy model…</div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
