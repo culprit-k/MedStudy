@@ -902,7 +902,7 @@ elif page == "Hands-on Skills Lab":
     <div style="background:linear-gradient(120deg,#071827,#15384b 60%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px;color:#effcff;margin-bottom:14px">
       <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · VIRTUAL SKILLS LAB</div>
       <h1 style="color:white;margin:.45rem 0">Hands-on Surgical Skills Lab</h1>
-      <p style="color:#ccebed;margin:0">A touch-controlled 3D training sandbox for camera orientation, instrument targeting, tissue handling concepts and suture-placement accuracy.</p>
+      <p style="color:#ccebed;margin:0">A touch-controlled 3D training sandbox with a real external kidney surface model, orbit/zoom, instrument targeting and a visual anchor-alignment drill. Internal cutaway structures are schematic overlays, not anatomically registered geometry.</p>
     </div>
     """, unsafe_allow_html=True)
     st.warning("EDUCATIONAL SIMULATION ONLY. The virtual tissue and tools are simplified game-like representations, not a validated surgical simulator. This does not teach a complete real operation or provide safe real-world cutting, dissection, suturing or instrument-force instructions. Use formal skills-lab training and direct clinical supervision.")
