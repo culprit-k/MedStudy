@@ -10,7 +10,7 @@ The preferred external surface model is the CC0 kidney model at [3DAssets.dev â€
 
 `https://cdn.3dassets.dev/assets/38958/v1/model.glb`
 
-The component loads the model with Three.js GLTFLoader and normalizes its orientation/height for the viewer. The model is loaded from the source CDN rather than copied into this repository. This depends on the source URL, network access, browser CORS permissions, and the upstream host remaining available. If it fails, a procedural kidney-shaped fallback keeps the lab usable and a status message indicates the fallback state.
+The component loads the model with Three.js GLTFLoader, rotates it upright, normalizes its height, and modestly compresses display depth for a clearer front view. The model is loaded from the source CDN rather than copied into this repository. This depends on the source URL, network access, browser CORS permissions, and the upstream host remaining available. If it fails, a procedural kidney-shaped fallback keeps the lab usable and a status message indicates the fallback state.
 
 ## Anatomy view and interactions
 
@@ -28,6 +28,9 @@ From the repository root:
 
 ```bash
 python -m unittest discover -s tests -p 'test_kidney_anatomy_lab.py' -v
+npm init -y
+npm install --no-save @playwright/test@1.55.0 three@0.128.0
+npx playwright install chromium
 npx playwright test --config=playwright.config.cjs
 ```
 
