@@ -1671,6 +1671,138 @@ elif page == "Research & EBM":
     st.markdown("---")
     st.markdown("**Research integrity:** do not invent data, fabricate citations, upload identifiable patient records, or treat statistical association as proof of causation. Verify methods and conclusions against the original paper.")
 
+elif page == "Image Quiz":
+    st.title("🖼️ Real-image medical quiz")
+    st.caption("Search real medical images, review source and licence information, and practise with image-led questions.")
+    c1, c2 = st.columns(2)
+    with c1:
+        quiz_subject = st.selectbox("Subject", [x["name"] for x in IMAGE_LIBRARY.get("subjects", []) if x["name"] != "All subjects"], key="image_quiz_subject")
+        quiz_topic = st.text_input("Specific topic", placeholder="e.g. renal corpuscle, malaria smear, mitral stenosis", key="image_quiz_topic")
+    with c2:
+        quiz_level = st.selectbox("Difficulty", ["MBBS foundation", "MBBS exam", "Clinical integration", "Postgraduate"], index=1, key="image_quiz_level")
+        quiz_size = st.selectbox("Questions", [5, 10, 15, 20], index=1, key="image_quiz_size")
+    if st.button("Find real medical images", type="primary", use_container_width=True):
+        query = (quiz_topic.strip() or quiz_subject) + " medical anatomy histology pathology " + quiz_subject
+        with st.spinner("Searching Wikimedia Commons and retrieving attribution/licence details..."):
+            images, error = search_wikimedia_images(query, 12)
+        st.session_state.image_quiz_images = images
+        st.session_state.image_quiz_error = error
+        st.session_state.image_quiz_query = query
+        st.session_state.image_quiz_items = []
+        st.session_state.image_quiz_answers = {}
+    if st.session_state.get("image_quiz_error"):
+        st.warning(st.session_state.image_quiz_error)
+    images = st.session_state.get("image_quiz_images", [])
+    if images:
+        st.markdown("### Choose a real image")
+        image_labels = [str(i + 1) + ". " + im.get("title", "Medical image") for i, im in enumerate(images)]
+        chosen_label = st.selectbox("Image", image_labels, key="image_quiz_selected")
+        chosen_image = images[image_labels.index(chosen_label)]
+        left, right = st.columns([1.1, 1])
+        with left:
+            if chosen_image.get("thumbnail"):
+                st.image(chosen_image["thumbnail"], use_container_width=True)
+            st.caption(chosen_image.get("description") or "No detailed image description was supplied by the source.")
+            st.caption("Creator: " + chosen_image.get("author", "Check source page"))
+            st.caption("Licence: " + chosen_image.get("licence", "Check source page"))
+            st.markdown("[Open original source and reuse terms](" + chosen_image.get("source_url", "https://commons.wikimedia.org/") + ")")
+        with right:
+            observation = st.text_area("What do you observe?", placeholder="Describe visible structures, morphology, stain/modality, and what the image cannot prove.", key="image_quiz_observation")
+            if st.button("Generate questions for this image", type="primary", use_container_width=True):
+                api_key = os.environ.get("OPENAI_API_KEY")
+                try:
+                    if not api_key:
+                        api_key = st.secrets.get("OPENAI_API_KEY", None)
+                except Exception:
+                    pass
+                generated = []
+                if api_key and chosen_image.get("thumbnail"):
+                    try:
+                        from openai import OpenAI
+                        client = OpenAI(api_key=api_key)
+                        prompt = (
+                            "Create exactly five accurate educational MBBS MCQs from the actual image, title, and source description. "
+                            "Only claim features visible in the image; if uncertain, ask about image type or limitations. "
+                            "Level: " + quiz_level + "; subject: " + quiz_subject + "; topic: " + (quiz_topic.strip() or quiz_subject) + ". "
+                            "Learner observation: " + (observation.strip() or "not provided") + ". "
+                            "Return only JSON: {questions:[{question,options,answer,explanation,pearl}]}. "
+                            "Each options array must have four choices and answer must exactly match one. Educational use only."
+                        )
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=[
+                                {"role":"system","content":"You are a cautious medical educator. Ground questions in visible image evidence and explain limits."},
+                                {"role":"user","content":[
+                                    {"type":"text","text":prompt + "\nImage title: " + chosen_image.get("title","") + "\nSource description: " + chosen_image.get("description","")},
+                                    {"type":"image_url","image_url":{"url":chosen_image["thumbnail"],"detail":"high"}}
+                                ]}
+                            ],
+                            temperature=0.25,
+                        )
+                        raw = (response.choices[0].message.content or "").strip()
+                        fence = chr(96) * 3
+                        if raw.startswith(fence):
+                            raw = "\n".join(line for line in raw.splitlines() if not line.strip().startswith(fence))
+                        payload = json.loads(raw)
+                        for i, q in enumerate(payload.get("questions", [])[:5]):
+                            options = q.get("options", [])
+                            if q.get("question") and len(options) == 4 and q.get("answer") in options:
+                                generated.append({"id":"image-ai-" + str(i), "question":q["question"], "options":options, "answer":q["answer"], "explanation":q.get("explanation","Review with a trusted source."), "pearl":q.get("pearl","Interpret the image within its limitations.")})
+                    except Exception as exc:
+                        st.warning("Image-question AI is unavailable right now (" + type(exc).__name__ + "). Falling back to the verified question bank.")
+                if not generated:
+                    terms = (quiz_topic.strip() or quiz_subject).lower().split()
+                    pool = [q for q in ALL_CARDS if any(term in (q.get("subject","") + " " + q.get("question","") + " " + q.get("explanation","")).lower() for term in terms if len(term) > 3)]
+                    if not pool:
+                        pool = [q for q in ALL_CARDS if quiz_subject.lower() in q.get("subject","").lower()]
+                    if not pool:
+                        pool = ALL_CARDS
+                    for i, q in enumerate(random.sample(pool, min(quiz_size, len(pool)))):
+                        if len(q.get("options", [])) == 4:
+                            generated.append({"id":"bank-" + str(i) + "-" + q["id"], "question":q["question"], "options":q["options"], "answer":q["answer"], "explanation":q.get("explanation",""), "pearl":q.get("pearl","Review the related mechanism and clinical correlation.")})
+                st.session_state.image_quiz_items = generated
+                st.session_state.image_quiz_answers = {}
+                st.session_state.image_quiz_image_title = chosen_image.get("title","")
+                st.session_state.image_quiz_source = chosen_image.get("source_url","")
+        items = st.session_state.get("image_quiz_items", [])
+        if items:
+            st.markdown("---")
+            st.markdown("## Your practice set")
+            st.caption("AI-generated questions use the selected image when vision access is available. Fallback questions come from the curated MedStudy bank and are related to your selected topic.")
+            for i, q in enumerate(items):
+                with st.container(border=True):
+                    st.markdown("**Question " + str(i + 1) + ". " + q["question"] + "**")
+                    choice = st.radio("Choose the best answer", q["options"], index=None, key="image_quiz_answer_" + q["id"])
+                    if st.button("Check answer", key="image_quiz_check_" + q["id"]):
+                        if choice is None:
+                            st.warning("Choose an answer first.")
+                        else:
+                            st.session_state.image_quiz_answers[q["id"]] = {"choice":choice, "correct":choice == q["answer"]}
+                    result = st.session_state.image_quiz_answers.get(q["id"])
+                    if result:
+                        if result["correct"]:
+                            st.success("Correct.")
+                        else:
+                            st.error("Best answer: " + q["answer"])
+                        st.write(q.get("explanation",""))
+                        st.info(q.get("pearl",""))
+            answered = list(st.session_state.image_quiz_answers.values())
+            if answered:
+                score = sum(int(x["correct"]) for x in answered)
+                st.metric("Score", str(score) + "/" + str(len(answered)), str(round(100 * score / len(answered))) + "% accuracy")
+                if st.button("Ask Teacher AI to review my weak areas", type="primary", use_container_width=True):
+                    misses = [q["question"] for q in items if q["id"] in st.session_state.image_quiz_answers and not st.session_state.image_quiz_answers[q["id"]]["correct"]]
+                    st.session_state.tutor_prefill = "Personalised review of " + quiz_topic.strip() + " at " + quiz_level + " level. Image: " + st.session_state.get("image_quiz_image_title","") + ". Questions missed: " + "; ".join(misses)
+                    st.session_state.navigation = "Teacher AI"
+                    st.rerun()
+    else:
+        st.info("Search for an image to begin. The library reports the source, creator and licence metadata when available.")
+    st.markdown("### More practice")
+    st.write("MedStudy has " + str(len(ALL_CARDS)) + " built-in questions across " + str(len(SUBJECTS)) + " subjects, plus an image library and adaptive Teacher AI.")
+    if st.button("Open Exam Arena", use_container_width=True):
+        st.session_state.navigation = "Exam Arena"
+        st.rerun()
+
 elif page == "Teacher AI":
     st.title("👩‍🏫 Your personal medical teacher")
     st.caption("Choose your level and learning style. Ask for a concept lesson, Socratic hints, exam questions, or feedback on your reasoning.")
