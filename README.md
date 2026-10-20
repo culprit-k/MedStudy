@@ -6,7 +6,7 @@ MedStudy is an interactive medical learning project built for medical students w
 
 ## What is included
 
-- **Learning library:** a searchable starter MCQ bank across anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology, with explanations and adjustable learning depth.
+- **Learning library:** 120 starter MCQs (20 each in anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology), with explanations and adjustable learning depth.
 - **Visual lab:** original heart, nephron, neuron, alveolar-interface, and ECG teaching schematics with image-based questions and clinical/exam pearls.
 - **Medical Image Library:** searchable image catalogue across 30 medical subjects, live Wikimedia Commons previews, original source pages, creator credits, per-file licence metadata, session-saved references, and curated collection links.
 - **Image Quiz:** a focused quiz workflow that searches real medical images from Wikimedia Commons, shows available creator/licence/source metadata, and generates image-grounded MCQs through the optional vision-capable AI service. Without an API key it falls back to the curated question bank and labels that fallback clearly.
@@ -67,7 +67,7 @@ Every question should have a unique ID, question, options, answer matching one o
 ## Current limitations
 
 - Progress and bookmarks are stored in the active Streamlit session and may reset.
-- The starter question bank is small; it must be expanded and faculty-reviewed before claiming comprehensive exam coverage.
+- The question bank now contains 120 starter MCQs. Continue expanding it and obtain faculty review before claiming comprehensive exam coverage.
 - Visuals are original schematic teaching diagrams, not radiology, histopathology, or diagnostic-grade clinical images.
 - Surgery Simulator cases use fictional patients and high-level safety/decision questions; they do not teach hands-on surgical technique and are not a substitute for simulation-lab training or direct supervision.
 - The detailed 3D atlas is a third-party project hosted at https://nqwrc.github.io/3d-anatomy/ and documented at https://github.com/nqwrc/3d-anatomy. Its model set includes non-commercial components; review upstream attribution and licence terms before redistribution or commercial use. It is for education, not clinical use.
