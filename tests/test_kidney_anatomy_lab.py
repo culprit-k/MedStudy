@@ -18,7 +18,7 @@ class KidneyAnatomyLabTests(unittest.TestCase):
     def test_skills_lab_uses_standalone_kidney_component(self):
         self.assertIn('ROOT / "components" / "kidney_anatomy_lab.html"', self.app)
         self.assertIn('organ_lab_html = organ_lab_path.read_text(encoding="utf-8")', self.app)
-        self.assertIn('components.html(organ_lab_html.replace("__STATION__", json.dumps(skill))', self.app)
+        self.assertIn("components.html(organ_lab_html, height=730, scrolling=False)", self.app)
         self.assertTrue(COMPONENT_PATH.is_file())
 
     def test_real_cc0_kidney_model_and_fallback_are_configured(self):
@@ -44,7 +44,7 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         for landmark in ("Renal cortex", "Renal pyramids", "Renal pelvis", "Renal artery", "Renal vein", "Ureter"):
             with self.subTest(landmark=landmark):
                 self.assertIn(landmark, self.html)
-        self.assertIn("Pointer path", self.html)
+        self.assertIn("pointermove", self.html)
         self.assertIn("Alignment drill", self.html)
 
     def test_external_model_and_internal_overlay_limitations_are_disclosed(self):
