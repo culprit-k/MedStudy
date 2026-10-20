@@ -28,28 +28,28 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          streamlit run app.py \
+          python -m streamlit run app.py \
             --server.headless=true \
             --server.port=8501 \
             --server.address=127.0.0.1 \
             --browser.gatherUsageStats=false > /tmp/medstudy-streamlit.log 2>&1 &
           app_pid=$!
-          trap 'kill "$app_pid" 2>/dev/null || true' EXIT
+          trap 'kill "$app_pid" 2>/dev/null || true; wait "$app_pid" 2>/dev/null || true' EXIT
+          echo "Waiting for Streamlit to become healthy..."
           ready=0
           for attempt in $(seq 1 40); do
-            if curl --silent --show-error --fail http://127.0.0.1:8501/_stcore/health >/dev/null; then
+            if curl --silent --fail http://127.0.0.1:8501/_stcore/health >/dev/null; then
               ready=1
               break
-            fi
-            if ! kill -0 "$app_pid" 2>/dev/null; then
-              cat /tmp/medstudy-streamlit.log
-              exit 1
             fi
             sleep 1
           done
           if [ "$ready" -ne 1 ]; then
-            cat /tmp/medstudy-streamlit.log
             echo "Streamlit health endpoint did not become ready within 40 seconds."
+            echo "--- Streamlit log ---"
+            cat /tmp/medstudy-streamlit.log
+            echo "--- process status ---"
+            ps -p "$app_pid" -o pid,stat,cmd || true
             exit 1
           fi
           curl --silent --show-error --fail http://127.0.0.1:8501/ -o /tmp/medstudy-home.html
