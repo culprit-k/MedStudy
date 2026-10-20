@@ -209,7 +209,7 @@ const columnSpecs=[
 ];
 columnSpecs.forEach((pts,i)=>triangleMesh(pts,0xd79b8f,"Renal column "+(i+1),"A renal column is cortical tissue extending between adjacent renal pyramids.",pyramidsGroup,.438));
 
-function addTube(group,title,points,radius,color,description,zExtra=0){
+function addTube(group,title,points,radius,color,description,zExtra=.50){
  const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],p[1],p[2]+zExtra)));
  const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,40,radius,10,false),mat(color,.42));
  addInfo(mesh,title,description);group.add(mesh);return mesh;
