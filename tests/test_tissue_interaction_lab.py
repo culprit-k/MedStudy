@@ -22,20 +22,19 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         cls.readme = README.read_text(encoding="utf-8")
         cls.docs = DOCS.read_text(encoding="utf-8")
 
-    def test_documentation_discloses_model_limits(self):
-        self.assertIn("Tissue Interaction Lab", self.readme)
-        self.assertIn("not a realistic or clinically validated surgical simulator", self.readme)
+    def test_archived_prototype_limits_remain_documented(self):
+        self.assertIn("not a realistic or clinically validated surgical simulator", self.docs)
         self.assertIn("mass-spring membrane approximation", self.docs)
         self.assertIn("not literature-derived measurements", self.docs)
 
-    def test_main_navigation_routes_to_tissue_lab(self):
-        self.assertIn('"Tissue Interaction Lab"', self.app)
-        self.assertIn('st.switch_page("pages/3_Tissue_Interaction_Lab.py")', self.app)
-        self.assertIn("Tissue interaction lab", self.app)
-        self.assertIn("adjustable spring parameters", self.app)
+    def test_heavy_tissue_lab_is_removed_from_primary_navigation(self):
+        self.assertNotIn('"Tissue Interaction Lab"', self.app)
+        self.assertNotIn('st.switch_page("pages/3_Tissue_Interaction_Lab.py")', self.app)
+        self.assertNotIn("adjustable spring parameters", self.app)
 
-    def test_home_card_button_uses_registered_navigation_target(self):
-        self.assertIn('"Tissue Interaction Lab"', self.app)
+    def test_home_dashboard_uses_registered_lightweight_navigation(self):
+        self.assertIn('"Image Quiz"', self.app)
+        self.assertIn('"Teacher AI"', self.app)
         self.assertIn('key=f"home_{target}"', self.app)
         self.assertIn('on_click=jump, args=(target,)', self.app)
 
