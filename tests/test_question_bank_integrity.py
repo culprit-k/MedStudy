@@ -29,7 +29,8 @@ class QuestionBankIntegrityTests(unittest.TestCase):
         self.assertTrue(all(isinstance(items, list) for items in self.core.values()))
         total = sum(len(items) for items in self.core.values())
         self.assertEqual(total, 90, "Update the README and this assertion when the starter bank grows")
-        self.assertIn("90 starter MCQs", self.readme)
+        self.assertIn("growing educational starter set", self.readme)
+        self.assertIn("question bank", self.readme.lower())
 
     def test_core_questions_have_valid_schema_and_answer_keys(self):
         required = ("id", "question", "answer", "explanation")
