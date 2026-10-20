@@ -15,11 +15,12 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         cls.app = APP.read_text(encoding="utf-8")
         cls.docs = DOCS.read_text(encoding="utf-8") if DOCS.is_file() else ""
 
-    def test_component_is_loaded_by_hands_on_lab(self):
-        self.assertIn('ROOT / "components" / "kidney_anatomy_lab.html"', self.app)
-        self.assertIn('organ_lab_html = organ_lab_path.read_text(encoding="utf-8")', self.app)
-        self.assertIn('replace("__STATION__", json.dumps(skill))', self.app)
-        self.assertIn("components.html(organ_lab_html, height=730, scrolling=False)", self.app)
+    def test_archived_kidney_prototype_is_not_loaded_by_simplified_app(self):
+        self.assertNotIn('ROOT / "components" / "kidney_anatomy_lab.html"', self.app)
+        self.assertNotIn('elif page == "Hands-on Skills Lab":', self.app)
+        self.assertTrue(COMPONENT.is_file(), "Keep the prototype source available for future reference")
+        self.assertIn("Image Quiz", self.app)
+        self.assertIn("Teacher AI", self.app)
 
     def test_single_organ_does_not_depend_on_the_old_remote_pair_asset(self):
         self.assertIn("function makeKidneyGeometry()", self.html)
