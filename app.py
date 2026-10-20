@@ -43,6 +43,8 @@ def init_state():
         "tutor_messages": [], "profile_level": "MBBS — Core concepts",
         "profile_goal": "Exam preparation", "profile_style": "Explain simply, then go deeper",
         "daily_goal": 15, "visual_index": 0, "case_revealed": [],
+        "learner_year": "MBBS Year 2", "learner_curriculum": "MBBS", "learner_language": "English",
+        "learner_weak_topics": [], "learner_pace": "Balanced", "learner_context": "",
         "image_library_results": [], "image_library_last_query": "",
         "image_library_error": "", "saved_image_references": [],
         "hospital_completed_steps": {}, "hospital_micro_results": {}, "hospital_diagnostic_results": {},
@@ -1806,14 +1808,24 @@ elif page == "Image Quiz":
 elif page == "Teacher AI":
     st.title("👩‍🏫 Your personal medical teacher")
     st.caption("Choose your level and learning style. Ask for a concept lesson, Socratic hints, exam questions, or feedback on your reasoning.")
-    with st.expander("Personalise your tutor",expanded=not bool(st.session_state.tutor_messages)):
+    with st.expander("Build your learning profile",expanded=not bool(st.session_state.tutor_messages)):
+        st.caption("Tell your teacher what matters to you. These preferences guide lesson depth and question difficulty during this session.")
         a,b=st.columns(2)
         with a:
             st.session_state.profile_level=st.selectbox("Study level",["Foundation","MBBS — Core concepts","MBBS — Exam depth","Clinical integration","Postgraduate / research"],index=["Foundation","MBBS — Core concepts","MBBS — Exam depth","Clinical integration","Postgraduate / research"].index(st.session_state.profile_level) if st.session_state.profile_level in ["Foundation","MBBS — Core concepts","MBBS — Exam depth","Clinical integration","Postgraduate / research"] else 1)
+            stages=["Pre-medical","MBBS Year 1","MBBS Year 2","MBBS Year 3","MBBS Year 4","MBBS Year 5/6","Internship","Postgraduate","Other"]
+            st.session_state.learner_year=st.selectbox("Current stage",stages,index=stages.index(st.session_state.learner_year) if st.session_state.learner_year in stages else 2)
             st.session_state.profile_goal=st.selectbox("Main goal",["Exam preparation","Understand mechanisms","Clinical reasoning","Research / deeper reading"])
+            st.session_state.learner_weak_topics=st.multiselect("Topics you find difficult",SUBJECTS,default=[x for x in st.session_state.learner_weak_topics if x in SUBJECTS])
         with b:
             st.session_state.profile_style=st.selectbox("Teaching style",["Explain simply, then go deeper","Socratic: ask me questions","High-yield exam revision","Case-based teaching"])
             tutor_subject=st.selectbox("Focus subject",SUBJECTS)
+            languages=["English","Simple English","Malayalam","Hindi","Tamil","Uzbek","Russian"]
+            st.session_state.learner_language=st.selectbox("Preferred language",languages,index=languages.index(st.session_state.learner_language) if st.session_state.learner_language in languages else 0)
+            paces=["Slow, step by step","Balanced","Fast, high-yield"]
+            st.session_state.learner_pace=st.selectbox("Learning pace",paces,index=paces.index(st.session_state.learner_pace) if st.session_state.learner_pace in paces else 1)
+        st.session_state.learner_curriculum=st.text_input("Your syllabus / university / exam",value=st.session_state.learner_curriculum,placeholder="e.g. MBBS syllabus, university exam, viva")
+        st.session_state.learner_context=st.text_area("What should your teacher know about you?",value=st.session_state.learner_context,placeholder="Current topic, exam date, confusing concepts, preferred feedback…",height=90)
     for msg in st.session_state.tutor_messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
@@ -1822,7 +1834,11 @@ elif page == "Teacher AI":
         st.session_state.tutor_messages.append({"role":"user","content":prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
-        system_prompt = f"You are MedStudy Teacher, a supportive medical educator. Learner level: {st.session_state.profile_level}. Goal: {st.session_state.profile_goal}. Style: {st.session_state.profile_style}. Focus: {tutor_subject}. Teach accurately with clear headings, mechanisms, clinical correlations, and 2 retrieval questions. Distinguish established facts from uncertainty. Do not diagnose real users or replace medical care. If asked about a real emergency, direct them to emergency services. Keep educational answers appropriate to level."
+        weak_summary = ", ".join(st.session_state.get("learner_weak_topics", [])) or "not specified"
+        recent_attempts = st.session_state.get("answered", [])[-20:]
+        missed_subjects = [x.get("subject", "") for x in recent_attempts if not x.get("correct")]
+        missed_summary = ", ".join(sorted(set(missed_subjects))) or "no missed-question history yet"
+        system_prompt = f"You are MedStudy Teacher, a warm, patient, highly personalised medical educator. Learner level: {st.session_state.profile_level}; stage: {st.session_state.get('learner_year','not specified')}; curriculum/exam: {st.session_state.get('learner_curriculum','MBBS')}; preferred language: {st.session_state.get('learner_language','English')}; goal: {st.session_state.profile_goal}; teaching style: {st.session_state.profile_style}; pace: {st.session_state.get('learner_pace','Balanced')}; focus: {tutor_subject}; learner-identified difficult subjects: {weak_summary}; subjects with recent incorrect answers: {missed_summary}; personal context: {st.session_state.get('learner_context','not provided')}. Adapt examples, depth, pace, terminology and retrieval practice to this profile. Start from prerequisites, check understanding frequently, correct misconceptions kindly, connect anatomy to physiology, histology, pathology, diagnostics and clinical relevance, and finish with a short recap plus 2 new questions. In Socratic mode ask one question at a time and do not reveal the answer before the learner tries. In high-yield mode emphasise exam traps and concise tables. Do not pretend to remember beyond the session unless stored context is explicitly provided. Distinguish established facts from uncertainty. Do not diagnose real users or replace medical care. If asked about a real emergency, direct them to emergency services."
         api_key = os.environ.get("OPENAI_API_KEY")
         try:
             if not api_key:
