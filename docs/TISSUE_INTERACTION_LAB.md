@@ -64,7 +64,7 @@ For the headless browser smoke tests, install Node.js and a supported browser, t
 
 ```bash
 npm init -y
-npm install --no-save @playwright/test@1.55.0
+npm install --no-save @playwright/test@1.55.0 three@0.128.0
 npx playwright install chromium
 npx playwright test --config=playwright.config.cjs
 ```
