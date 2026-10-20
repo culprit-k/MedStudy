@@ -6,21 +6,21 @@ MedStudy is an interactive medical learning project built for medical students w
 
 ## What is included
 
-- **Learning library:** 90 starter MCQs across anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology, with explanations and adjustable learning depth.
+- **Learning library:** a searchable starter MCQ bank across anatomy, physiology, biochemistry, pathology, microbiology, and pharmacology, with explanations and adjustable learning depth.
 - **Visual lab:** original heart, nephron, neuron, alveolar-interface, and ECG teaching schematics with image-based questions and clinical/exam pearls.
 - **Medical Image Library:** searchable image catalogue across 30 medical subjects, live Wikimedia Commons previews, original source pages, creator credits, per-file licence metadata, session-saved references, and curated collection links.
-- **Tissue Interaction Lab:** a separate 3D educational prototype with a static external body-surface reference, a generated deformable surface using an adjustable damped mass-spring approximation, visual probe/incision/suture interactions, and automated unit, syntax, and headless-browser smoke checks. The mesh parameters are illustrative, not calibrated human biomechanics; this is not a realistic or clinically validated surgical simulator. See [technical documentation](docs/TISSUE_INTERACTION_LAB.md).
-- **Hands-on Skills Lab:** a touch-controlled Three.js learning sandbox with camera-orientation, instrument-targeting, suture-anchor alignment and instrument-recognition stations. Its renal anatomy station now renders one standalone procedural kidney with external-surface and cutaway views, schematic cortex, medulla/pyramids, calyces, pelvis, ureter, and vessel teaching layers, plus touch rotation/zoom, layer toggles, structure descriptions, and a visual target drill. The internal geometry is simplified rather than segmented from a validated specimen, so the model is not a precisely registered anatomical dissection and has not been clinically validated; the target drill is not a surgical competency assessment. The kidney scene no longer depends on a remote organ-mesh CDN. See [kidney anatomy technical notes](docs/KIDNEY_ANATOMY_LAB.md).
-- **Surgery Simulator:** four fictional surgical/operative training cases (appendectomy, laparoscopic cholecystectomy, wound-assessment/closure decisions, and hip-fracture theatre safety), with staged decisions, anatomy orientation, explanations, scores, missed-answer review, restart controls, and links to the detailed 3D anatomy atlas. This is a safety-focused educational simulation, not a surgical procedural guide or credentialing tool. It also includes a 10-stage end-to-end operating-room workflow from pre-operative checks through team briefing, anaesthesia handoff, positioning, sterile-field/equipment checks, intraoperative uncertainty, deterioration response, sign-out, recovery handover and postoperative review.
-- **Virtual Hospital:** immersive teaching workspace with an animated conceptual organ map, fictional bedside-monitor values, structured patient-assessment scenarios, operating-theatre safety workflow, virtual microbiology test interpretation, and fictional diagnostic laboratory panels.
-- **Immersive visual scenes:** animated fictional bedside monitor/organ map, illustrated operating-theatre environment, and microscopy bench with clearly labelled teaching-only visual specimens.
-- **Detailed 3D Anatomy Atlas:** embeds the externally hosted Z-Anatomy-derived browser atlas, with thousands of individually selectable structures, touch rotation, pinch zoom, isolate/hide/transparent controls and anatomical detail panels. Requires internet access. The upstream atlas has mixed CC BY-SA and non-commercial model licence terms; the atlas is externally hosted and not copied into this repository.
+- **Image Quiz:** a focused quiz workflow that searches real medical images from Wikimedia Commons, shows available creator/licence/source metadata, and generates image-grounded MCQs through the optional vision-capable AI service. Without an API key it falls back to the curated question bank and labels that fallback clearly.
+
+
+
+
+
 - **Image reuse safeguards:** every online image links to its source and licence details; users must verify file-specific reuse terms before redistribution or publication.
 - **Clinical cases:** structured case vignettes with explanations and stretch prompts.
 - **Exam arena:** configurable mixed-question sessions, immediate feedback, score summaries, and missed-question review.
 - **OSCE studio:** self-checklists for focused history, respiratory examination, and patient communication.
 - **Research & EBM:** PICO builder, study-design guide, diagnostic-test calculator, and critical-appraisal checklist.
-- **Personal teacher:** adapts tone and level to the learner's goal; guided tutor prompts work without an API key.
+- **Personal teacher:** adapts to learner stage, syllabus/exam, preferred language, weak subjects, pace, goal, teaching style, personal context and recent incorrect answers. Guided prompts work without an API key; full generative tutoring and vision-based image questions require `OPENAI_API_KEY` in Streamlit Community Cloud Secrets.
 - **Optional AI tutor:** configure an OpenAI API key in Streamlit Community Cloud Secrets as `OPENAI_API_KEY = "your-key"` to enable open-ended AI responses. API usage may incur charges. Never commit keys to GitHub.
 - **Active-recall flashcards, bookmarks, and progress charts.**
 - **Android test wrapper:** a lightweight APK shell for opening the deployed Streamlit app on Android. Build and install instructions are in [android/README.md](android/README.md); GitHub Actions builds a downloadable debug APK.
