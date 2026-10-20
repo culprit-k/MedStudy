@@ -960,11 +960,92 @@ const camera=new THREE.PerspectiveCamera(45,1,.1,100);camera.position.set(0,0,7)
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));root.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xc8f6ff,0x17232c,2));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,5,6);scene.add(light);
 const controls={yaw:0,pitch:0};let dragging=false,lastX=0,lastY=0,selectedTool="Grasper",attempts=0,success=0,targetIndex=0,step=0;
-const board=new THREE.Mesh(new THREE.BoxGeometry(5.6,3.6,.16),new THREE.MeshStandardMaterial({color:0x17313c,roughness:.72}));board.position.z=-.7;scene.add(board);
-const grid=new THREE.GridHelper(5,20,0x2c7581,0x204754);grid.rotation.x=Math.PI/2;grid.position.z=-.58;scene.add(grid);
-const targets=[];const targetMat=new THREE.MeshStandardMaterial({color:0x38e1d0,emissive:0x0d817b,emissiveIntensity:1.1});
-const pointPositions=[[-1.2,.45,.08],[1.1,-.42,.08],[.15,.8,.08],[-.75,-.7,.08],[1.3,.6,.08]];
-for(let i=0;i<pointPositions.length;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.18,.035,10,36),targetMat.clone());ring.position.set(...pointPositions[i]);ring.userData.target=i;scene.add(ring);targets.push(ring);const dot=new THREE.Mesh(new THREE.SphereGeometry(.055,16,12),new THREE.MeshStandardMaterial({color:0xbafff7,emissive:0x29b9b0}));dot.position.copy(ring.position);dot.position.z+=.01;scene.add(dot);}
+// Original procedural kidney teaching model: recognisable bean silhouette, renal hilum, vessels, ureter and cutaway structures.
+const kidneyGeo=new THREE.SphereGeometry(1,72,52);
+const kp=kidneyGeo.attributes.position;
+for(let i=0;i<kp.count;i++){
+  const x0=kp.getX(i), y0=kp.getY(i), z0=kp.getZ(i);
+  const x=x0*1.13;
+  const y=y0*1.62;
+  const medialNotch=.43*Math.exp(-Math.pow(y/.53,2))*Math.max(0,x0);
+  kp.setXYZ(i,x-medialNotch,y,z0*.59*(1-.08*Math.max(0,y0)));
+}
+kidneyGeo.computeVertexNormals();
+const kidneyMaterial=new THREE.MeshStandardMaterial({color:0x9f4f53,roughness:.72,metalness:0.02});
+const kidneySurface=new THREE.Mesh(kidneyGeo,kidneyMaterial);
+kidneySurface.name="Kidney outer surface";
+scene.add(kidneySurface);
+const anatomyGroup=new THREE.Group();
+anatomyGroup.name="Kidney cutaway anatomy";
+scene.add(anatomyGroup);
+const organMaterial=(color,roughness=.72)=>new THREE.MeshStandardMaterial({color,roughness,side:THREE.DoubleSide});
+const cortex=new THREE.Mesh(new THREE.SphereGeometry(1.005,72,52),organMaterial(0xc27b70));
+const cp=cortex.geometry.attributes.position;
+for(let i=0;i<cp.count;i++){
+  const x0=cp.getX(i), y0=cp.getY(i), z0=cp.getZ(i);
+  const x=x0*1.13, y=y0*1.62;
+  cp.setXYZ(i,x-.43*Math.exp(-Math.pow(y/.53,2))*Math.max(0,x0),y,z0*.595*(1-.08*Math.max(0,y0)));
+}
+cortex.geometry.computeVertexNormals();
+cortex.material=organMaterial(0xc98278);
+cortex.name="Renal cortex";
+anatomyGroup.add(cortex);
+const medullaMat=organMaterial(0x853a42), pyramidGroup=new THREE.Group();pyramidGroup.name="Renal pyramids";
+const pyramidSpecs=[
+  [-.42,.80,-.18],[-.58,.42,.05],[-.60,-.02,.18],[-.45,-.52,.02],[-.19,-.92,-.12],[.02,.68,-.12]
+];
+pyramidSpecs.forEach((p,i)=>{
+  const pyramid=new THREE.Mesh(new THREE.ConeGeometry(.25,.48,5,1),medullaMat.clone());
+  pyramid.position.set(p[0],p[1],.30+p[2]);
+  pyramid.rotation.z=(i-2.5)*.16;
+  pyramid.scale.set(1,.92,1);
+  pyramid.name="Renal pyramid "+(i+1);
+  pyramidGroup.add(pyramid);
+});
+anatomyGroup.add(pyramidGroup);
+const tube=(name,points,radius,color,parent=anatomyGroup)=>{
+  const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],p[1],p[2])));
+  const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,32,radius,10,false),organMaterial(color,.38));
+  mesh.name=name;parent.add(mesh);return mesh;
+};
+const pelvisGroup=new THREE.Group();pelvisGroup.name="Collecting system";
+tube("Renal pelvis",[[.58,.03,.47],[.34,-.04,.53],[.15,-.12,.52]],.115,0xdcbf78,pelvisGroup);
+tube("Superior major calyx",[[.38,-.02,.53],[.18,.25,.48],[-.02,.47,.39]],.064,0xe5cd8a,pelvisGroup);
+tube("Middle major calyx",[[.33,-.08,.52],[.05,-.02,.49],[-.24,.03,.42]],.06,0xe5cd8a,pelvisGroup);
+tube("Inferior major calyx",[[.38,-.15,.50],[.14,-.35,.44],[-.06,-.59,.34]],.064,0xe5cd8a,pelvisGroup);
+tube("Ureter",[[.62,-.07,.43],[.69,-.28,.39],[.68,-.57,.31],[.60,-.88,.19]],.075,0xd7b67a,pelvisGroup);
+anatomyGroup.add(pelvisGroup);
+const vesselGroup=new THREE.Group();vesselGroup.name="Renal blood vessels";
+tube("Renal artery",[[1.02,.10,.32],[.77,.12,.49],[.52,.08,.53],[.31,.31,.47],[.08,.47,.37]],.075,0xb63d43,vesselGroup);
+tube("Renal artery branch",[[.52,.08,.53],[.20,.03,.52],[-.07,-.10,.44]],.043,0xb63d43,vesselGroup);
+tube("Renal vein",[[1.06,-.15,.30],[.82,-.13,.49],[.56,-.10,.55],[.28,-.26,.44],[.03,-.48,.34]],.09,0x467db4,vesselGroup);
+tube("Renal vein branch",[[.56,-.10,.55],[.29,.10,.51],[.00,.22,.43]],.047,0x467db4,vesselGroup);
+scene.add(vesselGroup);
+anatomyGroup.visible=false;
+const targets=[];const targetMat=new THREE.MeshStandardMaterial({color:0x3fe6d5,emissive:0x0b766f,emissiveIntensity:1.0});
+const pointPositions=[[-.55,.82,.29],[-.78,.33,.42],[-.79,-.24,.40],[-.52,-.82,.27],[.35,.43,.48]];
+for(let i=0;i<pointPositions.length;i++){
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.105,.022,10,32),targetMat.clone());
+  ring.position.set(...pointPositions[i]);ring.userData.target=i;ring.name="Training target "+(i+1);scene.add(ring);targets.push(ring);
+  const dot=new THREE.Mesh(new THREE.SphereGeometry(.035,14,10),new THREE.MeshStandardMaterial({color:0xc8fff7,emissive:0x29b9b0,emissiveIntensity:.55}));
+  dot.position.copy(ring.position);dot.position.z+=.008;dot.name="Target marker "+(i+1);scene.add(dot);
+}
+let anatomyVisible=false,surfaceVisible=true,interactionMode="instrument",drillActive=false,drillStep=0;
+function setAnatomyVisible(show){
+  anatomyVisible=show;anatomyGroup.visible=show;
+  kidneySurface.material.transparent=show; kidneySurface.material.opacity=show?.24:1; kidneySurface.material.depthWrite=!show;
+  document.getElementById("anatomyToggle").classList.toggle("active",show);
+}
+function setSurfaceVisible(show){
+  surfaceVisible=show;kidneySurface.visible=show;
+  document.getElementById("surfaceToggle").classList.toggle("active",!show);
+}
+function setInteractionMode(next){
+  interactionMode=next;
+  document.getElementById("cameraMode").classList.toggle("active",next==="camera");
+  document.getElementById("instrumentMode").classList.toggle("active",next==="instrument");
+  document.getElementById("result").textContent=next==="camera"?"Camera control active: drag to orbit the kidney; scroll to zoom.":"Instrument control active: drag on the organ to move the virtual instrument.";
+}
 const toolGroup=new THREE.Group();scene.add(toolGroup);
 const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,2.1,16),new THREE.MeshStandardMaterial({color:0xb9d6df,metalness:.6,roughness:.3}));shaft.rotation.z=Math.PI/2;toolGroup.add(shaft);
 const tip=new THREE.Mesh(new THREE.SphereGeometry(.12,20,16),new THREE.MeshStandardMaterial({color:0xf0c878,metalness:.3,roughness:.3}));tip.position.x=1.12;toolGroup.add(tip);
