@@ -9,6 +9,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -23,3 +24,34 @@ jobs:
         run: python -m compileall -q app.py tests
       - name: Run automated tests
         run: python -m unittest discover -s tests -v
+      - name: Launch Streamlit and check application health
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m streamlit run app.py \
+            --server.headless=true \
+            --server.port=8501 \
+            --server.address=127.0.0.1 \
+            --browser.gatherUsageStats=false > /tmp/medstudy-streamlit.log 2>&1 &
+          app_pid=$!
+          trap 'kill "$app_pid" 2>/dev/null || true; wait "$app_pid" 2>/dev/null || true' EXIT
+          echo "Waiting for Streamlit to become healthy..."
+          ready=0
+          for attempt in $(seq 1 40); do
+            if curl --silent --fail http://127.0.0.1:8501/_stcore/health >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            echo "Streamlit health endpoint did not become ready within 40 seconds."
+            echo "--- Streamlit log ---"
+            cat /tmp/medstudy-streamlit.log
+            echo "--- process status ---"
+            ps -p "$app_pid" -o pid,stat,cmd || true
+            exit 1
+          fi
+          curl --silent --show-error --fail http://127.0.0.1:8501/ -o /tmp/medstudy-home.html
+          test -s /tmp/medstudy-home.html
+          echo "Streamlit started and the MedStudy home page responded successfully."

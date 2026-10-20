@@ -24,7 +24,7 @@ MedStudy is an interactive medical learning project built for medical students w
 - **Optional AI tutor:** configure an OpenAI API key in Streamlit Community Cloud Secrets as `OPENAI_API_KEY = "your-key"` to enable open-ended AI responses. API usage may incur charges. Never commit keys to GitHub.
 - **Active-recall flashcards, bookmarks, and progress charts.**
 - **Android test wrapper:** a lightweight APK shell for opening the deployed Streamlit app on Android. Build and install instructions are in [android/README.md](android/README.md); GitHub Actions builds a downloadable debug APK.
-- **Automated checks** through GitHub Actions.
+- **Automated checks** through GitHub Actions, including question/data integrity, page-navigation wiring, syntax, and an actual Streamlit startup/health smoke test. Tissue Lab also has numerical regression tests and a headless Chromium interaction smoke test.
 
 The question bank is a growing educational starter set, not a comprehensive MBBS, postgraduate, or PhD curriculum. Advanced learning depth changes the style of prompts, but it does not replace validated specialist-level content or research supervision. The current question set is deliberately a foundation for expansion and should be faculty-reviewed before formal exam use.
 
