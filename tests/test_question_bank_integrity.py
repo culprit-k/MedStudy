@@ -28,7 +28,7 @@ class QuestionBankIntegrityTests(unittest.TestCase):
         self.assertEqual(set(self.core), EXPECTED_SUBJECTS)
         self.assertTrue(all(isinstance(items, list) for items in self.core.values()))
         total = sum(len(items) for items in self.core.values())
-        self.assertEqual(total, 90, "Update the README and this assertion when the starter bank grows")
+        self.assertEqual(total, 120, "Update the README and this assertion when the starter bank grows")
         self.assertIn("growing educational starter set", self.readme)
         self.assertIn("question bank", self.readme.lower())
 
