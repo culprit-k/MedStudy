@@ -1,0 +1,152 @@
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07131d;color:#eaf8fb;font-family:system-ui,Arial,sans-serif;touch-action:none}
+#app{height:100%;display:flex;flex-direction:column;border:1px solid #2b5261;border-radius:15px;overflow:hidden;background:radial-gradient(ellipse at 50% 15%,#17394b,#07131d 70%)}
+#head{padding:10px 12px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #244451}
+#eyebrow{font-size:10px;letter-spacing:1.4px;color:#8de8df;font-weight:800}#hint{font-size:11px;color:#a8c9d3;margin-top:4px}
+#status{font-size:10px;border:1px solid #286b60;color:#9af4cb;border-radius:20px;padding:6px 8px;white-space:nowrap;height:max-content}
+#scene{position:relative;flex:1;min-height:300px;touch-action:none}#scene canvas{display:block;width:100%;height:100%}
+#overlay{position:absolute;left:9px;top:9px;pointer-events:none;display:flex;flex-direction:column;gap:5px;max-width:65%}
+.pill{background:#081a25dd;border:1px solid #2b5362;border-radius:8px;padding:7px;font-size:10px;color:#cbe7ec}
+#bottom{padding:10px;border-top:1px solid #244451;background:#0a1a25}
+#tools{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+button{border:1px solid #315465;border-radius:9px;background:#102b39;color:#d5edf2;padding:9px 11px;font:inherit;font-size:11px;white-space:nowrap;touch-action:manipulation}
+button.active{background:#12616b;border-color:#62e2d7;color:white}button:disabled{opacity:.4}
+#actions{display:flex;gap:6px;flex-wrap:wrap}#result{font-size:11px;color:#9ed6df;margin-top:7px;min-height:16px}
+</style></head><body><div id="app">
+<div id="head"><div><div id="eyebrow">MEDSTUDY · TOUCH SKILLS SIMULATOR</div><div id="hint">Drag to move · tap to select · use the station controls</div></div><div id="status">● TRAINING MODE</div></div>
+<div id="scene"><div id="overlay"><div class="pill" id="station">Station</div><div class="pill" id="goal">Goal: interact with the highlighted target</div><div class="pill" id="count">Attempts: 0 · Successful: 0</div></div></div>
+<div id="bottom"><div id="tools"></div><div class="legend" id="anatomyLegend">Kidney teaching model · Renal artery · Renal vein · Renal pelvis · Ureter · Pyramids</div><div id="actions"><button id="cameraMode">Camera control</button><button id="instrumentMode" class="active">Instrument control</button><button id="anatomyToggle">Toggle anatomy</button><button id="surfaceToggle">Surface layer</button><button id="sutureDrill">Suture-alignment drill</button><button id="reset">Reset view</button><button id="next">Next target →</button><button id="show">Show target</button></div><div id="result">Loading kidney anatomy model…</div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const station=__STATION__,root=document.getElementById('scene');
+document.getElementById('station').textContent=station.toUpperCase();
+const instructions={
+"Laparoscopic camera orientation":"Drag to rotate the camera. Tap the highlighted teal target when it is centred.",
+"Instrument targeting and hand-eye coordination":"Choose an instrument, drag its tip and tap the glowing target to acquire it.",
+"Suture target alignment":"Select point A, then point B, in the marked order. This represents alignment only.",
+"Operating-room instrument identification":"Select the requested instrument category from the buttons."
+};
+document.getElementById('goal').textContent=instructions[station]||"Select the highlighted target.";
+if(!window.THREE){document.getElementById('result').textContent="3D engine did not load. Check internet access and reload.";return;}
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x081621);
+const camera=new THREE.PerspectiveCamera(45,1,.1,100);camera.position.set(0,0,7);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xc8f6ff,0x17232c,2));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,5,6);scene.add(light);
+const controls={yaw:0,pitch:0};let dragging=false,lastX=0,lastY=0,selectedTool="Grasper",attempts=0,success=0,targetIndex=0,step=0;
+// Original procedural kidney teaching model: recognisable bean silhouette, renal hilum, vessels, ureter and cutaway structures.
+const kidneyGeo=new THREE.SphereGeometry(1,72,52);
+const kp=kidneyGeo.attributes.position;
+for(let i=0;i<kp.count;i++){
+  const x0=kp.getX(i), y0=kp.getY(i), z0=kp.getZ(i);
+  const x=x0*1.13;
+  const y=y0*1.62;
+  const medialNotch=.43*Math.exp(-Math.pow(y/.53,2))*Math.max(0,x0);
+  kp.setXYZ(i,x-medialNotch,y,z0*.59*(1-.08*Math.max(0,y0)));
+}
+kidneyGeo.computeVertexNormals();
+const kidneyMaterial=new THREE.MeshStandardMaterial({color:0x9f4f53,roughness:.72,metalness:0.02});
+const kidneySurface=new THREE.Mesh(kidneyGeo,kidneyMaterial);
+kidneySurface.name="Kidney outer surface";
+scene.add(kidneySurface);
+const anatomyGroup=new THREE.Group();
+anatomyGroup.name="Kidney cutaway anatomy";
+scene.add(anatomyGroup);
+const organMaterial=(color,roughness=.72)=>new THREE.MeshStandardMaterial({color,roughness,side:THREE.DoubleSide});
+const cortex=new THREE.Mesh(new THREE.SphereGeometry(1.005,72,52),organMaterial(0xc27b70));
+const cp=cortex.geometry.attributes.position;
+for(let i=0;i<cp.count;i++){
+  const x0=cp.getX(i), y0=cp.getY(i), z0=cp.getZ(i);
+  const x=x0*1.13*.86, y=y0*1.62*.86;
+  cp.setXYZ(i,x-.37*Math.exp(-Math.pow(y/.46,2))*Math.max(0,x0),y,z0*.595*.86*(1-.08*Math.max(0,y0)));
+}
+cortex.geometry.computeVertexNormals();
+cortex.material=organMaterial(0xc98278);cortex.material.transparent=true;cortex.material.opacity=.34;cortex.material.depthWrite=false;
+cortex.name="Renal cortex · inner cutaway rim";
+anatomyGroup.add(cortex);
+const medullaMat=organMaterial(0x853a42), pyramidGroup=new THREE.Group();pyramidGroup.name="Renal pyramids";
+const pyramidSpecs=[
+  [-.42,.80,-.18],[-.58,.42,.05],[-.60,-.02,.18],[-.45,-.52,.02],[-.19,-.92,-.12],[.02,.68,-.12]
+];
+pyramidSpecs.forEach((p,i)=>{
+  const pyramid=new THREE.Mesh(new THREE.ConeGeometry(.25,.48,5,1),medullaMat.clone());
+  pyramid.position.set(p[0],p[1],.30+p[2]);
+  pyramid.rotation.z=(i-2.5)*.16;
+  pyramid.scale.set(1,.92,1);
+  pyramid.name="Renal pyramid "+(i+1);
+  pyramidGroup.add(pyramid);
+});
+anatomyGroup.add(pyramidGroup);
+const tube=(name,points,radius,color,parent=anatomyGroup)=>{
+  const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],p[1],p[2])));
+  const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,32,radius,10,false),organMaterial(color,.38));
+  mesh.name=name;parent.add(mesh);return mesh;
+};
+const pelvisGroup=new THREE.Group();pelvisGroup.name="Collecting system";
+tube("Renal pelvis",[[.58,.03,.47],[.34,-.04,.53],[.15,-.12,.52]],.115,0xdcbf78,pelvisGroup);
+tube("Superior major calyx",[[.38,-.02,.53],[.18,.25,.48],[-.02,.47,.39]],.064,0xe5cd8a,pelvisGroup);
+tube("Middle major calyx",[[.33,-.08,.52],[.05,-.02,.49],[-.24,.03,.42]],.06,0xe5cd8a,pelvisGroup);
+tube("Inferior major calyx",[[.38,-.15,.50],[.14,-.35,.44],[-.06,-.59,.34]],.064,0xe5cd8a,pelvisGroup);
+tube("Ureter",[[.62,-.07,.43],[.69,-.28,.39],[.68,-.57,.31],[.60,-.88,.19]],.075,0xd7b67a,pelvisGroup);
+anatomyGroup.add(pelvisGroup);
+const vesselGroup=new THREE.Group();vesselGroup.name="Renal blood vessels";
+tube("Renal artery",[[1.02,.10,.32],[.77,.12,.49],[.52,.08,.53],[.31,.31,.47],[.08,.47,.37]],.075,0xb63d43,vesselGroup);
+tube("Renal artery branch",[[.52,.08,.53],[.20,.03,.52],[-.07,-.10,.44]],.043,0xb63d43,vesselGroup);
+tube("Renal vein",[[1.06,-.15,.30],[.82,-.13,.49],[.56,-.10,.55],[.28,-.26,.44],[.03,-.48,.34]],.09,0x467db4,vesselGroup);
+tube("Renal vein branch",[[.56,-.10,.55],[.29,.10,.51],[.00,.22,.43]],.047,0x467db4,vesselGroup);
+scene.add(vesselGroup);vesselGroup.visible=false;
+anatomyGroup.visible=false;
+const targets=[];const targetMat=new THREE.MeshStandardMaterial({color:0x3fe6d5,emissive:0x0b766f,emissiveIntensity:1.0});
+const pointPositions=[[-.55,.82,.40],[-.78,.33,.44],[-.79,-.24,.43],[-.52,-.82,.43],[.35,.43,.55]];
+for(let i=0;i<pointPositions.length;i++){
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.105,.022,10,32),targetMat.clone());
+  ring.position.set(...pointPositions[i]);ring.userData.target=i;ring.name="Training target "+(i+1);scene.add(ring);targets.push(ring);
+  const dot=new THREE.Mesh(new THREE.SphereGeometry(.035,14,10),new THREE.MeshStandardMaterial({color:0xc8fff7,emissive:0x29b9b0,emissiveIntensity:.55}));
+  dot.position.copy(ring.position);dot.position.z+=.008;dot.name="Target marker "+(i+1);scene.add(dot);
+}
+let anatomyVisible=false,surfaceVisible=true,interactionMode="instrument",drillActive=false,drillStep=0;
+function setAnatomyVisible(show){
+  anatomyVisible=show;anatomyGroup.visible=show;vesselGroup.visible=show;
+  kidneySurface.material.transparent=show; kidneySurface.material.opacity=show ? .30 : 1; kidneySurface.material.depthWrite=!show;
+  document.getElementById("anatomyToggle").classList.toggle("active",show);
+}
+function setSurfaceVisible(show){
+  surfaceVisible=show;kidneySurface.visible=show;
+  document.getElementById("surfaceToggle").classList.toggle("active",show);
+}
+function setInteractionMode(next){
+  interactionMode=next;
+  document.getElementById("cameraMode").classList.toggle("active",next==="camera");
+  document.getElementById("instrumentMode").classList.toggle("active",next==="instrument");
+  document.getElementById("result").textContent=next==="camera"?"Camera control active: drag to orbit the kidney; scroll to zoom.":"Instrument control active: drag on the organ to move the virtual instrument.";
+}
+const toolGroup=new THREE.Group();scene.add(toolGroup);
+const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,2.1,16),new THREE.MeshStandardMaterial({color:0xb9d6df,metalness:.6,roughness:.3}));shaft.rotation.z=Math.PI/2;toolGroup.add(shaft);
+const tip=new THREE.Mesh(new THREE.SphereGeometry(.12,20,16),new THREE.MeshStandardMaterial({color:0xf0c878,metalness:.3,roughness:.3}));tip.position.x=1.12;toolGroup.add(tip);
+const handle=new THREE.Mesh(new THREE.TorusGeometry(.22,.055,12,30),new THREE.MeshStandardMaterial({color:0x41b9b4,metalness:.2}));handle.position.x=-1.15;toolGroup.add(handle);toolGroup.position.set(-1.65,.76,.82);toolGroup.rotation.z=-.42;
+const tools=document.getElementById('tools');const toolNames=station==="Operating-room instrument identification"?["Scissors","Grasper","Needle holder","Suction","Retractor"]:["Grasper","Camera","Probe","Suture pointer"];
+function drawTools(){tools.innerHTML="";toolNames.forEach(n=>{const b=document.createElement('button');b.textContent=n;b.className=n===selectedTool?'active':'';b.onclick=()=>{selectedTool=n;drawTools();document.getElementById('result').textContent="Selected: "+n+". Use the station's target task.";};tools.appendChild(b);});}
+drawTools();
+function updateTarget(){targets.forEach((t,i)=>{t.visible=drillActive ? i<2 : (i===targetIndex||station==="Operating-room instrument identification");t.scale.setScalar(i===targetIndex?1.3:(drillActive&&i<2?1:0.7));});document.getElementById('count').textContent=drillActive?"Suture alignment · point "+(drillStep+1)+" of 2 · Attempts: "+attempts+" · Successful: "+success:"Attempts: "+attempts+" · Successful: "+success+" · Target "+(targetIndex+1)+"/"+targets.length;}
+function resize(){const w=root.clientWidth,h=root.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}new ResizeObserver(resize).observe(root);
+const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
+function pick(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(targets.filter(t=>t.visible));if(hit.length){attempts++;const id=hit[0].object.userData.target;const expected=drillActive?drillStep:targetIndex;if(id===expected){success++;if(drillActive){drillStep++;if(drillStep>=2){drillActive=false;targetIndex=2;document.getElementById('result').textContent="Alignment drill complete. You selected anchor points A then B in order. This measures visual sequencing only.";}else{targetIndex=drillStep;document.getElementById('result').textContent="Point A selected. Now select point B to complete the alignment drill.";}}else{document.getElementById('result').textContent="Target acquired on the kidney surface. This is a visual coordination score only.";targetIndex=(targetIndex+1)%targets.length;}updateTarget();}else{document.getElementById('result').textContent=drillActive?"Select point "+(expected===0?"A":"B")+" next to complete the alignment drill.":"That was not the highlighted target. Reorient and try again.";updateTarget();}}else if(interactionMode==="instrument"){const p=new THREE.Vector3(pointer.x,pointer.y,.1).unproject(camera);const dir=p.sub(camera.position).normalize();const distance=(.58-camera.position.z)/dir.z;const pos=camera.position.clone().add(dir.multiplyScalar(distance));toolGroup.position.x=Math.max(-2,Math.min(2,pos.x));toolGroup.position.y=Math.max(-1.45,Math.min(1.45,pos.y));document.getElementById('result').textContent="Virtual "+selectedTool+" repositioned. Instrument interaction is schematic, not force feedback.";}}
+let down=null;renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};lastX=e.clientX;lastY=e.clientY;dragging=true;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{if(!dragging||!down)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;if(interactionMode==="camera"){camera.position.x=Math.max(-2.4,Math.min(2.4,camera.position.x-dx*.008));camera.position.y=Math.max(-1.8,Math.min(1.8,camera.position.y+dy*.008));camera.lookAt(0,0,0);}else if(Math.hypot(e.clientX-down.x,e.clientY-down.y)>4){toolGroup.position.x=Math.max(-2.2,Math.min(2.2,toolGroup.position.x+dx*.009));toolGroup.position.y=Math.max(-1.6,Math.min(1.6,toolGroup.position.y-dy*.009));}});
+renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)<8)pick(e);down=null;});
+renderer.domElement.addEventListener('wheel',e=>{camera.position.z=Math.max(3.5,Math.min(10,camera.position.z+e.deltaY*.005));},{passive:true});
+document.getElementById('reset').onclick=()=>{attempts=0;success=0;targetIndex=0;step=0;drillActive=false;drillStep=0;camera.position.set(0,0,7);camera.lookAt(0,0,0);toolGroup.position.set(-1.65,.76,.82);toolGroup.rotation.z=-.42;setAnatomyVisible(false);setSurfaceVisible(true);setInteractionMode('instrument');document.getElementById('result').textContent="Kidney view reset. Choose a control and explore the labelled teaching anatomy.";updateTarget();};
+document.getElementById('next').onclick=()=>{targetIndex=(targetIndex+1)%targets.length;updateTarget();document.getElementById('result').textContent="New target highlighted. Continue practising visual orientation.";};
+document.getElementById('show').onclick=()=>{const t=targets[drillActive?drillStep:targetIndex];camera.position.x=t.position.x*.25;camera.position.y=t.position.y*.25;camera.lookAt(0,0,0);document.getElementById('result').textContent="Highlighted target brought into view.";};
+document.getElementById('cameraMode').onclick=()=>setInteractionMode('camera');
+document.getElementById('instrumentMode').onclick=()=>setInteractionMode('instrument');
+document.getElementById('anatomyToggle').onclick=()=>{setAnatomyVisible(!anatomyVisible);document.getElementById('result').textContent=anatomyVisible?"Cutaway anatomy shown: renal pyramids, renal pelvis, renal artery, renal vein and ureter are schematic teaching structures.":"External kidney surface view. Turn anatomy on to inspect the simplified internal layout.";};
+document.getElementById('surfaceToggle').onclick=()=>{setSurfaceVisible(!surfaceVisible);document.getElementById('result').textContent=surfaceVisible?"Kidney outer surface shown.":"Outer surface hidden. Internal structures remain visible only when Toggle anatomy is enabled.";};
+document.getElementById('sutureDrill').onclick=()=>{drillActive=true;drillStep=0;targetIndex=0;setInteractionMode('instrument');document.getElementById('result').textContent="Alignment drill: select anchor point A, then anchor point B. This tests target order only, not real suturing technique.";updateTarget();};
+updateTarget();document.getElementById('result').textContent="Touch the scene to begin. This is a simplified coordination exercise.";
+function animate(t){requestAnimationFrame(animate);targets.forEach((o,i)=>{if(i===targetIndex){const z=1+Math.sin(t*.004)*.12;o.scale.setScalar(z);}});renderer.render(scene,camera);}animate(0);
+})();
+</script></body></html>
+"""
