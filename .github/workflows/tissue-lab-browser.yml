@@ -38,7 +38,7 @@ jobs:
       - name: Install Playwright test runner
         run: |
           npm init -y
-          npm install --no-save @playwright/test@1.55.0
+          npm install --no-save @playwright/test@1.55.0 three@0.128.0
       - name: Install Chromium and system dependencies
         run: npx playwright install --with-deps chromium
       - name: Run browser smoke tests
