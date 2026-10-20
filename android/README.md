@@ -1,10 +1,10 @@
 # MedStudy Android test wrapper
 
-This directory contains a lightweight Android WebView wrapper for the existing Streamlit MedStudy app. It is a test package, not a native rewrite of the Streamlit application.
+This directory contains a lightweight Android WebView wrapper for the image-first MedStudy learning app (120 starter MCQs, sourced medical-image quizzes, revision tools, and a personalised AI teacher). It is a test package, not a native rewrite of the Streamlit application.
 
 ## Important: deploy the website first
 
-The APK does not contain a Python/Streamlit server. It opens the HTTPS URL you enter on first launch. Deploy the repository in Streamlit Community Cloud:
+The APK does not contain a Python/Streamlit server. It opens the HTTPS URL you enter on first launch. The repository has automated code validation, but the owner must deploy the website before the wrapper can be tested against the live app. Deploy the repository in Streamlit Community Cloud:
 
 1. Open https://share.streamlit.io/ and sign in with GitHub.
 2. Create an app from repository `culprit-k/MedStudy`, branch `main`, main file `app.py`.
