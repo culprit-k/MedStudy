@@ -84,7 +84,8 @@
     }
     return deepest;
   }
-\n  const api = { pointPlaneContact, pointSphereContact, deepestProxyContact, sweptSphereContact, deepestSweptProxyContact };
+
+  const api = { pointPlaneContact, pointSphereContact, deepestProxyContact, sweptSphereContact, deepestSweptProxyContact };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.AnatomyCollisionEngine = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);
