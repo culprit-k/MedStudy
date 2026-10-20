@@ -431,12 +431,645 @@ if page == "Home":
         ("🎯","Real-image quiz","Study sourced medical images and practise image-led questions.","Image Quiz"),
         ("🧠","Personal teacher","A tutor adapted to your syllabus, weak topics, goals and learning pace.","Teacher AI"),
         ("📚","Learning library","Search the medical question bank and review explanations.","Learning Library"),
-        ("🩻","Visual lab","Practise with bundled anatomy and physiology teaching images.","Visual Lab"),
-        ("🖼️","Medical image library","Explore image references with source, creator and licence information.","Medical Image Library"),
+        ("🩻","Visual lab","Practise with anatomy and physiology teaching images.","Visual Lab"),
+        ("🖼️","Medical image library","Explore sourced image references with creator and licence details.","Medical Image Library"),
         ("🏁","Exam arena","Build a mixed-question session and review missed concepts.","Exam Arena"),
         ("🩺","Clinical cases","Practise mechanism-based reasoning with fictional cases.","Clinical Cases"),
         ("🗣️","OSCE studio","Revise structured clinical communication and examination checklists.","OSCE Studio"),
         ("🔎","Research & EBM","Practise PICO, study design and evidence appraisal.","Research & EBM"),
+    ]
+    cols = st.columns(2)
+    for i,(icon,title,desc,target) in enumerate(cards):
+        with cols[i%2]:
+            st.markdown(f'<div class="panel"><div style="font-size:1.8rem">{icon}</div><h3>{title}</h3><p class="muted">{desc}</p></div>', unsafe_allow_html=True)
+            st.button(f"Open {title} →", key=f"home_{target}", use_container_width=True, on_click=jump, args=(target,))
+    st.markdown("## Keep your momentum")
+    left,right = st.columns([1.4,1])
+    with left:
+        st.markdown('<div class="panel"><h3>Suggested study loop</h3><p>① Learn one concept → ② test recall → ③ apply it to a case → ④ explain it in your own words.</p><p class="muted">Short active-recall sessions are more useful than rereading alone.</p></div>', unsafe_allow_html=True)
+    with right:
+        st.markdown('<div class="panel"><h3>Session snapshot</h3><p><b>'+str(correct_total)+'</b> correct responses</p><p><b>'+str(len(st.session_state.bookmarks))+'</b> saved questions</p><p><b>'+str(mastered_subjects)+'</b> subjects with a correct answer</p></div>', unsafe_allow_html=True)
+
+
+elif page == "Virtual Hospital":
+    st.markdown("""
+    <div style="background:linear-gradient(115deg,#071827,#10374a 62%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px 26px;color:#effcff;margin-bottom:14px">
+      <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · SIMULATION CENTER</div>
+      <h1 style="color:white;margin:.5rem 0">Virtual Hospital</h1>
+      <p style="color:#ccebed;max-width:850px;margin:0">Practise bedside assessment, organ-system exploration, operating-room safety, microbiology interpretation and laboratory reasoning in one interactive teaching environment.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.warning("All patients, monitor values and results are fictional. These activities do not provide diagnosis, treatment, medication instructions, real operating-room credentialing or real laboratory protocols. Follow qualified supervision and local institutional guidance in actual clinical environments.")
+    cases = HOSPITAL_DATA.get("patient_cases", [])
+    organ_systems = HOSPITAL_DATA.get("organ_systems", [])
+    micro_tests = HOSPITAL_DATA.get("microbiology_tests", [])
+    or_stages = HOSPITAL_DATA.get("or_workflow", [])
+    diag_panels = HOSPITAL_DATA.get("diagnostic_panels", [])
+    st.markdown("#### Choose your hospital station")
+    tab_ward, tab_organs, tab_or, tab_micro, tab_diag = st.tabs([
+        "🏥 Patient ward", "🫀 Organ explorer", "🧤 Operating theatre", "🦠 Microbiology bench", "🔬 Diagnostics lab"
+    ])
+
+    with tab_ward:
+        st.markdown("### Bedside assessment & live monitor")
+        st.caption("Select a fictional case, review simulated observations, then complete a structured clinical review.")
+        case_names = [c["name"] for c in cases]
+        chosen_case_name = st.selectbox("Patient scenario", case_names, key="hospital_case_select")
+        case = next(c for c in cases if c["name"] == chosen_case_name)
+        c1, c2 = st.columns([1.1, 1])
+        with c1:
+            st.markdown(f"**{case['location']}** · {case['level']}")
+            st.write(case["presentation"])
+            st.markdown("#### Adjust fictional monitor values")
+            st.caption("This is a teaching sandbox; changes are not connected to a real person or medical device.")
+            v = case["vitals"]
+            p1, p2 = st.columns(2)
+            with p1:
+                hr = st.slider("Heart rate · bpm", 35, 190, int(v["hr"]), key=f"ward_hr_{case['id']}")
+                spo2 = st.slider("SpO₂ · %", 65, 100, int(v["spo2"]), key=f"ward_spo2_{case['id']}")
+                rr = st.slider("Respiratory rate · /min", 6, 45, int(v["rr"]), key=f"ward_rr_{case['id']}")
+            with p2:
+                sbp = st.slider("Systolic BP · mmHg", 60, 220, int(v["systolic_bp"]), key=f"ward_sbp_{case['id']}")
+                dbp = st.slider("Diastolic BP · mmHg", 30, 140, int(v["diastolic_bp"]), key=f"ward_dbp_{case['id']}")
+                temp = st.slider("Temperature · °C", 34.0, 42.0, float(v["temperature"]), step=0.1, key=f"ward_temp_{case['id']}")
+            st.markdown("#### Bedside review checklist")
+            step_done = []
+            check_map = {}
+            for idx, item in enumerate(case["observations"]):
+                key = f"ward_{case['id']}_step_{idx}"
+                checked = st.checkbox(item, key=key)
+                check_map[str(idx)] = checked
+                if checked:
+                    step_done.append(idx)
+            st.progress(len(step_done) / max(len(case["observations"]),1))
+            if st.button("Submit bedside review", type="primary", key=f"ward_submit_{case['id']}"):
+                st.session_state.setdefault("hospital_case_reviews", {})[case["id"]] = {
+                    "completed": len(step_done), "total": len(case["observations"]),
+                    "reflection": st.session_state.get(f"ward_reflection_{case['id']}", "")
+                }
+                record_answer({"id":f"hospital-review-{case['id']}","subject":"Virtual Hospital · Patient assessment"},
+                              len(step_done) == len(case["observations"]), f"{len(step_done)}/{len(case['observations'])} checklist items")
+                st.success("Review recorded in this session. Read the debrief and consider what would require a supervisor in a real setting.")
+            reflection = st.text_area("Clinical reasoning reflection", key=f"ward_reflection_{case['id']}", placeholder="What changed? What is uncertain? What would you report to the supervising clinician?")
+        with c2:
+            render_hospital_monitor("Heart & circulation", {
+                "hr":hr,"spo2":spo2,"rr":rr,"systolic_bp":sbp,"diastolic_bp":dbp,"temperature":temp
+            }, "BEDSIDE MONITOR · SIMULATED")
+            st.markdown("#### Debrief")
+            st.info(case["debrief"])
+            st.markdown("**Structured handover**")
+            st.write("Use SBAR: Situation → Background → Assessment → Recommendation. Report observed findings and trends, distinguish facts from interpretation, and escalate concerns through the appropriate real-world pathway.")
+            saved_review = st.session_state.get("hospital_case_reviews", {}).get(case["id"])
+            if saved_review:
+                st.caption(f"Last checklist attempt this session: {saved_review['completed']}/{saved_review['total']} items.")
+
+    with tab_organs:
+        st.markdown("### Interactive organ-system explorer")
+        st.caption("Select an organ system to highlight it in a live animated conceptual body map and connect structure to function.")
+        org_names = [o["name"] for o in organ_systems]
+        selected_name = st.selectbox("Organ system", org_names, key="hospital_organ_select")
+        organ = next(o for o in organ_systems if o["name"] == selected_name)
+        oleft, oright = st.columns([1,1])
+        with oleft:
+            st.caption("For detailed individual structures, use the real 3D atlas. The small teaching model below represents organ systems conceptually.")
+            components.iframe("https://nqwrc.github.io/3d-anatomy/", height=650, scrolling=True)
+            st.markdown("[Open full 3D atlas ↗](https://nqwrc.github.io/3d-anatomy/)")
+        with oright:
+            st.markdown(f"## {organ['icon']} {organ['name']}")
+            st.markdown(f"**Key structures:** {organ['focus']}")
+            st.write(organ["concept"])
+            st.info(organ["caseLink"])
+            st.markdown("#### Quick learning actions")
+            q1, q2 = st.columns(2)
+            with q1:
+                if st.button("Study this system", key=f"organ_study_{selected_name}", use_container_width=True):
+                    st.session_state.navigation = "Anatomy Lab"
+                    st.rerun()
+            with q2:
+                if st.button("Run a physiology model", key=f"organ_physiology_{selected_name}", use_container_width=True):
+                    st.session_state.navigation = "Whole-Body Organ Simulator"
+                    st.rerun()
+            if st.button("Ask the Teacher AI", key=f"organ_teacher_{selected_name}", use_container_width=True):
+                st.session_state.tutor_prefill = f"Teach me about {selected_name}: structure, physiology, histology, pathology, diagnostic tests and clinical correlations at MBBS level. Clearly state uncertainties."
+                st.session_state.navigation = "Teacher AI"
+                st.rerun()
+
+    with tab_or:
+        st.markdown("### Operating theatre · safety and team workflow")
+        st.caption("This module focuses on communication, verification, sterility and checklist discipline—not instructions for performing a real operation.")
+        stage_names = [stage["stage"] for stage in or_stages]
+        stage_name = st.selectbox("Theatre phase", stage_names, key="or_stage_select")
+        stage = next(s for s in or_stages if s["stage"] == stage_name)
+        st.markdown(f"#### {stage['stage']}")
+        selected_checks = []
+        for idx, item in enumerate(stage["items"]):
+            if st.checkbox(item, key=f"or_{stage_name}_{idx}"):
+                selected_checks.append(item)
+        st.progress(len(selected_checks) / max(len(stage["items"]),1))
+        st.metric("Checklist completion", f"{len(selected_checks)}/{len(stage['items'])}")
+        st.markdown("#### Team briefing")
+        briefing = st.text_area("What would you confirm with the team before proceeding?", key=f"or_briefing_{stage_name}", placeholder="Patient/site/procedure, roles, risks, equipment, specimen plan and concerns...")
+        if st.button("Complete simulated theatre phase", type="primary", key=f"or_complete_{stage_name}"):
+            all_done = len(selected_checks) == len(stage["items"])
+            st.session_state.setdefault("or_phase_results", {})[stage_name] = {"completed":len(selected_checks),"total":len(stage["items"]),"briefing":briefing}
+            if all_done:
+                st.success("Phase checklist complete in this simulation. In practice, always use the approved local checklist and supervising team.")
+            else:
+                st.warning("The checklist is incomplete. Review the omitted safety items before marking this phase complete.")
+            record_answer({"id":f"or-{stage_name}","subject":"Virtual Hospital · Operating theatre"},all_done,f"{len(selected_checks)}/{len(stage['items'])} items")
+        st.markdown("---")
+        st.markdown("**Operating-room environment**")
+        render_simulation_scene("operating")
+
+    with tab_micro:
+        st.markdown("### Clinical microbiology bench")
+        st.caption("Virtual bench: specimen reasoning, test principles, interpretation and limitations. No real biological materials are used.")
+        test_names = [test["name"] for test in micro_tests]
+        test_name = st.selectbox("Choose a microbiology station", test_names, key="micro_station_select")
+        test = next(t for t in micro_tests if t["name"] == test_name)
+        st.markdown(f"#### 🦠 {test['name']}")
+        st.markdown(f"**Specimen context:** {test['specimen']}")
+        st.markdown(f"**Principle:** {test['principle']}")
+        st.markdown(f"**Task:** {test['learning_task']}")
+        render_simulation_scene("microbiology")
+        answer = st.radio("Select your interpretation", test["options"], key=f"micro_answer_{test_name}")
+        if st.button("Submit interpretation", type="primary", key=f"micro_submit_{test_name}"):
+            correct = test["options"].index(answer) == int(test["answer"])
+            st.session_state.setdefault("hospital_micro_results", {})[test_name] = {
+                "correct": correct, "selected": answer, "best_answer": test["options"][int(test["answer"])]
+            }
+            record_answer({"id":f"micro-{test_name}","subject":"Virtual Hospital · Microbiology"},correct,answer)
+        result = st.session_state.get("hospital_micro_results", {}).get(test_name)
+        if result:
+            if result["correct"]:
+                st.success("Correct interpretation.")
+            else:
+                st.error(f"Review the interpretation. Best answer: {result['best_answer']}")
+            st.write(test["explanation"])
+        with st.expander("Quality control, limitations and safety"):
+            st.write(test["limitations"])
+            st.write("Actual specimen handling, culture, staining, amplification, susceptibility testing and quality control must be done by trained personnel under approved laboratory SOPs and institutional biosafety requirements.")
+        m1, m2 = st.columns(2)
+        with m1:
+            if st.button("Study organisms and stains", key="micro_to_library", use_container_width=True):
+                st.session_state.navigation = "Medical Image Library"
+                st.rerun()
+        with m2:
+            if st.button("Open microbiology questions", key="micro_to_quiz", use_container_width=True):
+                st.session_state.navigation = "Learning Library"
+                st.rerun()
+
+    with tab_diag:
+        st.markdown("### Clinical diagnostics laboratory")
+        st.caption("Interpret fictional panels and learn the limitations of test results. These are examples, not real patient results.")
+        panel_names = [p["name"] for p in diag_panels]
+        panel_name = st.selectbox("Diagnostic panel", panel_names, key="diagnostic_panel_select")
+        panel = next(p for p in diag_panels if p["name"] == panel_name)
+        st.markdown(f"#### {panel['name']}")
+        st.caption(panel["context"])
+        for test_label, value, interpretation in panel["results"]:
+            row1, row2, row3 = st.columns([1.15,1,1.4])
+            row1.markdown(f"**{test_label}**")
+            row2.write(value)
+            row3.caption(interpretation)
+        st.markdown("---")
+        st.markdown(f"**{panel['question']}**")
+        diag_answer = st.radio("Choose the best interpretation", panel["options"], key=f"diagnostic_answer_{panel_name}")
+        if st.button("Submit lab interpretation", type="primary", key=f"diagnostic_submit_{panel_name}"):
+            correct = panel["options"].index(diag_answer) == int(panel["answer"])
+            st.session_state.setdefault("hospital_diagnostic_results", {})[panel_name] = {
+                "correct": correct, "selected": diag_answer, "best_answer": panel["options"][int(panel["answer"])]
+            }
+            record_answer({"id":f"diagnostic-{panel_name}","subject":"Virtual Hospital · Diagnostics"},correct,diag_answer)
+        result = st.session_state.get("hospital_diagnostic_results", {}).get(panel_name)
+        if result:
+            if result["correct"]:
+                st.success("Good interpretation.")
+            else:
+                st.error(f"Best answer: {result['best_answer']}")
+            st.info(panel["explanation"])
+        st.info("In clinical care, test results must be interpreted by qualified personnel using current guidelines, local reference ranges, patient context and appropriate escalation.")
+
+elif page == "Real 3D Anatomy Atlas":
+    st.markdown("""
+    <div class="hero">
+      <div class="eyebrow">Open anatomy atlas · external model library</div>
+      <h1>Real 3D Anatomy Atlas</h1>
+      <p>Explore a detailed, touch-enabled anatomical model with individually selectable structures, system layers, isolate/hide controls and transparent views.</p>
+      <span class="pill">Touch rotation</span><span class="pill">Pinch to zoom</span><span class="pill">Select structures</span><span class="pill">Layer controls</span>
+    </div>
+    """, unsafe_allow_html=True)
+    st.info("This embeds an externally hosted atlas based on Z-Anatomy/BodyParts3D data rather than the simplified demo geometry. Its 3D assets load from the atlas provider and require internet access. The atlas contains its own credits and licence notices.")
+    action_col, credit_col = st.columns([1,1])
+    with action_col:
+        st.markdown("**Best on a phone:** rotate with one finger, pinch to zoom, and tap a structure to select it. Use the viewer's own Isolate, Hide, Transparent and Show all controls.")
+        st.markdown("[Open the atlas directly in full screen ↗](https://nqwrc.github.io/3d-anatomy/)")
+    with credit_col:
+        st.caption("Source: 3D Anatomy by nqwrc, using Z-Anatomy and BodyParts3D-derived models. The source project documents CC BY-SA requirements and notes additional non-commercial components. We link/embed the hosted viewer; we are not copying its model assets into this repository.")
+        st.markdown("[Read source and model licensing](https://github.com/nqwrc/3d-anatomy#licence)")
+    st.markdown("### Interactive anatomy viewer")
+    components.iframe("https://nqwrc.github.io/3d-anatomy/", height=870, scrolling=True)
+    st.caption("If your in-app browser blocks the embedded viewer or it does not load, use the full-screen link above. Loading and performance depend on network speed and the browser's WebGL support.")
+    st.markdown("### How this connects to MedStudy")
+    c1,c2,c3 = st.columns(3)
+    with c1:
+        if st.button("Open Anatomy Lab", use_container_width=True):
+            st.session_state.navigation = "Anatomy Lab"
+            st.rerun()
+    with c2:
+        if st.button("Open Whole-Body Simulator", use_container_width=True):
+            st.session_state.navigation = "Whole-Body Organ Simulator"
+            st.rerun()
+    with c3:
+        if st.button("Open Virtual Hospital", use_container_width=True):
+            st.session_state.navigation = "Virtual Hospital"
+            st.rerun()
+
+elif page == "Surgery Simulator":
+    st.markdown("""
+    <div style="background:linear-gradient(120deg,#071827,#15384b 60%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px;color:#effcff;margin-bottom:14px">
+      <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · VIRTUAL OPERATING THEATRE</div>
+      <h1 style="color:white;margin:.45rem 0">Surgery Simulator</h1>
+      <p style="color:#ccebed;margin:0">A branching, fictional operating-room simulation for anatomy recognition, patient safety, team communication and clinical decision-making.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.warning("TRAINING ONLY — not a surgical guide or credentialing tool. No real patient is involved. Procedures are represented at a high educational level; do not use this simulation as instructions for performing surgery. Real procedures require formal training, institutional protocols and direct supervision.")
+    procedures = {
+        "Appendectomy (acute appendicitis)": {
+            "case":"A 22-year-old fictional patient has migratory right-lower-quadrant pain, fever and local tenderness. Imaging is reported as consistent with acute appendicitis.",
+            "goal":"Recognise the likely diagnosis, verify the patient and planned procedure, identify relevant anatomy, respond safely to a simulated intraoperative change, and complete a handover.",
+            "anatomy":"Appendix and caecum; ileocaecal region; terminal ileum; caecal taeniae as an anatomical landmark; nearby ureter and iliac vessels as structures to respect.",
+            "questions":[
+                {"stage":"Pre-operative planning","prompt":"Which safety action must be confirmed before the simulated procedure begins?","options":["Proceed because the imaging is positive","Confirm identity, consent, procedure/site, allergies and required checks with the team","Skip the briefing to reduce anaesthetic time"],"answer":1,"why":"A team time-out and confirmation of identity, consent, intended procedure/site and relevant risks are core safety checks."},
+                {"stage":"Anatomy recognition","prompt":"The appendix typically arises from which structure?","options":["The greater curvature of the stomach","The caecum near the convergence of the taeniae coli","The sigmoid colon"],"answer":1,"why":"The appendix arises from the caecum; the taeniae coli converge at its base and are a useful anatomical concept."},
+                {"stage":"Simulated intraoperative event","prompt":"The simulated view is unexpectedly unclear and anatomy cannot be confidently identified. What is the safest response?","options":["Continue based on the expected anatomy","Pause, communicate the concern, reassess exposure and obtain senior help as appropriate","Ignore the monitor and continue quickly"],"answer":1,"why":"When anatomy or conditions are unclear, pausing and communicating is safer than proceeding on an assumption."},
+                {"stage":"Recovery and handover","prompt":"Which information belongs in the structured handover?","options":["Only the procedure name","Procedure summary, relevant findings, blood loss/fluids if applicable, complications, current status and postoperative plan","Only the patient's age"],"answer":1,"why":"A structured handover communicates the clinical course, current condition, issues requiring attention and the agreed plan."}
+            ]},
+        "Laparoscopic cholecystectomy (gallbladder)": {
+            "case":"A fictional adult has recurrent biliary colic and investigations support symptomatic gallstones. The team has planned a simulated laparoscopic cholecystectomy.",
+            "goal":"Practise pre-operative safety, biliary anatomy recognition, responding to uncertainty and structured handover.",
+            "anatomy":"Gallbladder, cystic duct, common hepatic duct, common bile duct, liver and hepatocystic triangle. The relationship between structures must be clearly established by the operating team before division.",
+            "questions":[
+                {"stage":"Pre-operative planning","prompt":"Which briefing is most appropriate before the simulated case?","options":["Confirm patient, consent, allergies, intended procedure, imaging and team readiness","Assume all checks were completed by someone else","Begin before the equipment and team are ready"],"answer":0,"why":"A reliable pre-operative briefing and team time-out confirm shared understanding and readiness."},
+                {"stage":"Biliary anatomy","prompt":"Why is careful identification of biliary anatomy essential in this operation?","options":["The ducts have no important neighbouring structures","Anatomical variation and misidentification can cause serious bile-duct or vascular injury","It is only needed for the written exam"],"answer":1,"why":"Biliary anatomy varies, and misidentification can cause major injury. This is a key reason for a deliberate, safe critical view and senior judgement in real surgery."},
+                {"stage":"Simulated intraoperative event","prompt":"The anatomy remains uncertain in the simulation. What is the safest decision?","options":["Divide the structure that looks most likely","Stop and reassess; communicate, seek experienced assistance and consider a safer alternative strategy","Continue because the planned operation cannot change"],"answer":1,"why":"Do not proceed when critical anatomy is uncertain. Real operative choices depend on the patient, findings, local protocols and experienced surgical judgement."},
+                {"stage":"Recovery and handover","prompt":"What should the recovery team be told?","options":["Only that the operation is finished","Relevant operative findings, any concerns or complications, current condition, analgesia/monitoring plan and escalation criteria","Nothing if the patient is awake"],"answer":1,"why":"Clear handover supports continuity, monitoring and early recognition of postoperative problems."}
+            ]},
+        "Skin wound closure (simulation)": {
+            "case":"A fictional patient has a clean, superficial forearm laceration. This is a decision-making and wound-assessment exercise, not a practical suturing tutorial.",
+            "goal":"Assess wound-related red flags, confirm consent and neurovascular assessment, choose an appropriate escalation pathway and plan aftercare.",
+            "anatomy":"Skin layers, superficial fascia, nearby tendons, nerves and vessels; the hand and distal limb require careful functional and neurovascular assessment.",
+            "questions":[
+                {"stage":"Initial assessment","prompt":"Before deciding on closure, what must be considered?","options":["Only the wound length","Mechanism, contamination, time, depth, foreign body, tendon/nerve/vessel involvement, tetanus status and patient factors","Whether the wound looks small in a photo"],"answer":1,"why":"Wound management depends on mechanism, contamination, depth, associated injury and patient factors—not size alone."},
+                {"stage":"Safety check","prompt":"A patient has new numbness and reduced finger movement distal to the wound. What should happen?","options":["Close the skin first and reassess later","Treat as possible deeper neurovascular or tendon injury and obtain urgent qualified assessment","Assume anxiety explains it"],"answer":1,"why":"New sensory or motor deficit may indicate important injury and requires prompt assessment before a simple closure pathway is chosen."},
+                {"stage":"Decision point","prompt":"The wound is heavily contaminated and the injury involves a high-risk structure. What is the best next step?","options":["Follow a generic closure recipe","Escalate for appropriate clinical assessment and wound-management planning","Use the shortest possible appointment"],"answer":1,"why":"Contamination and suspected deeper injury change management; qualified assessment and local protocols are required."},
+                {"stage":"Aftercare","prompt":"Which discharge teaching is most useful when closure is appropriate?","options":["No follow-up is ever needed","Explain wound care, activity advice, follow-up/removal if relevant, and warning signs such as spreading redness, fever, worsening pain or loss of function","Keep all wounds hidden from review"],"answer":1,"why":"Clear aftercare and warning signs help patients seek timely review if complications develop."}
+            ]},
+        "Hip fracture: theatre safety and fixation planning": {
+            "case":"A fictional older adult has a painful shortened, externally rotated leg after a fall. Imaging reports a hip fracture; the fixation choice is intentionally left to the treating team.",
+            "goal":"Practise peri-operative risk recognition, correct-site checks, anatomical orientation, safe team communication and postoperative handover.",
+            "anatomy":"Proximal femur, femoral head and neck, greater and lesser trochanters, acetabulum, and nearby femoral neurovascular structures.",
+            "questions":[
+                {"stage":"Pre-operative planning","prompt":"Which safety factors should be reviewed with the team?","options":["Identity, consent/capacity, correct side, imaging, allergies, anticoagulation, comorbidities and peri-operative plan","Only the patient's height","Only the operating-room schedule"],"answer":0,"why":"Safe peri-operative planning includes patient-specific risks, imaging, correct side, consent and shared team readiness."},
+                {"stage":"Anatomy recognition","prompt":"Which structure is part of the proximal femur?","options":["Acromion","Greater trochanter","Olecranon"],"answer":1,"why":"The greater trochanter is a prominent landmark on the proximal femur."},
+                {"stage":"Simulated change","prompt":"The team notices that the displayed side and the planned side do not match. What should happen?","options":["Proceed using memory","Stop the process and resolve the discrepancy with the team and source documentation before continuing","Ask the patient after anaesthesia"],"answer":1,"why":"Any wrong-side discrepancy is a stop signal. It must be resolved before proceeding."},
+                {"stage":"Recovery and handover","prompt":"Which issue is especially important in the postoperative plan?","options":["Mobilisation/weight-bearing instructions as prescribed, pain control, VTE prevention plan, wound review and delirium-risk monitoring","Only the implant brand","No plan until the next day"],"answer":0,"why":"The postoperative plan should clearly communicate the treating team's mobility instructions, thromboprophylaxis and monitoring priorities."}
+            ]}
+    }
+    procedure_name = st.selectbox("Choose a practice case", list(procedures.keys()), key="surgery_procedure")
+    case = procedures[procedure_name]
+    st.markdown("### Patient brief")
+    st.info(case["case"])
+    st.markdown("**Learning objectives:** " + case["goal"])
+    top1, top2, top3 = st.columns(3)
+    top1.metric("Training case", "Fictional")
+    top2.metric("Stages", "4")
+    top3.metric("Scoring", "Safety + reasoning")
+    st.markdown("### Anatomy orientation")
+    st.write(case["anatomy"])
+    if st.button("Open 3D Anatomy Atlas", use_container_width=True):
+        st.session_state.navigation = "Real 3D Anatomy Atlas"
+        st.rerun()
+    st.divider()
+    st.markdown("### Enter the interactive operation room")
+    st.write("For hands-on practice with a touch-controlled 3D scene, open the Skills Lab. Choose a virtual station, move the on-screen instrument, select targets, and practise camera orientation. This prototype is for simulated coordination, not a complete validated operation.")
+    if st.button("🎮 Open Hands-on Skills Lab", type="primary", use_container_width=True):
+        st.session_state.navigation = "Hands-on Skills Lab"
+        st.rerun()
+    st.markdown("### What you can practise interactively")
+    skills1, skills2, skills3 = st.columns(3)
+    skills1.markdown("**Camera control**\n\nMove the view and orient toward highlighted targets.")
+    skills2.markdown("**Virtual instrument**\n\nMove a simplified tool and practise target acquisition.")
+    skills3.markdown("**Suture alignment**\n\nSelect marked points in order; this is not real suturing mechanics.")
+
+    st.markdown("### Operating theatre workflow")
+    st.caption("Work through each stage in order. Select an answer, review the rationale, and then continue to the next stage.")
+    progress_key = "surgery_progress_" + procedure_name
+    answers_key = "surgery_answers_" + procedure_name
+    if progress_key not in st.session_state:
+        st.session_state[progress_key] = 0
+    if answers_key not in st.session_state:
+        st.session_state[answers_key] = {}
+    questions = case["questions"]
+    current = st.session_state[progress_key]
+    st.progress((current + 1) / len(questions) if current < len(questions) else 1.0)
+    if current < len(questions):
+        q = questions[current]
+        st.markdown(f"#### Stage {current + 1} of {len(questions)} · {q['stage']}")
+        st.markdown(f"**{q['prompt']}**")
+        selected = st.radio("Choose the safest / most appropriate response", q["options"], key=f"surgery_choice_{procedure_name}_{current}", index=None)
+        if st.button("Submit decision", type="primary", key=f"surgery_submit_{procedure_name}_{current}"):
+            if selected is None:
+                st.warning("Choose an answer before submitting.")
+            else:
+                choice = q["options"].index(selected)
+                st.session_state[answers_key][current] = choice
+                if choice == q["answer"]:
+                    st.success("Correct — safe and appropriate decision.")
+                else:
+                    st.error("Not quite. Review the rationale before continuing.")
+                st.info(q["why"])
+                st.session_state[f"surgery_feedback_{procedure_name}_{current}"] = True
+        if st.session_state.get(f"surgery_feedback_{procedure_name}_{current}", False):
+            if st.button("Continue to next stage →", key=f"surgery_next_{procedure_name}_{current}"):
+                st.session_state[progress_key] += 1
+                st.rerun()
+    else:
+        correct = sum(1 for i, q in enumerate(questions) if st.session_state[answers_key].get(i) == q["answer"])
+        score = round(100 * correct / len(questions))
+        st.markdown("### Debrief")
+        st.metric("Decision score", f"{score}%")
+        st.write(f"You selected {correct} of {len(questions)} best answers for **{procedure_name}**.")
+        if score == 100:
+            st.success("Excellent performance on this learning case. Repeat with another procedure to practise transfer of safety principles.")
+        elif score >= 75:
+            st.info("Good foundation. Review the explanations for missed decisions and repeat the case.")
+        else:
+            st.warning("Review the rationales, then repeat the case. Prioritise identity/site checks, clear anatomy, escalation and handover.")
+        st.markdown("#### Your review")
+        for i, q in enumerate(questions):
+            chosen = st.session_state[answers_key].get(i)
+            st.markdown(f"**{i+1}. {q['stage']}**")
+            st.write(f"Your answer: {q['options'][chosen] if chosen is not None else 'Not answered'}")
+            st.write(f"Best answer: {q['options'][q['answer']]}")
+            st.caption(q["why"])
+        if st.button("Restart this case", type="primary", key=f"surgery_restart_{procedure_name}"):
+            st.session_state[progress_key] = 0
+            st.session_state[answers_key] = {}
+            for i in range(len(questions)):
+                st.session_state.pop(f"surgery_feedback_{procedure_name}_{i}", None)
+            st.rerun()
+    st.markdown("### Practice another skill")
+    st.caption("Next modules can add simulated instrument recognition, knot-tying concepts, laparoscopic camera orientation, bleeding-response teamwork, and postoperative complications. These should remain clearly labelled educational simulations, not real procedural instructions.")
+
+    st.markdown("---")
+    st.markdown("## Full operating-room run")
+    st.caption("A longer, end-to-end simulated theatre session. You will move through pre-op checks, team briefing, anaesthesia handoff, positioning, sterile-field checks, intraoperative judgement, sign-out, recovery and handover. This teaches workflow and safety decisions—not the technical steps for performing an operation.")
+    full_run = [
+        {"phase":"1 · Pre-operative assessment","scene":"The patient arrives for the planned operation. The chart, consent form and imaging are available, but the team has not yet completed its checks.","prompt":"What is the safest first action?","options":["Start because the case is on the list","Verify identity, consent/capacity, procedure and site; review allergies, relevant risks and the plan with the team","Ask the patient to confirm only their name, then proceed"],"answer":1,"feedback":"Correct: verify the patient and planned procedure/site, confirm consent, and review relevant risks and documentation before proceeding."},
+        {"phase":"2 · Team briefing and time-out","scene":"The patient is in the operating room. The surgeon, anaesthesia professional and nursing team are present.","prompt":"What should the team time-out establish?","options":["Only the surgeon's name","Shared confirmation of patient, procedure/site, imaging, anticipated critical events, equipment and team concerns","That everyone has seen the schedule"],"answer":1,"feedback":"A structured time-out builds a shared mental model and gives all team members a chance to raise concerns."},
+        {"phase":"3 · Anaesthesia and monitoring handoff","scene":"The anaesthesia team reports that monitoring is attached. A monitor value differs from the expected baseline and needs assessment.","prompt":"How should the surgical team respond?","options":["Ignore it because the anaesthesia team owns the monitor","Pause the simulated start, communicate with anaesthesia and confirm the patient is ready before proceeding","Continue and review after the procedure"],"answer":1,"feedback":"Readiness is shared. Communicate concerns and confirm stability with the anaesthesia professional; this simulation does not provide real-time clinical advice."},
+        {"phase":"4 · Positioning and pressure-point safety","scene":"The patient is anaesthetised in this fictional scenario. The team is preparing for the planned position.","prompt":"Which check is most appropriate?","options":["Check alignment, pressure points, limb protection, access to monitoring and that positioning is compatible with the planned procedure","Assume positioning is safe if the patient is on the table","Prioritise speed over checking"],"answer":0,"feedback":"Positioning checks help prevent pressure, nerve and other positioning-related injuries and preserve safe access."},
+        {"phase":"5 · Sterile field and equipment readiness","scene":"The team is ready to begin, but a team member notices a possible break in sterility and an item that may not be available.","prompt":"What is the safest response?","options":["Continue if the item looks clean","Stop and resolve the sterility or equipment concern using the institution's process before proceeding","Cover the issue and document it later"],"answer":1,"feedback":"Sterility and equipment concerns should be addressed before proceeding, using approved local processes."},
+        {"phase":"6 · Intraoperative anatomy and judgement","scene":"During the fictional operation, the view does not match the expected anatomy. A critical structure cannot be identified confidently.","prompt":"What should the operator do in this simulation?","options":["Proceed from memory","Pause, state the concern, reassess with the team and seek appropriate senior help or a safer alternative","Ask a junior observer to guess"],"answer":1,"feedback":"Never treat uncertain anatomy as confirmed. Stop, communicate and use experienced judgement; this module intentionally does not teach operative manoeuvres."},
+        {"phase":"7 · Unexpected deterioration","scene":"The fictional monitor changes abruptly and the anaesthesia professional calls attention to a concerning trend.","prompt":"What is the safest team behaviour?","options":["Keep operating until the planned task is complete","Pause the simulated procedure, respond as a coordinated team under the responsible clinicians' lead, and follow the institution's emergency protocol","Change several settings without communication"],"answer":1,"feedback":"A concerning change requires coordinated communication and response led by qualified clinicians and local emergency protocols. Values in this app are fictional."},
+        {"phase":"8 · Specimens, counts and sign-out","scene":"The procedure is ending. The team must account for any applicable specimens, instruments and swabs and agree on the immediate plan.","prompt":"What belongs in sign-out?","options":["Only the procedure name","Confirm procedure performed, specimen labelling where applicable, counts and equipment concerns, complications, and postoperative plan","Leave sign-out to the next shift without discussion"],"answer":1,"feedback":"Structured sign-out reduces omissions and confirms that specimens, counts, events and plans are communicated."},
+        {"phase":"9 · Recovery handover","scene":"The patient is transferred to the recovery team. The next team needs a clear picture of the operation and what to monitor.","prompt":"Which handover is best?","options":["A concise structured handover of procedure, key findings, complications, current status, relevant fluids/blood loss if applicable, monitoring and escalation plan","Say only that the patient is stable","Wait for the recovery team to read the entire chart"],"answer":0,"feedback":"A complete structured handover supports continuity, surveillance and timely escalation."},
+        {"phase":"10 · Post-operative review","scene":"The patient is in recovery. The team is documenting the case and planning ongoing care.","prompt":"What is the best final step in this educational run?","options":["End the record once the patient leaves theatre","Document the course and outstanding issues, ensure the postoperative plan is communicated, and review any safety learning points","Skip documentation if no complication occurred"],"answer":1,"feedback":"Documentation, explicit plans and debriefing are part of safe peri-operative care, even when no complication is identified."}
+    ]
+    full_key = "surgery_full_run_" + procedure_name
+    full_answers_key = full_key + "_answers"
+    if full_key not in st.session_state:
+        st.session_state[full_key] = 0
+    if full_answers_key not in st.session_state:
+        st.session_state[full_answers_key] = {}
+    phase = st.session_state[full_key]
+    st.progress(min(1.0, (phase + 1) / len(full_run)))
+    if phase < len(full_run):
+        item = full_run[phase]
+        st.markdown(f"### {item['phase']}")
+        st.info(item["scene"])
+        st.markdown(f"**{item['prompt']}**")
+        run_choice = st.radio("Your theatre decision", item["options"], key=f"{full_key}_choice_{phase}", index=None)
+        if st.button("Record decision", type="primary", key=f"{full_key}_submit_{phase}"):
+            if run_choice is None:
+                st.warning("Choose a response first.")
+            else:
+                idx = item["options"].index(run_choice)
+                st.session_state[full_answers_key][phase] = idx
+                st.session_state[f"{full_key}_feedback_{phase}"] = True
+                if idx == item["answer"]:
+                    st.success("Best answer.")
+                else:
+                    st.warning("Review the safer response below.")
+                st.info(item["feedback"])
+        if st.session_state.get(f"{full_key}_feedback_{phase}", False):
+            if st.button("Next phase →", key=f"{full_key}_next_{phase}"):
+                st.session_state[full_key] += 1
+                st.rerun()
+    else:
+        score = sum(st.session_state[full_answers_key].get(i) == item["answer"] for i, item in enumerate(full_run))
+        st.markdown("### End-of-case debrief")
+        st.metric("Theatre workflow score", f"{round(100 * score / len(full_run))}%", f"{score}/{len(full_run)} decisions")
+        st.write("Review each phase below. This score reflects performance on a fictional educational scenario, not surgical competence or clinical credentialing.")
+        for i, item in enumerate(full_run):
+            chosen = st.session_state[full_answers_key].get(i)
+            with st.expander(f"{item['phase']} · {'Best answer' if chosen == item['answer'] else 'Review'}"):
+                st.write(item["prompt"])
+                st.write("Your response: " + (item["options"][chosen] if chosen is not None else "Not answered"))
+                st.write("Best response: " + item["options"][item["answer"]])
+                st.caption(item["feedback"])
+        if st.button("Restart full theatre run", type="primary", key=full_key + "_restart"):
+            st.session_state[full_key] = 0
+            st.session_state[full_answers_key] = {}
+            for i in range(len(full_run)):
+                st.session_state.pop(f"{full_key}_feedback_{i}", None)
+            st.rerun()
+
+
+elif page == "Learning Library":
+    st.title("📚 Learning library")
+    st.caption("Start with the core idea, then use the explanation to connect mechanism to clinical relevance.")
+    subject = st.selectbox("Subject", SUBJECTS)
+    level = st.select_slider("Learning depth", options=["Foundation", "MBBS exam", "Clinical integration", "Postgraduate / research"], value=st.session_state.profile_level.split(" — ")[0] if st.session_state.profile_level.split(" — ")[0] in ["Foundation","MBBS exam","Clinical integration","Postgraduate / research"] else "MBBS exam")
+    st.session_state.profile_level = level
+    search = st.text_input("Search within this subject", placeholder="e.g. inflammation, nephron, receptor…")
+    items = QUESTIONS[subject]
+    if search:
+        items = [q for q in items if search.lower() in (q["question"]+" "+q["explanation"]).lower()]
+    st.caption(f"{len(items)} items · {subject}")
+    for i,item in enumerate(items,1):
+        with st.expander(f"{i:02d}  ·  {item['question']}"):
+            st.markdown("**Options**")
+            for option in item["options"]:
+                st.write("• "+option)
+            st.success("Correct answer: "+item["answer"])
+            st.write(item["explanation"])
+            if level in ["Clinical integration","Postgraduate / research"]:
+                st.info("Higher-level prompt: What mechanism explains this finding, and which alternative explanation would you exclude?")
+            if st.button("☆ Save to bookmarks", key=f"libsave_{item['id']}"):
+                if item["id"] not in st.session_state.bookmarks:
+                    st.session_state.bookmarks.append(item["id"])
+                st.toast("Saved to your revision list")
+
+elif page == "Exam Arena":
+    st.title("🏁 Exam arena")
+    st.caption("Active recall with instant feedback. Choose your focus, attempt the question, then review the reasoning.")
+    c1,c2,c3=st.columns(3)
+    with c1:
+        quiz_subject=st.selectbox("Question pool",["All subjects"]+SUBJECTS,key="arena_subject")
+    with c2:
+        quiz_size=st.selectbox("Session length",[5,10,15,20],key="arena_size")
+    with c3:
+        quiz_mode=st.selectbox("Practice style",["Standard MCQ","Mechanism challenge","Clinical integration"],key="arena_mode")
+    if st.button("Start / restart exam",type="primary",use_container_width=True):
+        pool=ALL_CARDS if quiz_subject=="All subjects" else [q for q in ALL_CARDS if q["subject"]==quiz_subject]
+        if quiz_mode=="Clinical integration":
+            pool=[q for q in pool if q["subject"]=="Clinical reasoning"] or pool
+        chosen=random.sample(pool,k=min(quiz_size,len(pool)))
+        st.session_state.quiz_ids=[q["id"] for q in chosen]
+        st.session_state.quiz_index=0
+        st.session_state.quiz_feedback={}
+        st.rerun()
+    ids=st.session_state.quiz_ids
+    if not ids:
+        st.markdown('<div class="panel"><h3>Ready when you are</h3><p>Pick a subject and session length, then start. Treat every explanation as a mini-review.</p></div>',unsafe_allow_html=True)
+    elif st.session_state.quiz_index>=len(ids):
+        answers=list(st.session_state.quiz_feedback.values())
+        score=sum(1 for x in answers if x["correct"])
+        st.balloons()
+        st.success("Session complete — review your errors before starting another round.")
+        a,b,c=st.columns(3)
+        a.metric("Score",f"{score}/{len(answers)}")
+        b.metric("Accuracy",f"{round(100*score/max(len(answers),1))}%")
+        c.metric("Questions reviewed",len(answers))
+        misses=[x for x in answers if not x["correct"]]
+        if misses:
+            st.markdown("### Review missed questions")
+            for missed in misses:
+                item=find_question(missed["id"])
+                if item:
+                    with st.expander(item["question"]):
+                        st.write("Your answer: "+missed["chosen"])
+                        st.success("Correct answer: "+item["answer"])
+                        st.write(item["explanation"])
+    else:
+        qid=ids[st.session_state.quiz_index]
+        item=find_question(qid)
+        if item:
+            st.progress(st.session_state.quiz_index/len(ids))
+            st.caption(f"QUESTION {st.session_state.quiz_index+1} OF {len(ids)} · {item['subject']} · {quiz_mode}")
+            if item.get("image"):
+                show_image(item["image"])
+            st.markdown(f'<div class="panel"><h3>{item["question"]}</h3></div>',unsafe_allow_html=True)
+            feedback=st.session_state.quiz_feedback.get(qid)
+            if feedback:
+                st.write("Your answer: "+feedback["chosen"])
+                if feedback["correct"]: st.success("Correct.")
+                else: st.error("Correct answer: "+item["answer"])
+                st.write(item["explanation"])
+                if st.button("Next question →",type="primary",use_container_width=True):
+                    st.session_state.quiz_index+=1; st.rerun()
+            else:
+                choice=st.radio("Select one answer",item["options"],key=f"arena_choice_{qid}")
+                if st.button("Submit answer",type="primary",use_container_width=True):
+                    is_correct=choice==item["answer"]
+                    st.session_state.quiz_feedback[qid]={"id":qid,"chosen":choice,"correct":is_correct}
+                    record_answer(item,is_correct,choice)
+                    st.rerun()
+                if st.button("Bookmark this question",key=f"arena_bookmark_{qid}"):
+                    if qid not in st.session_state.bookmarks: st.session_state.bookmarks.append(qid)
+                    st.toast("Saved to revision list")
+
+elif page == "Anatomy Lab":
+    st.title("🫀 Anatomy Lab")
+    st.caption("Explore systems, select structures, connect gross anatomy to physiology, and test your understanding.")
+    if st.button("Open detailed touch-enabled 3D Anatomy Atlas ↗", type="primary", use_container_width=True):
+        st.session_state.navigation = "Real 3D Anatomy Atlas"
+        st.rerun()
+    systems = {
+        "Cardiovascular": {
+            "image":"assets/heart.svg",
+            "structures":{
+                "Heart":("Four-chambered muscular pump","Right atrium receives systemic venous blood; right ventricle pumps it to the pulmonary circulation. Left atrium receives oxygenated pulmonary venous blood; left ventricle ejects into the aorta.","Clinical link: left ventricular dysfunction can cause pulmonary congestion; right ventricular dysfunction can cause systemic venous congestion."),
+                "Coronary circulation":("Arterial supply of the myocardium","The right and left coronary arteries arise from the ascending aorta. Coronary perfusion, especially of the left ventricle, occurs predominantly during diastole.","Clinical link: coronary occlusion can cause myocardial ischaemia and infarction."),
+                "Conduction system":("Specialised cardiac excitation pathway","The SA node normally initiates impulses; conduction proceeds through the AV node, His bundle, bundle branches and Purkinje network.","Clinical link: conduction blocks alter the relationship between atrial and ventricular activity.")
+            }},
+        "Renal": {
+            "image":"assets/nephron.svg",
+            "structures":{
+                "Nephron":("Functional unit of the kidney","Glomerular filtration is followed by selective tubular reabsorption and secretion. The proximal tubule reabsorbs most filtered sodium and water; the loop of Henle contributes to the medullary osmotic gradient.","Clinical link: tubular injury may impair electrolyte handling even when filtration is relatively preserved."),
+                "Glomerulus":("Capillary filtration apparatus","Fenestrated endothelium, glomerular basement membrane and podocyte slit diaphragms contribute to selective filtration.","Clinical link: damage to the filtration barrier can produce haematuria and/or proteinuria."),
+                "Juxtaglomerular apparatus":("Renal pressure and salt-sensing region","Macula densa cells sense tubular NaCl delivery; granular cells release renin in response to appropriate signals.","Clinical link: renin initiates the renin–angiotensin–aldosterone system.")
+            }},
+        "Nervous": {
+            "image":"assets/neuron.svg",
+            "structures":{
+                "Neuron":("Excitable information-processing cell","Dendrites receive signals, the soma integrates them, the axon conducts action potentials and synaptic terminals communicate with target cells.","Clinical link: demyelination can slow or block saltatory conduction."),
+                "Myelin":("Electrical insulation around selected axons","Myelin increases conduction velocity by allowing action potentials to regenerate at nodes of Ranvier.","Clinical link: central and peripheral demyelinating disorders affect different myelin-forming cells."),
+                "Synapse":("Junction for cell-to-cell signalling","Chemical synapses convert presynaptic electrical activity into neurotransmitter release and postsynaptic responses.","Clinical link: many medicines alter neurotransmitter synthesis, release, receptors or reuptake.")
+            }},
+        "Respiratory": {
+            "image":"assets/alveoli.svg",
+            "structures":{
+                "Alveolar interface":("Thin barrier for gas exchange","Oxygen and carbon dioxide diffuse down partial-pressure gradients across the alveolar–capillary interface; effective exchange depends on area, thickness and ventilation–perfusion matching.","Clinical link: oedema or fibrosis increases diffusion distance; pulmonary embolism disrupts perfusion."),
+                "Type I pneumocytes":("Thin alveolar epithelial cells","These cells cover most of the alveolar surface and provide a short diffusion path.","Clinical link: injury to the alveolar epithelium can compromise gas exchange."),
+                "Type II pneumocytes":("Surfactant-producing epithelial cells","They secrete pulmonary surfactant and can proliferate to help restore alveolar epithelium after injury.","Clinical link: surfactant deficiency increases alveolar surface tension.")
+            }}
+    }
+    system_name = st.selectbox("Choose a system", list(systems.keys()), key="anatomy_system")
+    system = systems[system_name]
+    left, right = st.columns([1.05, 1.35], gap="large")
+    with left:
+        show_image(system["image"])
+        st.markdown("#### Structure explorer")
+        structure_name = st.radio("Select a structure", list(system["structures"].keys()), key=f"anatomy_structure_{system_name}")
+        st.caption("Teaching schematics are simplified and not to scale.")
+    with right:
+        title, explanation, clinical = system["structures"][structure_name]
+        st.markdown(f"### {structure_name}")
+        st.markdown(f"**{title}**")
+        st.write(explanation)
+        st.info(clinical)
+        st.markdown("#### Quick actions")
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("Explain clinically", use_container_width=True):
+                st.session_state.navigation = "Teacher AI"
+                st.session_state.tutor_prefill = f"Explain {structure_name} in the {system_name.lower()} system with clinical correlations, mechanisms, and exam traps."
+                st.rerun()
+        with c2:
+            if st.button("Quiz me on this", type="primary", use_container_width=True):
+                st.session_state.anatomy_quiz_structure = structure_name
+                st.session_state.anatomy_quiz_system = system_name
+        if st.session_state.get("anatomy_quiz_structure") == structure_name and st.session_state.get("anatomy_quiz_system") == system_name:
+            quiz_items = {
+                "Heart":("Which chamber ejects blood into the systemic circulation?","Left ventricle"),
+                "Coronary circulation":("When does most left ventricular coronary perfusion occur?","During diastole"),
+                "Conduction system":("What is the usual primary pacemaker of the heart?","SA node"),
+                "Nephron":("Which two processes follow glomerular filtration to modify tubular fluid?","Reabsorption and secretion"),
+                "Glomerulus":("Name one component of the glomerular filtration barrier.","Glomerular basement membrane"),
+                "Juxtaglomerular apparatus":("Which enzyme is released by granular cells?","Renin"),
+                "Neuron":("Which neuronal region commonly conducts action potentials away from the soma?","Axon"),
+                "Myelin":("What is the effect of myelin on conduction velocity?","It increases conduction velocity"),
+                "Synapse":("What chemical messenger is released at a typical chemical synapse?","Neurotransmitter"),
+                "Alveolar interface":("Name one factor that reduces diffusion across the alveolar-capillary membrane.","Increased membrane thickness / reduced surface area"),
+                "Type I pneumocytes":("What is the main gas-exchange role of type I pneumocytes?","Provide a thin diffusion surface"),
+                "Type II pneumocytes":("What important substance do type II pneumocytes produce?","Surfactant")
+            }
+            question, answer = quiz_items[structure_name]
+            st.markdown(f"**Recall check:** {question}")
+            if st.button("Reveal answer", key=f"reveal_{system_name}_{structure_name}"):
+                st.success(answer)
+    st.markdown("---")
+    st.markdown("### Course pathway")
+    chapters = [
+        ("1","Orientation & anatomical language","Foundations"),
+        ("2","Cardiovascular system","Core concepts"),
+        ("3","Respiratory system","Structure–function"),
+        ("4","Renal system","Filtration and regulation"),
+        ("5","Nervous system","Neuroanatomy"),
+        ("6","Integrated clinical anatomy","Clinical application")
     ]
     cols = st.columns(3)
     for i,(num,name,detail) in enumerate(chapters):
