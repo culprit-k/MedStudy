@@ -56,7 +56,35 @@
     return deepest;
   }
 
-  const api = { pointPlaneContact, pointSphereContact, deepestProxyContact };
+
+  // Swept point-vs-sphere contact catches a moving tool point that crosses a
+  // proxy between frames. t is the closest point along the segment, in [0, 1].
+  function sweptSphereContact(start, end, sphere) {
+    finiteVector(start, "start");
+    finiteVector(end, "end");
+    if (!sphere || ![sphere.x, sphere.y, sphere.z, sphere.radius].every(Number.isFinite) || sphere.radius <= 0) {
+      throw new Error("sphere must have finite coordinates and positive radius");
+    }
+    const vx = end.x - start.x, vy = end.y - start.y, vz = end.z - start.z;
+    const lengthSq = vx * vx + vy * vy + vz * vz;
+    const t = lengthSq > 1e-16
+      ? Math.max(0, Math.min(1, ((sphere.x - start.x) * vx + (sphere.y - start.y) * vy + (sphere.z - start.z) * vz) / lengthSq))
+      : 0;
+    const closest = { x: start.x + t * vx, y: start.y + t * vy, z: start.z + t * vz };
+    const result = pointSphereContact(closest, sphere);
+    return { ...result, contact: result.distance <= sphere.radius, time: t, closestPoint: closest };
+  }
+
+  function deepestSweptProxyContact(start, end, proxies) {
+    if (!Array.isArray(proxies)) throw new Error("proxies must be an array");
+    let deepest = null;
+    for (const proxy of proxies) {
+      const result = sweptSphereContact(start, end, proxy);
+      if (result.contact && (!deepest || result.penetration > deepest.penetration)) deepest = result;
+    }
+    return deepest;
+  }
+\n  const api = { pointPlaneContact, pointSphereContact, deepestProxyContact, sweptSphereContact, deepestSweptProxyContact };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.AnatomyCollisionEngine = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);
