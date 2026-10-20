@@ -50,8 +50,8 @@ class NavigationIntegrityTests(unittest.TestCase):
         self.assertNotIn("Tissue Interaction Lab", self.options)
         self.assertNotIn("Hands-on Skills Lab", self.options)
         self.assertNotIn('if page == "Tissue Interaction Lab":', self.source)
-        self.assertIn('"Image Quiz"', self.options)
-        self.assertIn('"Teacher AI"', self.options)
+        self.assertIn("Image Quiz", self.options)
+        self.assertIn("Teacher AI", self.options)
 
     def test_app_runtime_data_files_exist_and_are_valid_json(self):
         paths = (
