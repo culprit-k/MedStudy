@@ -2,34 +2,47 @@
 
 ## Purpose and safety boundary
 
-The Hands-on Skills Lab loads a standalone kidney teaching component rather than a flat board with floating target dots. It remains an educational prototype, not a medical device, validated anatomy atlas, or surgical simulator.
+The Hands-on Skills Lab now uses a real externally hosted 3D kidney surface model in place of the generic flat target board. It is still an educational prototype, not a medical device, clinically validated anatomy atlas, or surgical simulator.
 
-## Model implementation
+## Model source and loading
 
-The scene uses original procedural Three.js geometry. It includes a bean-like outer renal silhouette with a medial indentation and a toggleable schematic cutaway showing a cortex rim, simplified renal pyramids, calyces, renal pelvis, ureter, and red/blue vessel paths. Camera orbit/zoom, instrument movement, surface/cutaway visibility, target acquisition, and a two-point alignment drill are wired into the UI.
+The component loads the [3DAssets.dev Human Anatomy and Education Kit kidney model](https://3dassets.dev/assets/human-anatomy-and-education-kit-kidney-model-c48807f6). The source listing describes this GLB asset as **CC0 1.0**. Runtime URL:
 
-The component deliberately does **not** download an unverified third-party organ mesh at runtime. This avoids an unverified external dependency and prevents the interface from claiming a source model or licence that has not been validated.
+`https://cdn.3dassets.dev/assets/38958/v1/model.glb`
 
-## Anatomical limitations
+The model is loaded via Three.js GLTFLoader, rotated upright, scaled to the scene, and mildly depth-compressed for a front-facing view. It is fetched at runtime rather than copied into this repository. That requires internet access, the source host to remain available, and successful browser CORS requests. If loading fails, the component displays a status message and keeps its procedural kidney-shaped fallback visible.
 
-This is **not a sourced, segmented, clinically validated 3D kidney mesh**. The shape, proportions, vessel paths, branching, internal relationships, and collecting system are schematic and have not been reviewed against an anatomical reference by a qualified reviewer. The cutaway is not a true volumetric section of the surface and its structures are not registered to internal anatomical meshes. It should not be described as anatomically accurate, used for diagnosis or operative planning, or substituted for an approved anatomy atlas.
+## Anatomy view and interactions
 
-The alignment drill measures target order and visual coordination only. It does not represent needle driving, tissue puncture, knot tying, calibrated forces, haptics, or suturing competence. The instrument does not provide validated tissue collision or damage prediction.
+- Camera mode supports orbit/zoom; instrument mode supports moving a simplified virtual instrument.
+- The anatomy toggle reveals a separate schematic teaching overlay for renal cortex, pyramids, calyces, renal pelvis, renal artery, renal vein, and ureter.
+- The surface toggle hides/shows the external model; reset restores default view and interaction state.
+- The alignment drill asks the learner to select two visual anchors in order. It measures selection order only.
+- The internal overlay is **not registered to the GLB mesh**. Its positions are illustrative and do not claim to reproduce the model's actual internal structures.
+
+## Important limitations
+
+The external organ surface is a real 3D asset, but this is not a segmented, clinically validated kidney model. The schematic internal structures and target markers are not meshed or anatomically aligned with the external GLB. The model has not been reviewed by anatomy faculty. It should not be used for diagnosis, operative planning, or as a substitute for an approved anatomy atlas or supervised training.
+
+The instrument does not model realistic cutting, tissue tearing, bleeding, instrument-shaft collision, haptics, or tissue force. The target drill is a basic visual-coordination task, not a suturing skill assessment.
 
 ## Regression checks
 
-From the repository root:
+From the repository root, install the dependencies and run:
 
 ```bash
 python -m unittest discover -s tests -p 'test_kidney_anatomy_lab.py' -v
+npm init -y
+npm install --no-save @playwright/test@1.55.0 three@0.128.0
+npx playwright install chromium
+npx playwright test --config=playwright.config.cjs
 ```
 
-These tests check UI wiring and disclosure text; they do not establish anatomical accuracy or clinical suitability.
+The browser suite uses a small deterministic mock GLB to test that the loader and controls work without depending on the external model CDN. This verifies integration behavior, not the real asset's anatomical accuracy or performance on every device.
 
-## Work needed for a genuinely realistic atlas
+## Next validation required
 
-1. Select a segmented kidney mesh with a licence that explicitly permits the intended use and distribution; preserve source and attribution details.
-2. Prefer separate structures for cortex, medulla/pyramids, calyces, pelvis, ureter, arteries, and veins, with documented units and reference landmarks.
-3. Have qualified anatomy reviewers verify geometry, labels, branching, and spatial relationships.
-4. Register all internal structures and collision geometry to the chosen surface mesh, with automated landmark/scale checks.
-5. Implement mesh collision and tissue interaction as separate engineering tasks and validate them independently.
+1. Check the actual GLB rendering on a physical iPhone and Android device.
+2. Have qualified anatomy faculty inspect the external model and all labels.
+3. Replace schematic internals with individually sourced/segmented structures and register them to the same coordinate system before claiming a true cutaway.
+4. Retain the source and licence record if the GLB is redistributed. CC0 licensing does not establish medical accuracy.
