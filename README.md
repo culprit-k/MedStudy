@@ -24,7 +24,7 @@ MedStudy is an interactive medical learning project built for medical students w
 - **Optional AI tutor:** configure an OpenAI API key in Streamlit Community Cloud Secrets as `OPENAI_API_KEY = "your-key"` to enable open-ended AI responses. API usage may incur charges. Never commit keys to GitHub.
 - **Active-recall flashcards, bookmarks, and progress charts.**
 - **Android test wrapper:** a lightweight APK shell for opening the deployed Streamlit app on Android. Build and install instructions are in [android/README.md](android/README.md); GitHub Actions builds a downloadable debug APK.
-- **Automated checks** through GitHub Actions, including question/data integrity, page-navigation wiring, syntax, and an actual Streamlit startup/health smoke test. Tissue Lab also has numerical regression tests and a headless Chromium interaction smoke test.
+- **Automated checks** through GitHub Actions, including question/data integrity, navigation wiring, Python syntax, application startup/health, and browser smoke checks for archived prototype code.
 
 The question bank is a growing educational starter set, not a comprehensive MBBS, postgraduate, or PhD curriculum. Advanced learning depth changes the style of prompts, but it does not replace validated specialist-level content or research supervision. The current question set is deliberately a foundation for expansion and should be faculty-reviewed before formal exam use.
 
@@ -66,15 +66,10 @@ Every question should have a unique ID, question, options, answer matching one o
 
 ## Current limitations
 
-- Progress and bookmarks are stored in the active Streamlit session and may reset.
-- The question bank now contains 120 starter MCQs. Continue expanding it and obtain faculty review before claiming comprehensive exam coverage.
-- Visuals are original schematic teaching diagrams, not radiology, histopathology, or diagnostic-grade clinical images.
-- Surgery Simulator cases use fictional patients and high-level safety/decision questions; they do not teach hands-on surgical technique and are not a substitute for simulation-lab training or direct supervision.
-- The detailed 3D atlas is a third-party project hosted at https://nqwrc.github.io/3d-anatomy/ and documented at https://github.com/nqwrc/3d-anatomy. Its model set includes non-commercial components; review upstream attribution and licence terms before redistribution or commercial use. It is for education, not clinical use.
-- AI tutor output can be inaccurate. An API key is optional and usage may incur charges.
-- No licence has been added yet; public visibility does not automatically grant reuse rights.
-- The Android wrapper does not include or host the Streamlit backend and cannot work until a public HTTPS app URL is configured.
-
-## Virtual Hospital data
-
-Fictional training scenarios, organ-system notes, microbiology interpretation stations, OR safety checklists, and diagnostic panels live in `data/hospital_training.json`. All values are educational examples, not clinical decision support.
+- The active learning experience is focused on questions, sourced medical images, revision, clinical cases, and the personal teacher. Heavy 3D and simulator prototypes are not part of the main navigation.
+- Progress, bookmarks, and the learner profile are currently session-based and may reset when the session ends.
+- The question bank contains 120 starter MCQs. It should be expanded and faculty-reviewed before being treated as comprehensive exam coverage.
+- Some local teaching illustrations are schematic diagrams, not diagnostic-grade radiology or histopathology images. Online images display source and licence metadata when available; confirm the individual file's terms before reuse.
+- AI-generated answers and image questions can be inaccurate. Full generative tutoring requires an `OPENAI_API_KEY`; API usage may incur charges.
+- The Android wrapper is a WebView shell and does not host the Streamlit backend. It requires a real deployed HTTPS app URL and internet access.
+- No production release or clinical validation is claimed. MedStudy is an educational project, not a diagnostic or treatment tool.
