@@ -56,22 +56,12 @@ async function installKidneyRuntimeRoutes(page) {
     path: path.join(ROOT, "node_modules/three/build/three.min.js"),
     contentType: "application/javascript",
   }));
-  await page.route("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", route => route.fulfill({
-    path: path.join(ROOT, "node_modules/three/examples/js/loaders/GLTFLoader.js"),
-    contentType: "application/javascript",
-  }));
   const kidneyHtml = fs.readFileSync(path.join(ROOT, "components/kidney_anatomy_lab.html"), "utf8")
     .replace("__STATION__", JSON.stringify("Instrument targeting and hand-eye coordination"));
   await page.route("**/components/kidney_anatomy_lab.html", route => route.fulfill({
     status: 200,
     contentType: "text/html",
     body: kidneyHtml,
-  }));
-  await page.route("https://cdn.3dassets.dev/assets/38958/v1/model.glb", route => route.fulfill({
-    status: 200,
-    contentType: "model/gltf-binary",
-    headers: { "Access-Control-Allow-Origin": "*" },
-    body: makeMockGlb(),
   }));
 }
 
@@ -147,52 +137,50 @@ test("layout remains usable at a phone-width viewport", async ({ page }) => {
 });
 
 
-test("kidney anatomy lab loads a mesh and its anatomy controls work", async ({ page }) => {
+test("kidney anatomy lab renders a single-organ model and its anatomy controls work", async ({ page }) => {
   const pageErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
   await installKidneyRuntimeRoutes(page);
   await page.goto(KIDNEY_URL);
 
-  await page.waitForFunction(
-    () => Boolean(window.THREE && window.THREE.GLTFLoader),
-    null,
-    { timeout: 10000 }
-  );
+  await page.waitForFunction(() => Boolean(window.THREE), null, { timeout: 10000 });
   await expect(page.locator("#scene")).toBeVisible();
   await expect(page.locator("#anatomyLegend")).toContainText("Renal pelvis");
-  await expect(page.locator("#assetStatus")).toContainText("CC0 3D kidney mesh loaded", { timeout: 10000 });
+  await expect(page.locator("#assetStatus")).toContainText("Original single-kidney geometry loaded", { timeout: 10000 });
 
-  await page.getByRole("button", { name: "Toggle anatomy", exact: true }).click();
-  await expect(page.locator("#result")).toContainText("Cutaway anatomy shown");
-  await page.getByRole("button", { name: "Surface layer", exact: true }).click();
-  await expect(page.locator("#result")).toContainText("Outer surface hidden");
+  await page.getByRole("button", { name: "Cutaway", exact: true }).click();
+  await expect(page.locator("#result")).toContainText("Cutaway view");
+  await page.getByRole("button", { name: "Cortex", exact: true }).click();
+  await expect(page.locator("#cortexLayer")).not.toHaveClass(/active/);
+  await page.getByRole("button", { name: "Outer surface", exact: true }).click();
+  await expect(page.locator("#result")).toContainText("Outer renal surface hidden");
 
-  await page.getByRole("button", { name: "Camera control", exact: true }).click();
-  await expect(page.locator("#result")).toContainText("Camera control active");
-  await page.getByRole("button", { name: "Instrument control", exact: true }).click();
-  await expect(page.locator("#result")).toContainText("Instrument control active");
-  await page.getByRole("button", { name: "Suture-alignment drill", exact: true }).click();
-  await expect(page.locator("#result")).toContainText("Alignment drill");
+  await page.getByRole("button", { name: "Camera orbit", exact: true }).click();
+  await expect(page.locator("#result")).toContainText("Camera orbit active");
+  await page.getByRole("button", { name: "Instrument", exact: true }).click();
+  await expect(page.locator("#result")).toContainText("Instrument mode active");
+  await page.getByRole("button", { name: "Start target drill", exact: true }).click();
+  await expect(page.locator("#result")).toContainText("Target drill started");
   await page.getByRole("button", { name: "Reset view", exact: true }).click();
-  await expect(page.locator("#result")).toContainText("Kidney view reset");
+  await expect(page.locator("#result")).toContainText("View reset");
   await expect(page.locator("#surfaceToggle")).toHaveClass(/active/);
   expect(pageErrors).toEqual([]);
 });
 
-test("kidney anatomy lab controls fit a phone-width viewport", async ({ page }) => {
+test("kidney anatomy controls fit a phone-width viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await installKidneyRuntimeRoutes(page);
   await page.goto(KIDNEY_URL);
-  await page.waitForFunction(() => Boolean(window.THREE && window.THREE.GLTFLoader), null, { timeout: 10000 });
+  await page.waitForFunction(() => Boolean(window.THREE), null, { timeout: 10000 });
   await expect(page.locator("#scene")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Suture-alignment drill", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start target drill", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Calyces / pelvis / ureter", exact: true })).toBeVisible();
 
-  const layout = await page.locator("body").evaluate(element => ({
+  const layout = await page.locator("#bottom").evaluate(element => ({
     width: element.clientWidth,
     scrollWidth: element.scrollWidth,
-    buttonWidth: document.querySelector("#actions").scrollWidth,
-    viewportWidth: document.querySelector("#actions").clientWidth,
+    sceneWidth: document.querySelector("#scene").clientWidth,
   }));
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width + 1);
-  expect(layout.buttonWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
+  expect(layout.sceneWidth).toBeGreaterThan(250);
 });
