@@ -51,7 +51,7 @@ The incision marks do **not** split the mesh. Stitches do **not** measure tissue
 
 ## Development checks
 
-Run from the repository root:
+Run the lightweight numerical and source checks from the repository root:
 
 ```bash
 node --test tests/anatomy_collision_engine.test.js
@@ -60,9 +60,18 @@ python -m unittest discover -s tests -p 'test_tissue_interaction_lab.py' -v
 python -m py_compile pages/3_Tissue_Interaction_Lab.py
 ```
 
-The GitHub Actions workflow `.github/workflows/tissue-lab-ci.yml` runs collision and physics regression suites, simulator smoke tests, Python compilation, and inline JavaScript syntax validation.
+For the headless browser smoke tests, install Node.js and a supported browser, then run:
 
-The Node tests check geometric collision and numerical invariants for these simplified models; they do not prove biomechanical accuracy. Source smoke tests and syntax checks do not validate visual output, anatomical correctness, or clinical training value. The simulator still needs live-browser testing.
+```bash
+npm init -y
+npm install --no-save @playwright/test@1.55.0
+npx playwright install chromium
+npx playwright test --config=playwright.config.cjs
+```
+
+GitHub Actions runs both the fast checks in `.github/workflows/tissue-lab-ci.yml` and the dedicated Chromium tests in `.github/workflows/tissue-lab-browser.yml`. The browser suite verifies runtime dependency loading, a simulated incision drag, reset behavior, and basic phone-width overflow.
+
+The Node tests check geometric collision and numerical invariants for simplified models; they do not prove biomechanical accuracy. Headless browser tests verify only a small set of runtime/UI behaviors, not anatomical correctness or clinical training value. Manual checks on real mobile devices and review by qualified anatomy/simulation specialists remain necessary.
 
 ## Recommended engineering sequence
 
