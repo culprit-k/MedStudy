@@ -179,6 +179,66 @@
       ],
       "answer": "Glossopharyngeal nerve (CN IX)",
       "explanation": "Preganglionic fibres travel via CN IX and the tympanic/lesser petrosal nerves to the otic ganglion; postganglionic fibres reach the parotid via the auriculotemporal nerve."
+    },
+    {
+      "id": "anat-016",
+      "question": "Which artery is the principal arterial supply to the head of the femur in most adults?",
+      "options": [
+        "Medial circumflex femoral artery",
+        "Obturator artery",
+        "Inferior gluteal artery",
+        "Lateral circumflex femoral artery"
+      ],
+      "answer": "Medial circumflex femoral artery",
+      "explanation": "Retinacular branches, especially from the medial circumflex femoral artery, supply most of the adult femoral head. Disruption can cause avascular necrosis."
+    },
+    {
+      "id": "anat-017",
+      "question": "A lesion of the recurrent laryngeal nerve most directly impairs which function?",
+      "options": [
+        "Abduction and adduction of most intrinsic laryngeal muscles",
+        "Sensation over the anterior two-thirds of the tongue",
+        "Elevation of the soft palate",
+        "Contraction of the masseter"
+      ],
+      "answer": "Abduction and adduction of most intrinsic laryngeal muscles",
+      "explanation": "The recurrent laryngeal nerve supplies most intrinsic laryngeal muscles and sensation below the vocal folds. The cricothyroid is supplied by the external branch of the superior laryngeal nerve."
+    },
+    {
+      "id": "anat-018",
+      "question": "Which structure forms the lateral boundary of the femoral triangle?",
+      "options": [
+        "Sartorius",
+        "Adductor longus",
+        "Inguinal ligament",
+        "Pectineus"
+      ],
+      "answer": "Sartorius",
+      "explanation": "The femoral triangle is bounded superiorly by the inguinal ligament, laterally by sartorius, and medially by adductor longus."
+    },
+    {
+      "id": "anat-019",
+      "question": "The thoracic duct usually drains lymph from which region?",
+      "options": [
+        "Right upper quadrant only",
+        "Both lower limbs and the left side of the body above the diaphragm",
+        "Only the right upper limb",
+        "Only the head and neck"
+      ],
+      "answer": "Both lower limbs and the left side of the body above the diaphragm",
+      "explanation": "The thoracic duct drains most of the body, except the right upper quadrant, which usually drains to the right lymphatic duct."
+    },
+    {
+      "id": "anat-020",
+      "question": "Which nerve is most at risk in a midshaft fracture of the humerus?",
+      "options": [
+        "Radial nerve",
+        "Median nerve",
+        "Axillary nerve",
+        "Musculocutaneous nerve"
+      ],
+      "answer": "Radial nerve",
+      "explanation": "The radial nerve runs in the radial groove with the profunda brachii artery and can be injured in humeral shaft fractures, producing wrist and finger extension weakness."
     }
   ],
   "Physiology": [
@@ -361,6 +421,66 @@
       ],
       "answer": "Compensatory increase in alveolar ventilation",
       "explanation": "Respiratory compensation lowers PaCO₂ to limit the fall in pH. Compensation does not usually fully normalise pH, and the underlying cause still requires evaluation."
+    },
+    {
+      "id": "phys-016",
+      "question": "Which variable is the strongest immediate determinant of alveolar ventilation when respiratory rate is unchanged?",
+      "options": [
+        "Tidal volume minus anatomical dead-space volume",
+        "Inspiratory reserve volume alone",
+        "Residual volume",
+        "Functional residual capacity"
+      ],
+      "answer": "Tidal volume minus anatomical dead-space volume",
+      "explanation": "Alveolar ventilation equals respiratory frequency multiplied by tidal volume minus dead-space volume. It determines CO₂ elimination more directly than minute ventilation alone."
+    },
+    {
+      "id": "phys-017",
+      "question": "Which change shifts the oxyhaemoglobin dissociation curve to the right?",
+      "options": [
+        "Increased temperature and increased 2,3-BPG",
+        "Decreased temperature and decreased 2,3-BPG",
+        "Decreased hydrogen-ion concentration",
+        "Carbon monoxide binding to haemoglobin"
+      ],
+      "answer": "Increased temperature and increased 2,3-BPG",
+      "explanation": "Increased temperature, CO₂, hydrogen ions, and 2,3-BPG favour oxygen unloading by shifting the curve to the right. Carbon monoxide reduces oxygen-carrying capacity and alters the curve differently."
+    },
+    {
+      "id": "phys-018",
+      "question": "In a healthy adult, which response helps restore blood pressure immediately after standing?",
+      "options": [
+        "Baroreceptor-mediated increase in sympathetic activity",
+        "Complete suppression of sympathetic outflow",
+        "Immediate reduction in heart rate",
+        "Abolition of venous tone"
+      ],
+      "answer": "Baroreceptor-mediated increase in sympathetic activity",
+      "explanation": "Standing transiently reduces venous return and arterial pressure. Reduced baroreceptor firing increases sympathetic activity and decreases parasympathetic activity, raising heart rate, contractility, and vascular tone."
+    },
+    {
+      "id": "phys-019",
+      "question": "Which nephron segment reabsorbs the largest fraction of filtered sodium and water under normal conditions?",
+      "options": [
+        "Proximal convoluted tubule",
+        "Thin ascending limb",
+        "Distal convoluted tubule",
+        "Collecting duct"
+      ],
+      "answer": "Proximal convoluted tubule",
+      "explanation": "The proximal tubule reabsorbs roughly two-thirds of filtered sodium and water, along with most filtered bicarbonate and glucose under normal conditions."
+    },
+    {
+      "id": "phys-020",
+      "question": "Which hormone increases collecting-duct water permeability by inserting aquaporin-2 channels?",
+      "options": [
+        "Antidiuretic hormone (vasopressin)",
+        "Aldosterone",
+        "Atrial natriuretic peptide",
+        "Parathyroid hormone"
+      ],
+      "answer": "Antidiuretic hormone (vasopressin)",
+      "explanation": "Vasopressin activates V2 receptors on collecting-duct principal cells, promoting aquaporin-2 insertion and increasing water reabsorption."
     }
   ],
   "Biochemistry": [
@@ -543,6 +663,66 @@
       ],
       "answer": "Pyridoxal phosphate (vitamin B6)",
       "explanation": "Pyridoxal phosphate participates in amino-group transfer reactions catalysed by aminotransferases and is derived from vitamin B6."
+    },
+    {
+      "id": "bio-016",
+      "question": "Which enzyme catalyses the committed, rate-limiting step of cholesterol synthesis?",
+      "options": [
+        "HMG-CoA reductase",
+        "Lipase",
+        "Hexokinase",
+        "Pyruvate dehydrogenase"
+      ],
+      "answer": "HMG-CoA reductase",
+      "explanation": "HMG-CoA reductase converts HMG-CoA to mevalonate and is regulated by feedback, phosphorylation, and gene expression. Statins inhibit this enzyme."
+    },
+    {
+      "id": "bio-017",
+      "question": "Which metabolite accumulates in classic phenylketonuria due to phenylalanine hydroxylase pathway impairment?",
+      "options": [
+        "Phenylalanine",
+        "Homogentisic acid",
+        "Methylmalonic acid",
+        "Uric acid"
+      ],
+      "answer": "Phenylalanine",
+      "explanation": "Classic PKU usually results from phenylalanine hydroxylase deficiency or impaired tetrahydrobiopterin metabolism, causing elevated phenylalanine and risk of neurodevelopmental injury if untreated."
+    },
+    {
+      "id": "bio-018",
+      "question": "Which enzyme generates ribose-5-phosphate and NADPH in the oxidative phase of the pentose phosphate pathway?",
+      "options": [
+        "Glucose-6-phosphate dehydrogenase",
+        "Pyruvate kinase",
+        "Lactate dehydrogenase",
+        "Glycogen phosphorylase"
+      ],
+      "answer": "Glucose-6-phosphate dehydrogenase",
+      "explanation": "Glucose-6-phosphate dehydrogenase catalyses the first oxidative step and helps generate NADPH for reductive biosynthesis and protection against oxidative stress."
+    },
+    {
+      "id": "bio-019",
+      "question": "A deficiency of which vitamin most directly impairs gamma-carboxylation of several coagulation factors?",
+      "options": [
+        "Vitamin K",
+        "Vitamin C",
+        "Vitamin B1",
+        "Vitamin E"
+      ],
+      "answer": "Vitamin K",
+      "explanation": "Vitamin K is required for gamma-carboxylation of glutamate residues in factors II, VII, IX, and X and proteins C and S, enabling calcium-dependent membrane binding."
+    },
+    {
+      "id": "bio-020",
+      "question": "Which pathway converts cytosolic NADH reducing equivalents into mitochondrial ATP indirectly under aerobic conditions?",
+      "options": [
+        "Malate-aspartate shuttle",
+        "Urea cycle",
+        "Heme degradation",
+        "Purine salvage pathway"
+      ],
+      "answer": "Malate-aspartate shuttle",
+      "explanation": "The malate-aspartate shuttle transfers reducing equivalents across the inner mitochondrial membrane because NADH itself cannot cross it directly."
     }
   ],
   "Pathology": [
@@ -725,6 +905,66 @@
       ],
       "answer": "Cross-linking of IgE on mast cells with mediator release",
       "explanation": "Allergen-mediated cross-linking of mast-cell-bound IgE triggers degranulation and newly synthesised mediators. Clinical manifestations range from local allergy to anaphylaxis."
+    },
+    {
+      "id": "path-016",
+      "question": "Which cellular adaptation describes increased cell size in response to increased workload?",
+      "options": [
+        "Hypertrophy",
+        "Hyperplasia",
+        "Metaplasia",
+        "Dysplasia"
+      ],
+      "answer": "Hypertrophy",
+      "explanation": "Hypertrophy is an increase in individual cell size, common in cardiac muscle in response to pressure or volume overload. Hyperplasia increases cell number."
+    },
+    {
+      "id": "path-017",
+      "question": "Which mediator is a potent vasodilator and increases vascular permeability during acute inflammation?",
+      "options": [
+        "Histamine",
+        "Albumin",
+        "Haemoglobin",
+        "Insulin"
+      ],
+      "answer": "Histamine",
+      "explanation": "Histamine released from mast cells and other cells causes arteriolar dilation and increased venular permeability, contributing to redness, warmth, and oedema."
+    },
+    {
+      "id": "path-018",
+      "question": "Which laboratory finding is most characteristic of disseminated intravascular coagulation?",
+      "options": [
+        "Thrombocytopenia with prolonged PT and aPTT and increased D-dimer",
+        "Isolated increased platelet count",
+        "Normal coagulation tests with low D-dimer in all cases",
+        "Isolated low serum sodium"
+      ],
+      "answer": "Thrombocytopenia with prolonged PT and aPTT and increased D-dimer",
+      "explanation": "DIC involves systemic coagulation activation with consumption of platelets and clotting factors and increased fibrin breakdown. Results vary with timing and clinical context."
+    },
+    {
+      "id": "path-019",
+      "question": "Which type of inflammatory exudate is rich in fibrin due to marked vascular leakage of fibrinogen?",
+      "options": [
+        "Fibrinous exudate",
+        "Serous exudate only",
+        "Mucous secretion",
+        "Transudate"
+      ],
+      "answer": "Fibrinous exudate",
+      "explanation": "Fibrinogen escapes through injured vessels and polymerises to fibrin in tissues or serosal cavities. Organisation may lead to adhesions if fibrin is not cleared."
+    },
+    {
+      "id": "path-020",
+      "question": "Which tumour-suppressor gene is commonly associated with familial adenomatous polyposis?",
+      "options": [
+        "APC",
+        "CFTR",
+        "HBB",
+        "DMD"
+      ],
+      "answer": "APC",
+      "explanation": "Germline APC mutations predispose to numerous colorectal adenomas and a high risk of colorectal carcinoma without appropriate surveillance and management."
     }
   ],
   "Microbiology": [
@@ -907,6 +1147,66 @@
       ],
       "answer": "Faecal–oral transmission",
       "explanation": "HAV spreads mainly by the faecal–oral route, often through contaminated food or water or close contact. Vaccination is an important prevention measure."
+    },
+    {
+      "id": "micro-016",
+      "question": "Which organism is classically associated with pseudomembranous colitis after antibiotic exposure?",
+      "options": [
+        "Clostridioides difficile",
+        "Vibrio cholerae",
+        "Bordetella pertussis",
+        "Treponema pallidum"
+      ],
+      "answer": "Clostridioides difficile",
+      "explanation": "Antibiotic exposure can disrupt gut microbiota, allowing toxigenic C. difficile to proliferate and cause diarrhoea and colitis. Diagnosis uses appropriate stool testing in symptomatic patients."
+    },
+    {
+      "id": "micro-017",
+      "question": "Which bacterial structure is the major target of acid-fast staining in Mycobacterium tuberculosis?",
+      "options": [
+        "Mycolic-acid-rich cell envelope",
+        "Outer membrane lipopolysaccharide only",
+        "Flagellar sheath",
+        "Polysaccharide capsule only"
+      ],
+      "answer": "Mycolic-acid-rich cell envelope",
+      "explanation": "The lipid-rich, mycolic-acid-containing cell envelope retains carbol fuchsin during acid-alcohol decolourisation, giving mycobacteria their acid-fast property."
+    },
+    {
+      "id": "micro-018",
+      "question": "Which test detects bacterial nucleic acid directly and can provide rapid pathogen identification?",
+      "options": [
+        "Nucleic acid amplification test (NAAT)",
+        "Catalase test alone",
+        "Coagulase test alone",
+        "Oxidase test alone"
+      ],
+      "answer": "Nucleic acid amplification test (NAAT)",
+      "explanation": "NAATs such as PCR amplify target nucleic acid and can detect organisms rapidly. Interpretation depends on specimen quality, timing, and the assay's intended use."
+    },
+    {
+      "id": "micro-019",
+      "question": "Which organism causes whooping cough?",
+      "options": [
+        "Bordetella pertussis",
+        "Corynebacterium diphtheriae",
+        "Haemophilus ducreyi",
+        "Legionella pneumophila"
+      ],
+      "answer": "Bordetella pertussis",
+      "explanation": "B. pertussis is a small Gram-negative coccobacillus that causes pertussis, characterised by paroxysmal cough. Vaccination reduces severe disease and transmission."
+    },
+    {
+      "id": "micro-020",
+      "question": "Which fungal form is typically seen as budding yeast with pseudohyphae in Candida albicans?",
+      "options": [
+        "Budding yeast and pseudohyphae",
+        "Encapsulated narrow-based budding yeast only",
+        "Broad non-septate hyphae only",
+        "Spherules filled with endospores"
+      ],
+      "answer": "Budding yeast and pseudohyphae",
+      "explanation": "Candida albicans can form budding yeast, pseudohyphae, and true hyphae; morphology supports identification but should be interpreted alongside clinical and laboratory findings."
     }
   ],
   "Pharmacology": [
@@ -1089,6 +1389,66 @@
       ],
       "answer": "Dose-related and predictable from the drug's pharmacology",
       "explanation": "Type A reactions are augmented pharmacological effects, generally dose-related and more predictable; type B reactions are less predictable and not simply dose-dependent."
+    },
+    {
+      "id": "pharm-016",
+      "question": "Which receptor is blocked by beta-blockers to reduce heart rate and myocardial contractility?",
+      "options": [
+        "Beta-1 adrenergic receptor",
+        "Muscarinic M3 receptor",
+        "Histamine H1 receptor",
+        "Nicotinic Nm receptor"
+      ],
+      "answer": "Beta-1 adrenergic receptor",
+      "explanation": "Beta-1 receptor blockade in the heart decreases heart rate, contractility, and renin release. Choice of agent depends on indication and patient-specific contraindications."
+    },
+    {
+      "id": "pharm-017",
+      "question": "Which anticoagulant acts by potentiating antithrombin and is monitored with aPTT in many unfractionated-heparin protocols?",
+      "options": [
+        "Unfractionated heparin",
+        "Warfarin",
+        "Clopidogrel",
+        "Apixaban in all circumstances"
+      ],
+      "answer": "Unfractionated heparin",
+      "explanation": "Unfractionated heparin enhances antithrombin activity against thrombin and factor Xa. Monitoring practices vary by institution and may use aPTT or anti-Xa assays."
+    },
+    {
+      "id": "pharm-018",
+      "question": "Which drug class is commonly associated with a dry cough through reduced bradykinin breakdown?",
+      "options": [
+        "ACE inhibitors",
+        "Thiazide diuretics",
+        "Dihydropyridine calcium-channel blockers",
+        "Nitrates"
+      ],
+      "answer": "ACE inhibitors",
+      "explanation": "ACE inhibition reduces angiotensin II formation and decreases bradykinin degradation. Bradykinin accumulation can cause cough and, rarely, angioedema."
+    },
+    {
+      "id": "pharm-019",
+      "question": "Which antibiotic class inhibits bacterial protein synthesis by binding the 30S ribosomal subunit?",
+      "options": [
+        "Tetracyclines",
+        "Macrolides",
+        "Glycopeptides",
+        "Rifamycins"
+      ],
+      "answer": "Tetracyclines",
+      "explanation": "Tetracyclines bind the 30S subunit and inhibit aminoacyl-tRNA attachment. Selection depends on organism susceptibility, clinical indication, pregnancy status, and other patient factors."
+    },
+    {
+      "id": "pharm-020",
+      "question": "Which pharmacokinetic parameter is the principal determinant of the maintenance dose rate needed to achieve a target steady-state concentration?",
+      "options": [
+        "Clearance",
+        "Volume of distribution alone",
+        "Time to peak concentration alone",
+        "Tablet colour"
+      ],
+      "answer": "Clearance",
+      "explanation": "At steady state, average maintenance dosing rate is determined principally by target concentration multiplied by clearance, with bioavailability considered for extravascular dosing."
     }
   ]
 }
