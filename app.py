@@ -394,7 +394,7 @@ with st.sidebar:
     st.markdown("---")
     page = st.radio(
         "YOUR WORKSPACE",
-        ["Home", "Virtual Hospital", "Surgery Simulator", "Hands-on Skills Lab", "Tissue Interaction Lab", "Learning Library", "Medical Image Library", "Real 3D Anatomy Atlas", "Whole-Body Organ Simulator", "Anatomy Lab", "Physiology Lab", "Histology Lab", "Pathology Lab", "Microbiology Lab", "Biochemistry Lab", "Pharmacology Lab", "Radiology Lab", "ECG Lab", "Simulation Center", "Exam Arena", "Visual Lab", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
+        ["Home", "Image Quiz", "Learning Library", "Medical Image Library", "Visual Lab", "Exam Arena", "Clinical Cases", "OSCE Studio", "Research & EBM", "Teacher AI", "Flashcards", "Bookmarks", "Progress & Goals"],
         key="navigation",
         label_visibility="visible",
     )
@@ -896,49 +896,6 @@ elif page == "Surgery Simulator":
                 st.session_state.pop(f"{full_key}_feedback_{i}", None)
             st.rerun()
 
-
-elif page == "Hands-on Skills Lab":
-    st.markdown("""
-    <div style="background:linear-gradient(120deg,#071827,#15384b 60%,#087f8c);border:1px solid #2b6271;border-radius:22px;padding:24px;color:#effcff;margin-bottom:14px">
-      <div style="font-size:11px;letter-spacing:2px;color:#89e8df;font-weight:800">MEDSTUDY · VIRTUAL SKILLS LAB</div>
-      <h1 style="color:white;margin:.45rem 0">Hands-on Surgical Skills Lab</h1>
-      <p style="color:#ccebed;margin:0">A touch-controlled 3D training sandbox with a real external kidney surface model, orbit/zoom, instrument targeting and a visual anchor-alignment drill. Internal cutaway structures are schematic overlays, not anatomically registered geometry.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    st.warning("EDUCATIONAL SIMULATION ONLY. The virtual tissue and tools are simplified game-like representations, not a validated surgical simulator. This does not teach a complete real operation or provide safe real-world cutting, dissection, suturing or instrument-force instructions. Use formal skills-lab training and direct clinical supervision.")
-    skill = st.selectbox("Choose a training station", [
-        "Laparoscopic camera orientation",
-        "Instrument targeting and hand-eye coordination",
-        "Suture target alignment",
-        "Operating-room instrument identification"
-    ], key="hands_on_station")
-    station_config = {
-        "Laparoscopic camera orientation": ("CAMERA NAVIGATION", "Move the camera view to bring the highlighted target into the centre, then select it. Practise spatial orientation without a real patient or procedure.", "centre the teal target"),
-        "Instrument targeting and hand-eye coordination": ("TARGET ACQUISITION", "Move the virtual instrument tip to the highlighted target and select it. This is a basic coordination exercise, not a tissue manipulation technique.", "touch the glowing target"),
-        "Suture target alignment": ("SUTURE PLACEMENT CONCEPT", "Select the two marked points in sequence to practise visual alignment and order tracking. No real needle-driving or knot-tying technique is represented.", "select point A, then point B"),
-        "Operating-room instrument identification": ("INSTRUMENT RECOGNITION", "Choose the instrument category requested by the station. Instruments are simplified icons; identification does not imply competence to use them.", "select the matching instrument")
-    }
-    station_title, station_help, station_goal = station_config[skill]
-    st.markdown(f"### {station_title}")
-    st.write(station_help)
-    organ_lab_path = ROOT / "components" / "kidney_anatomy_lab.html"
-    if organ_lab_path.is_file():
-        organ_lab_html = organ_lab_path.read_text(encoding="utf-8").replace("__STATION__", json.dumps(skill))
-        components.html(organ_lab_html, height=730, scrolling=False)
-    else:
-        st.error("The kidney anatomy training component is missing. Please check the repository installation.")
-    st.markdown("### What this station measures")
-    st.write("This prototype provides a visual target-acquisition task and simple attempt/success counts inside the embedded scene. It does not measure clinical skill, tissue force, depth perception under validated conditions, or surgical competence.")
-    st.markdown("### Continue your case")
-    a, b = st.columns(2)
-    with a:
-        if st.button("Return to Surgery Simulator", use_container_width=True):
-            st.session_state.navigation = "Surgery Simulator"
-            st.rerun()
-    with b:
-        if st.button("Open Real 3D Anatomy Atlas", use_container_width=True):
-            st.session_state.navigation = "Real 3D Anatomy Atlas"
-            st.rerun()
 
 elif page == "Learning Library":
     st.title("📚 Learning library")
