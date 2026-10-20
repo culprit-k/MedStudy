@@ -2,47 +2,45 @@
 
 ## Purpose and safety boundary
 
-The Hands-on Skills Lab now uses a real externally hosted 3D kidney surface model in place of the generic flat target board. It is still an educational prototype, not a medical device, clinically validated anatomy atlas, or surgical simulator.
+The Hands-on Skills Lab now loads a separate kidney scene rather than a flat practice board with floating target dots. It remains an educational prototype, not a medical device, diagnostic display, or validated surgical simulator.
 
-## Model source and loading
+## 3D surface model
 
-The component loads the [3DAssets.dev Human Anatomy and Education Kit kidney model](https://3dassets.dev/assets/human-anatomy-and-education-kit-kidney-model-c48807f6). The source listing describes this GLB asset as **CC0 1.0**. Runtime URL:
+The component loads the **Kidney Model (Human Anatomy and Education Kit)** from [3DAssets.dev](https://3dassets.dev/assets/human-anatomy-and-education-kit-kidney-model-c48807f6). The asset listing identifies the downloadable GLB as **CC0 1.0 Universal** and describes twin bean-shaped kidneys with a hilum, ureter cords, and red/blue vessel stubs. The runtime model URL is:
 
 `https://cdn.3dassets.dev/assets/38958/v1/model.glb`
 
-The model is loaded via Three.js GLTFLoader, rotated upright, scaled to the scene, and mildly depth-compressed for a front-facing view. It is fetched at runtime rather than copied into this repository. That requires internet access, the source host to remain available, and successful browser CORS requests. If loading fails, the component displays a status message and keeps its procedural kidney-shaped fallback visible.
+The component loads the asset using Three.js GLTFLoader and normalizes its orientation and display scale. The model is fetched from the upstream CDN, not copied into the repository. Internet access, browser CORS, and upstream availability therefore affect loading. A procedural kidney-shaped fallback remains available if the asset or loader fails.
 
-## Anatomy view and interactions
+## Interactions
 
-- Camera mode supports orbit/zoom; instrument mode supports moving a simplified virtual instrument.
-- The anatomy toggle reveals a separate schematic teaching overlay for renal cortex, pyramids, calyces, renal pelvis, renal artery, renal vein, and ureter.
-- The surface toggle hides/shows the external model; reset restores default view and interaction state.
-- The alignment drill asks the learner to select two visual anchors in order. It measures selection order only.
-- The internal overlay is **not registered to the GLB mesh**. Its positions are illustrative and do not claim to reproduce the model's actual internal structures.
+- Camera orbit/zoom and virtual instrument movement are separate modes.
+- Surface visibility can be toggled.
+- A schematic internal overlay shows a cortex rim, simplified renal pyramids, calyces, renal pelvis, ureter, and red/blue vessel paths.
+- A two-point alignment drill checks selection order only; it does not model actual suturing.
 
 ## Important limitations
 
-The external organ surface is a real 3D asset, but this is not a segmented, clinically validated kidney model. The schematic internal structures and target markers are not meshed or anatomically aligned with the external GLB. The model has not been reviewed by anatomy faculty. It should not be used for diagnosis, operative planning, or as a substitute for an approved anatomy atlas or supervised training.
+The external surface is a real 3D teaching asset, but it is a low-polygon educational model and is not a clinically validated anatomical reference. The asset represents **twin kidneys on a tray**, not a single isolated organ. The internal overlay is separate, schematic geometry and is **not registered to the mesh**. Its exact shape, scale, branching, and spatial relationships have not been anatomically validated. The scene is not suitable for diagnosis, operative planning, procedural instruction, or surgical credentialing.
 
-The instrument does not model realistic cutting, tissue tearing, bleeding, instrument-shaft collision, haptics, or tissue force. The target drill is a basic visual-coordination task, not a suturing skill assessment.
+The instrument has no validated mesh collision, cutting, tearing, haptics, or tissue-force model. Do not interpret target scores as surgical competence.
 
 ## Regression checks
 
-From the repository root, install the dependencies and run:
+From the repository root:
 
 ```bash
 python -m unittest discover -s tests -p 'test_kidney_anatomy_lab.py' -v
-npm init -y
-npm install --no-save @playwright/test@1.55.0 three@0.128.0
-npx playwright install chromium
 npx playwright test --config=playwright.config.cjs
 ```
 
-The browser suite uses a small deterministic mock GLB to test that the loader and controls work without depending on the external model CDN. This verifies integration behavior, not the real asset's anatomical accuracy or performance on every device.
+The browser test uses a deterministic mocked GLTFLoader result so that UI behavior can be checked without relying on the public asset CDN. These tests do not establish anatomical accuracy or clinical suitability.
 
-## Next validation required
+## Remaining work for a genuinely realistic atlas
 
-1. Check the actual GLB rendering on a physical iPhone and Android device.
-2. Have qualified anatomy faculty inspect the external model and all labels.
-3. Replace schematic internals with individually sourced/segmented structures and register them to the same coordinate system before claiming a true cutaway.
-4. Retain the source and licence record if the GLB is redistributed. CC0 licensing does not establish medical accuracy.
+1. Replace the twin-kidney-on-tray asset with a single isolated kidney model if the station requires one organ.
+2. Source segmented internal anatomy with compatible licence, units, and documented landmarks.
+3. Have qualified anatomy reviewers verify the geometry, labels, and spatial relationships.
+4. Register internal structures and collision geometry to the selected surface mesh.
+5. Add mesh collision and tissue interaction as separate engineering tasks with independent validation.
+6. Test on real iOS and Android devices; browser CI cannot guarantee device-specific performance.
