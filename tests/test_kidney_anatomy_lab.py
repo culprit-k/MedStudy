@@ -25,7 +25,7 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
         self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
         self.assertIn("function loadExternalKidney()", self.html)
-        self.assertIn("The CC0 kidney mesh could not load", self.html)
+        self.assertIn("External kidney mesh unavailable", self.html)
         self.assertIn("built-in kidney fallback", self.html.lower())
         self.assertIn("CC0", self.docs)
         self.assertIn("3dassets.dev", self.docs)
@@ -53,7 +53,7 @@ class KidneyAnatomyLabTests(unittest.TestCase):
 
     def test_limitations_are_disclosed(self):
         self.assertIn("schematic", self.html.lower())
-        self.assertIn("not registered to the source mesh", self.html.lower())
+        self.assertIn("not registered to this mesh", self.html.lower())
         self.assertIn("not a sourced, segmented, clinically validated 3d kidney mesh", self.docs.lower())
 
 
