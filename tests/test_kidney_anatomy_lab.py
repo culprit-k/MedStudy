@@ -1,4 +1,4 @@
-"""Regression checks for the kidney anatomy teaching scene."""
+"""Regression checks for the standalone kidney anatomy teaching scene."""
 from pathlib import Path
 import unittest
 
@@ -21,41 +21,54 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         self.assertIn('replace("__STATION__", json.dumps(skill))', self.app)
         self.assertIn("components.html(organ_lab_html, height=730, scrolling=False)", self.app)
 
-    def test_cc0_kidney_mesh_and_procedural_fallback_are_configured(self):
-        self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
-        self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
-        self.assertIn("function loadExternalKidney()", self.html)
-        self.assertIn("External kidney mesh unavailable", self.html)
-        self.assertIn("built-in kidney fallback", self.html.lower())
-        self.assertIn("CC0", self.docs)
-        self.assertIn("3dassets.dev", self.docs)
+    def test_single_organ_does_not_depend_on_the_old_remote_pair_asset(self):
+        self.assertIn("function makeKidneyGeometry()", self.html)
+        self.assertIn('kidneySurface.name="Single kidney outer surface"', self.html)
+        self.assertIn("No twin-kidney tray asset or remote organ mesh is required.", self.html)
+        self.assertNotIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
+        self.assertNotIn("function loadExternalKidney()", self.html)
+        self.assertIn("originally", self.docs.lower())
+        self.assertIn("procedurally authored geometry", self.docs.lower())
 
-    def test_kidney_has_bean_shape_and_named_teaching_structures(self):
-        self.assertIn("medialNotch", self.html)
-        self.assertIn('kidneySurface.name="Kidney outer surface"', self.html)
-        for label in ("Renal cortex", "Renal pyramids", "Renal pelvis", "Ureter",
-                      "Renal artery", "Renal vein", "Superior major calyx"):
+    def test_cutaway_parts_and_hilum_are_named_for_learning(self):
+        for label in (
+            "Renal cortex", "Renal medulla", "renal pyramid", "Renal column",
+            "Minor calyx", "Superior major calyx", "Middle major calyx",
+            "Inferior major calyx", "Renal pelvis", "Ureter",
+            "Renal artery", "Renal vein", "Single kidney outer surface",
+        ):
             with self.subTest(label=label):
-                self.assertIn(label, self.html)
+                self.assertIn(label.lower(), self.html.lower())
+        self.assertIn("function kidneyShape(scale=1)", self.html)
+        self.assertIn("medialNotch", self.html)
+        self.assertIn("medial hilum", self.docs.lower())
 
-    def test_controls_are_present_and_wired(self):
-        for control in ("cameraMode", "instrumentMode", "anatomyToggle",
-                        "surfaceToggle", "sutureDrill", "reset", "next", "show"):
+    def test_touch_controls_are_present_and_wired(self):
+        controls = (
+            "surfaceView", "cutawayView", "cameraMode", "instrumentMode",
+            "anatomyToggle", "surfaceToggle", "cortexLayer", "pyramidsLayer",
+            "collectingLayer", "vesselsLayer", "sutureDrill", "reset",
+            "next", "show", "zoomIn", "zoomOut",
+        )
+        for control in controls:
             with self.subTest(control=control):
                 self.assertIn(f'id="{control}"', self.html)
-                self.assertIn("getElementById", self.html)
-                self.assertIn(control, self.html)
-        self.assertIn("function setAnatomyVisible(show)", self.html)
-        self.assertIn("function setSurfaceVisible(show)", self.html)
-        self.assertIn("function setInteractionMode(next)", self.html)
+                self.assertIn(f'byId("{control}")', self.html)
+        self.assertIn("function applyView()", self.html)
+        self.assertIn("function setView(mode)", self.html)
+        self.assertIn("function setInteractionMode(mode)", self.html)
         self.assertIn("drillActive=true", self.html)
-        self.assertIn("drillStep++", self.html)
+        self.assertIn("attempts++", self.html)
+        self.assertIn("successful++", self.html)
+        self.assertIn('addEventListener("pointermove"', self.html)
+        self.assertIn('addEventListener("pointerup"', self.html)
 
-    def test_limitations_are_disclosed(self):
-        self.assertIn("schematic", self.html.lower())
-        self.assertIn("not registered to this mesh", self.html.lower())
+    def test_safety_and_asset_licensing_limits_are_documented(self):
+        self.assertIn("not clinically validated", self.html.lower())
         self.assertIn("not a clinically validated anatomical reference", self.docs.lower())
-        self.assertIn("not registered to the mesh", self.docs.lower())
+        self.assertIn("does not have validated mesh collision", self.docs.lower())
+        self.assertIn("exact file's licence", self.docs.lower())
+        self.assertIn("not a measure of surgical competence", self.docs.lower())
 
 
 if __name__ == "__main__":
