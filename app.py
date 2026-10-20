@@ -409,9 +409,6 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Study companion only · not for diagnosis or treatment decisions")
 
-if page == "Tissue Interaction Lab":
-    st.switch_page("pages/3_Tissue_Interaction_Lab.py")
-
 if page == "Home":
     st.markdown("""
     <div class="hero">
