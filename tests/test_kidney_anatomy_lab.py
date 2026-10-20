@@ -1,62 +1,60 @@
-"""Regression checks for the interactive kidney anatomy component."""
+"""Regression checks for the self-contained kidney teaching scene.
+
+These checks verify code wiring and disclosures. They do not validate anatomical
+accuracy or surgical simulation quality.
+"""
 from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-APP_PATH = ROOT / "app.py"
-COMPONENT_PATH = ROOT / "components" / "kidney_anatomy_lab.html"
-DOC_PATH = ROOT / "docs" / "KIDNEY_ANATOMY_LAB.md"
+COMPONENT = ROOT / "components" / "kidney_anatomy_lab.html"
+APP = ROOT / "app.py"
+DOCS = ROOT / "docs" / "KIDNEY_ANATOMY_LAB.md"
 
 
 class KidneyAnatomyLabTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = APP_PATH.read_text(encoding="utf-8")
-        cls.html = COMPONENT_PATH.read_text(encoding="utf-8")
-        cls.docs = DOC_PATH.read_text(encoding="utf-8") if DOC_PATH.is_file() else ""
+        cls.html = COMPONENT.read_text(encoding="utf-8")
+        cls.app = APP.read_text(encoding="utf-8")
+        cls.docs = DOCS.read_text(encoding="utf-8") if DOCS.is_file() else ""
 
-    def test_skills_lab_uses_standalone_kidney_component(self):
+    def test_component_is_loaded_by_hands_on_lab(self):
         self.assertIn('ROOT / "components" / "kidney_anatomy_lab.html"', self.app)
         self.assertIn('organ_lab_html = organ_lab_path.read_text(encoding="utf-8")', self.app)
+        self.assertIn('replace("__STATION__", json.dumps(skill))', self.app)
         self.assertIn("components.html(organ_lab_html, height=730, scrolling=False)", self.app)
-        self.assertTrue(COMPONENT_PATH.is_file())
 
-    def test_real_cc0_kidney_model_and_fallback_are_configured(self):
-        self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
-        self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
-        self.assertIn('model.name="CC0 anatomical kidney model"', self.html)
-        self.assertIn("The built-in 3D kidney fallback remains available", self.html)
-        self.assertIn("CC0", self.docs)
-        self.assertIn("3dassets.dev", self.docs)
+    def test_kidney_has_bean_shape_and_named_teaching_structures(self):
+        self.assertIn("medialNotch", self.html)
+        self.assertIn('kidneySurface.name="Kidney outer surface"', self.html)
+        for label in ("Renal cortex", "Renal pyramids", "Renal pelvis", "Ureter",
+                      "Renal artery", "Renal vein", "Superior major calyx"):
+            with self.subTest(label=label):
+                self.assertIn(label, self.html)
 
-    def test_anatomy_and_tissue_landmark_controls_are_wired(self):
-        for element_id in (
-            "cameraMode",
-            "instrumentMode",
-            "anatomyToggle",
-            "surfaceToggle",
-            "sutureDrill",
-            "reset",
-            "assetStatus",
-        ):
-            with self.subTest(element_id=element_id):
-                self.assertIn(f'id="{element_id}"', self.html)
-        for landmark in ("Renal cortex", "Renal pyramids", "Renal pelvis", "Renal artery", "Renal vein", "Ureter"):
-            with self.subTest(landmark=landmark):
-                self.assertIn(landmark, self.html)
-        self.assertIn("pointermove", self.html)
-        self.assertIn("Alignment drill", self.html)
+    def test_controls_are_present_and_wired(self):
+        for control in ("cameraMode", "instrumentMode", "anatomyToggle",
+                        "surfaceToggle", "sutureDrill", "reset", "next", "show"):
+            with self.subTest(control=control):
+                self.assertIn(f'id="{control}"', self.html)
+                self.assertIn(f'getElementById("{control}")', self.html)
+        self.assertIn("function setAnatomyVisible(show)", self.html)
+        self.assertIn("function setSurfaceVisible(show)", self.html)
+        self.assertIn("function setInteractionMode(next)", self.html)
+        self.assertIn("drillActive=true", self.html)
+        self.assertIn("drillStep++", self.html)
 
-    def test_external_model_and_internal_overlay_limitations_are_disclosed(self):
-        self.assertIn("internal overlay is schematic and not registered to the source mesh", self.html)
-        self.assertIn("not real suturing technique", self.html)
-        self.assertIn("not force feedback", self.html)
-        self.assertIn("validated anatomy teaching product", self.docs.lower())
+    def test_model_does_not_download_an_unverified_external_mesh(self):
+        self.assertIn("built-in kidney teaching model", self.html.lower())
+        self.assertNotIn("cdn.3dassets.dev", self.html)
+        self.assertNotIn("loadExternalKidney();", self.html)
+        self.assertIn("Built-in kidney teaching model loaded", self.html)
 
-    def test_component_has_no_accidental_python_string_delimiter(self):
-        self.assertFalse(self.html.rstrip().endswith('"""'))
-        self.assertIn("function loadExternalKidney()", self.html)
-        self.assertIn("requestAnimationFrame(animate)", self.html)
+    def test_limitations_are_disclosed(self):
+        self.assertIn("schematic", self.html.lower())
+        self.assertIn("not a clinically validated mesh", self.html.lower())
+        self.assertIn("not a validated anatomy teaching product", self.docs.lower())
 
 
 if __name__ == "__main__":
