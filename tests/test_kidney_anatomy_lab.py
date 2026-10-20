@@ -27,7 +27,7 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         self.assertIn("No twin-kidney tray asset or remote organ mesh is required.", self.html)
         self.assertNotIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
         self.assertNotIn("function loadExternalKidney()", self.html)
-        self.assertIn("originally", self.docs.lower())
+        self.assertIn("original, procedurally authored geometry", self.docs.lower())
         self.assertIn("procedurally authored geometry", self.docs.lower())
 
     def test_cutaway_parts_and_hilum_are_named_for_learning(self):
