@@ -1,6 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const path = require("node:path");
 const fs = require("node:fs");
+const fs = require("node:fs");
 
 const ROOT = process.cwd();
 const LAB_URL = "/components/realistic_tissue_interaction_lab.html";
@@ -195,4 +196,33 @@ test("kidney anatomy lab controls fit a phone-width viewport", async ({ page }) 
   }));
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width + 1);
   expect(layout.buttonWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
+});
+
+
+test("kidney anatomy lab renders and its teaching controls respond", async ({ page }) => {
+  const pageErrors = [];
+  page.on("pageerror", error => pageErrors.push(error.message));
+  const component = fs.readFileSync(path.join(ROOT, "components/kidney_anatomy_lab.html"), "utf8")
+    .replace("__STATION__", JSON.stringify("Instrument targeting and hand-eye coordination"));
+
+  await page.route("https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js", route =>
+    route.fulfill({ path: path.join(ROOT, "node_modules/three/build/three.min.js"), contentType: "application/javascript" })
+  );
+  await page.route("**/kidney-lab-test", route =>
+    route.fulfill({ status: 200, contentType: "text/html", body: component })
+  );
+  await page.goto("/kidney-lab-test");
+  await expect(page.locator("#scene canvas")).toBeVisible();
+  await expect(page.locator("#assetStatus")).toContainText("Built-in kidney teaching model loaded");
+  await expect(page.getByRole("button", { name: "Toggle anatomy" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Toggle anatomy" }).click();
+  await expect(page.locator("#result")).toContainText("Cutaway anatomy shown");
+  await page.getByRole("button", { name: "Camera control" }).click();
+  await expect(page.locator("#result")).toContainText("Camera control active");
+  await page.getByRole("button", { name: "Suture-alignment drill" }).click();
+  await expect(page.locator("#result")).toContainText("select anchor point A");
+  await page.getByRole("button", { name: "Reset view" }).click();
+  await expect(page.locator("#result")).toContainText("Kidney view reset");
+  expect(pageErrors).toEqual([]);
 });
