@@ -51,7 +51,7 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         self.assertIn("internal overlay is schematic and not registered to the source mesh", self.html)
         self.assertIn("not real suturing technique", self.html)
         self.assertIn("not force feedback", self.html)
-        self.assertIn("not a validated", self.docs.lower())
+        self.assertIn("validated anatomy teaching product", self.docs.lower())
 
     def test_component_has_no_accidental_python_string_delimiter(self):
         self.assertFalse(self.html.rstrip().endswith('"""'))
