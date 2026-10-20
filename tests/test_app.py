@@ -77,14 +77,17 @@ class AppSmokeTests(unittest.TestCase):
 
     def test_hands_on_skills_lab_is_integrated(self):
         source = APP_FILE.read_text(encoding="utf-8")
-        component = (ROOT / "components" / "kidney_anatomy_lab.html").read_text(encoding="utf-8")
+        component_path = ROOT / "components" / "kidney_anatomy_lab.html"
+        self.assertTrue(component_path.is_file())
+        component = component_path.read_text(encoding="utf-8")
+        self.assertIn('elif page == "Hands-on Skills Lab":', source)
+        self.assertIn('ROOT / "components" / "kidney_anatomy_lab.html"', source)
         for label in [
             "Hands-on Skills Lab",
             "Laparoscopic camera orientation",
             "Instrument targeting and hand-eye coordination",
             "Suture target alignment",
             "Operating-room instrument identification",
-            "Return to Surgery Simulator"
         ]:
             self.assertIn(label, source)
         for label in [
@@ -93,6 +96,10 @@ class AppSmokeTests(unittest.TestCase):
             "Camera control",
             "Instrument control",
             "kidneySurface",
+            "Renal artery",
+            "Renal vein",
+            "Renal pelvis",
+            "Suture-alignment drill",
         ]:
             self.assertIn(label, component)
 
