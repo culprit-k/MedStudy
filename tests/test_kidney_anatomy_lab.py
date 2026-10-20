@@ -1,8 +1,4 @@
-"""Regression checks for the self-contained kidney teaching scene.
-
-These checks verify code wiring and disclosures. They do not validate anatomical
-accuracy or surgical simulation quality.
-"""
+"""Regression checks for the self-contained kidney teaching scene."""
 from pathlib import Path
 import unittest
 
@@ -38,26 +34,23 @@ class KidneyAnatomyLabTests(unittest.TestCase):
                         "surfaceToggle", "sutureDrill", "reset", "next", "show"):
             with self.subTest(control=control):
                 self.assertIn(f'id="{control}"', self.html)
-                self.assertIn(f'getElementById("{control}")', self.html)
+                self.assertRegex(self.html, "getElementById\\(['\"]" + control + "['\"]\\)")
         self.assertIn("function setAnatomyVisible(show)", self.html)
         self.assertIn("function setSurfaceVisible(show)", self.html)
         self.assertIn("function setInteractionMode(next)", self.html)
         self.assertIn("drillActive=true", self.html)
         self.assertIn("drillStep++", self.html)
 
-    def test_cc0_kidney_mesh_loads_with_a_local_fallback(self):
-        self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
-        self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
-        self.assertIn('function loadExternalKidney()', self.html)
-        self.assertIn('model.name="CC0 anatomical kidney model"', self.html)
-        self.assertIn("built-in 3D kidney fallback remains available", self.html)
-        self.assertIn("CC0", self.docs)
-        self.assertIn("3dassets.dev", self.docs)
+    def test_model_does_not_download_an_unverified_external_mesh(self):
+        self.assertIn("built-in kidney teaching model", self.html.lower())
+        self.assertNotIn("cdn.3dassets.dev", self.html)
+        self.assertNotIn("loadExternalKidney();", self.html)
+        self.assertIn("Built-in kidney teaching model loaded", self.html)
 
     def test_limitations_are_disclosed(self):
         self.assertIn("schematic", self.html.lower())
         self.assertIn("not a clinically validated mesh", self.html.lower())
-        self.assertIn("not a validated anatomy teaching product", self.docs.lower())
+        self.assertIn("not a sourced, segmented, clinically validated 3d kidney mesh", self.docs.lower())
 
 
 if __name__ == "__main__":
