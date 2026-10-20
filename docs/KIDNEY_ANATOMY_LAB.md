@@ -1,44 +1,35 @@
-# Kidney Anatomy Lab — Technical Notes
+# Kidney Anatomy Skills Lab
 
 ## Purpose and safety boundary
 
-The Hands-on Skills Lab now loads a standalone kidney model component rather than rendering only a flat practice board with floating target dots. It is still an educational prototype, not a surgical simulator, medical device, or validated anatomy teaching product.
+The Hands-on Skills Lab loads a standalone kidney teaching component rather than a flat board with floating target dots. It remains an educational prototype, not a medical device, validated anatomy atlas, or surgical simulator.
 
-## Model source
+## Model implementation
 
-The preferred external surface model is the CC0 kidney model at [3DAssets.dev — Human Anatomy and Education Kit: Kidney Model](https://3dassets.dev/assets/human-anatomy-and-education-kit-kidney-model-c48807f6). Its source listing identifies the downloadable GLB as CC0 1.0. Runtime URL:
+The scene uses original procedural Three.js geometry. It includes a bean-like outer renal silhouette with a medial indentation and a toggleable schematic cutaway showing a cortex rim, simplified renal pyramids, calyces, renal pelvis, ureter, and red/blue vessel paths. Camera orbit/zoom, instrument movement, surface/cutaway visibility, target acquisition, and a two-point alignment drill are wired into the UI.
 
-`https://cdn.3dassets.dev/assets/38958/v1/model.glb`
+The component deliberately does **not** download an unverified third-party organ mesh at runtime. This avoids an unverified external dependency and prevents the interface from claiming a source model or licence that has not been validated.
 
-The component loads the model with Three.js GLTFLoader, rotates it upright, normalizes its height, and modestly compresses display depth for a clearer front view. The model is loaded from the source CDN rather than copied into this repository. This depends on the source URL, network access, browser CORS permissions, and the upstream host remaining available. If it fails, a procedural kidney-shaped fallback keeps the lab usable and a status message indicates the fallback state.
+## Anatomical limitations
 
-## Anatomy view and interactions
+This is **not a sourced, segmented, clinically validated 3D kidney mesh**. The shape, proportions, vessel paths, branching, internal relationships, and collecting system are schematic and have not been reviewed against an anatomical reference by a qualified reviewer. The cutaway is not a true volumetric section of the surface and its structures are not registered to internal anatomical meshes. It should not be described as anatomically accurate, used for diagnosis or operative planning, or substituted for an approved anatomy atlas.
 
-- The outer kidney model has orbit/zoom camera control and a separate virtual instrument control.
-- The anatomy toggle reveals a schematic internal overlay for the renal cortex, renal pyramids, collecting system, renal pelvis, renal artery, renal vein, and ureter.
-- The surface toggle hides/shows the organ surface; reset restores the view and interaction defaults.
-- The anchor-alignment drill guides users to select two visual targets in sequence. It measures selection order only.
-- Targets, tool motion, and internal-overlay landmarks are not tied to mesh triangles or a validated coordinate registration.
+The alignment drill measures target order and visual coordination only. It does not represent needle driving, tissue puncture, knot tying, calibrated forces, haptics, or suturing competence. The instrument does not provide validated tissue collision or damage prediction.
 
-**Important limitation:** the external kidney mesh is a real 3D anatomical asset, but the current internal structures are a separate original schematic overlay and are not registered to the model's actual internal anatomy. It must not be presented as an anatomically accurate dissection, cutting simulator, injury predictor, or practice substitute.
-
-## Local checks
+## Regression checks
 
 From the repository root:
 
 ```bash
 python -m unittest discover -s tests -p 'test_kidney_anatomy_lab.py' -v
-npm init -y
-npm install --no-save @playwright/test@1.55.0 three@0.128.0
-npx playwright install chromium
-npx playwright test --config=playwright.config.cjs
 ```
 
-The CI browser suite uses a deterministic mock GLB to test the loader and controls without relying on the external asset host. It also verifies fallback handling in source-level checks. It does not certify the external model's anatomical accuracy or performance on every physical phone.
+These tests check UI wiring and disclosure text; they do not establish anatomical accuracy or clinical suitability.
 
-## Next validation required
+## Work needed for a genuinely realistic atlas
 
-1. Review the rendered model on an actual iPhone and an Android device.
-2. Have anatomy faculty verify the surface shape and landmark labels.
-3. Register any internal mesh structures to the chosen external organ surface before claiming the cutaway is anatomically aligned.
-4. Keep licence/source notices with any model redistribution. CC0 asset availability does not validate the model medically.
+1. Select a segmented kidney mesh with a licence that explicitly permits the intended use and distribution; preserve source and attribution details.
+2. Prefer separate structures for cortex, medulla/pyramids, calyces, pelvis, ureter, arteries, and veins, with documented units and reference landmarks.
+3. Have qualified anatomy reviewers verify geometry, labels, branching, and spatial relationships.
+4. Register all internal structures and collision geometry to the chosen surface mesh, with automated landmark/scale checks.
+5. Implement mesh collision and tissue interaction as separate engineering tasks and validate them independently.
