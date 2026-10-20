@@ -1815,6 +1815,8 @@ elif page == "Teacher AI":
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
     prompt=st.chat_input("Ask your teacher: e.g. Explain B12 absorption step by step")
+    if st.session_state.get("tutor_prefill") and not prompt:
+        prompt = st.session_state.pop("tutor_prefill")
     if prompt:
         st.session_state.tutor_messages.append({"role":"user","content":prompt})
         with st.chat_message("user"):
