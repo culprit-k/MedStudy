@@ -430,13 +430,12 @@ if page == "Home":
     cards = [
         ("🧠","Learning library","Build strong foundations, then review mechanisms and clinical correlations.","Learning Library"),
         ("🩻","Visual lab","Interpret anatomy illustrations and image-led questions.","Visual Lab"),
-        ("🖼️","Medical image library","Search and save image references across every major medical subject.","Medical Image Library"),
-        ("🏥","Virtual hospital","Enter a simulated ward, operating theatre, microbiology bench and diagnostic lab.","Virtual Hospital"),
-        ("🫀","Real 3D anatomy atlas","Explore thousands of named anatomical structures in a detailed touch-enabled 3D viewer.","Real 3D Anatomy Atlas"),
-        ("🧵","Tissue interaction lab","Explore a generated 3D tissue surface with adjustable spring parameters and visual interaction drills.","Tissue Interaction Lab"),
-        ("🫀","Anatomy lab","Explore cardiovascular, renal, nervous and respiratory structures with clinical links.","Anatomy Lab"),
+        ("🖼️","Medical image library","Search and save sourced medical images with creator and licence details.","Medical Image Library"),
+        ("🧠","Personal teacher","A tutor adapted to your syllabus, goals, weak topics and learning pace.","Teacher AI"),
+        ("🎯","Real-image quiz","Practise with real medical images and adaptive question sets.","Image Quiz"),
+        ("🫀","Anatomy lab","Review anatomy foundations, structures and clinical links.","Anatomy Lab"),
         ("🧪","Physiology lab","Run interactive experiments in cardiovascular, respiratory, renal and nerve physiology.","Physiology Lab"),
-        ("🧍","Whole-body organ simulator","Adjust organ-system variables and explore simplified whole-body responses.","Whole-Body Organ Simulator"),
+
         ("🔬","Histology lab","Study tissue architecture, cell identification and microscopic patterns.","Histology Lab"),
         ("🧫","Pathology lab","Explore mechanisms, gross patterns, blood films and case-based morphology.","Pathology Lab"),
         ("🦠","Microbiology lab","Practise organism identification, staining, culture and diagnostic reasoning.","Microbiology Lab"),
