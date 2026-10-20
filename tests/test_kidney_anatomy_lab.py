@@ -41,11 +41,14 @@ class KidneyAnatomyLabTests(unittest.TestCase):
         self.assertIn("drillActive=true", self.html)
         self.assertIn("drillStep++", self.html)
 
-    def test_model_does_not_download_an_unverified_external_mesh(self):
-        self.assertIn("built-in kidney teaching model", self.html.lower())
-        self.assertNotIn("cdn.3dassets.dev", self.html)
-        self.assertNotIn("loadExternalKidney();", self.html)
-        self.assertIn("Built-in kidney teaching model loaded", self.html)
+    def test_cc0_kidney_mesh_loads_with_a_local_fallback(self):
+        self.assertIn("https://cdn.3dassets.dev/assets/38958/v1/model.glb", self.html)
+        self.assertIn("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js", self.html)
+        self.assertIn("function loadExternalKidney()", self.html)
+        self.assertIn('model.name="CC0 anatomical kidney model"', self.html)
+        self.assertIn("built-in 3D kidney fallback remains available", self.html)
+        self.assertIn("CC0", self.docs)
+        self.assertIn("3dassets.dev", self.docs)
 
     def test_limitations_are_disclosed(self):
         self.assertIn("schematic", self.html.lower())
