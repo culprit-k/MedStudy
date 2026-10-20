@@ -20,7 +20,7 @@ class ArchivedKidneyLabTests(unittest.TestCase):
 
     def test_primary_navigation_prioritises_image_learning(self):
         match = re.search(
-            r'page\\s*=\\s*st\\.radio\\(\\s*"YOUR WORKSPACE"\\s*,\\s*(\\[[\\s\\S]*?\\])\\s*,\\s*key="navigation"',
+            r'page\s*=\s*st\.radio\(\s*"YOUR WORKSPACE"\s*,\s*(\[[\s\S]*?\])\s*,\s*key="navigation"',
             self.app,
         )
         self.assertIsNotNone(match, "Sidebar navigation list must exist")
