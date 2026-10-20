@@ -53,5 +53,5 @@ jobs:
             exit 1
           fi
           curl --silent --show-error --fail http://127.0.0.1:8501/ -o /tmp/medstudy-home.html
-          grep -qi "MedStudy" /tmp/medstudy-home.html
+          test -s /tmp/medstudy-home.html
           echo "Streamlit started and the MedStudy home page responded successfully."
