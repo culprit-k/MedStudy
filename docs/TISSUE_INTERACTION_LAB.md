@@ -34,6 +34,8 @@ This is a small **mass-spring membrane approximation**, not finite-element analy
 - The scene displays two translucent labelled proxy volumes and reports whether a probe point overlaps a proxy.
 - Collision helpers are covered by Node regression tests for surface contact, non-contact, finite contact normals, deepest-proxy selection, and invalid inputs.
 - These are deliberately simple geometric proxies. Their labels are placeholders for interaction testing, not claims that the rendered objects match real vessels or organs. They are not a full instrument-vs-triangle collision system and do not provide force feedback.
+- During pointer movement, the UI now checks the straight segment between consecutive tool-tip samples with `deepestSweptProxyContact`, so a fast pointer movement can register a proxy crossing even when the sampled endpoints are outside the proxy.
+- Swept checks approximate a point moving along a segment; they do not model the full instrument shaft, continuous rigid-body motion, triangle-mesh collisions, penetration dynamics, or force feedback. Contact labels remain schematic and must not be interpreted as anatomical injury prediction.
 
 ### Current interactions
 
