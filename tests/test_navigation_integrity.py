@@ -46,11 +46,12 @@ class NavigationIntegrityTests(unittest.TestCase):
         missing = sorted(set(self.options) - self.routed)
         self.assertEqual(missing, [], f"Navigation labels without a rendering route: {missing}")
 
-    def test_tissue_lab_routes_to_existing_streamlit_page_and_component(self):
-        self.assertIn('if page == "Tissue Interaction Lab":', self.source)
-        self.assertIn('st.switch_page("pages/3_Tissue_Interaction_Lab.py")', self.source)
-        self.assertTrue((ROOT / "pages" / "3_Tissue_Interaction_Lab.py").is_file())
-        self.assertTrue((ROOT / "components" / "realistic_tissue_interaction_lab.html").is_file())
+    def test_retired_heavy_simulator_is_not_in_primary_navigation(self):
+        self.assertNotIn("Tissue Interaction Lab", self.options)
+        self.assertNotIn("Hands-on Skills Lab", self.options)
+        self.assertNotIn('if page == "Tissue Interaction Lab":', self.source)
+        self.assertIn('"Image Quiz"', self.options)
+        self.assertIn('"Teacher AI"', self.options)
 
     def test_app_runtime_data_files_exist_and_are_valid_json(self):
         paths = (
