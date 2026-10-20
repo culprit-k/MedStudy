@@ -90,6 +90,11 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
     def test_reset_and_layer_controls_exist(self):
         self.assertIn('id="reset"', self.html)
         self.assertIn('id="layers"', self.html)
+        self.assertIn("function clearContact()", self.html)
+        self.assertIn("down=false;lastPoint=null;lastPointerPoint=null;clearContact();clearGroup(overlayGroup)", self.html)
+        self.assertIn("pointercancel", self.html)
+        self.assertIn("lostpointercapture", self.html)
+        self.assertIn("g.remove(o)", self.html)
 
     def test_physics_controls_are_wired_to_model_parameters(self):
         self.assertIn('id="stiffnessSlider"', self.html)
