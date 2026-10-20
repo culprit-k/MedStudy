@@ -81,6 +81,11 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         self.assertIn("function pointPlaneContact", engine)
         self.assertIn("function pointSphereContact", engine)
         self.assertIn("illustrative collision proxy", self.html)
+        self.assertIn("deepestSweptProxyContact(lastToolPoint,p,anatomyProxies)", self.html)
+        self.assertIn("lastToolPoint=p", self.html)
+        self.assertIn("Swept proxy contact", self.html)
+        self.assertIn("function sweptSphereContact", engine)
+        self.assertIn("function deepestSweptProxyContact", engine)
 
     def test_reset_and_layer_controls_exist(self):
         self.assertIn('id="reset"', self.html)
