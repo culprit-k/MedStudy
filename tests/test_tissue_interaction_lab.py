@@ -23,14 +23,18 @@ class TissueInteractionLabSmokeTests(unittest.TestCase):
         cls.docs = DOCS.read_text(encoding="utf-8")
 
     def test_archived_prototype_limits_remain_documented(self):
-        self.assertIn("not a realistic or clinically validated surgical simulator", self.docs)
+        self.assertIn("not a medical device, a validated surgical simulator", self.docs)
         self.assertIn("mass-spring membrane approximation", self.docs)
         self.assertIn("not literature-derived measurements", self.docs)
 
     def test_heavy_tissue_lab_is_removed_from_primary_navigation(self):
-        self.assertNotIn('"Tissue Interaction Lab"', self.app)
-        self.assertNotIn('st.switch_page("pages/3_Tissue_Interaction_Lab.py")', self.app)
-        self.assertNotIn("adjustable spring parameters", self.app)
+        import re
+        match = re.search(r'page\s*=\s*st\.radio\(\s*"YOUR WORKSPACE"\s*,\s*(\[[\s\S]*?\])\s*,\s*key="navigation"', self.app)
+        self.assertIsNotNone(match, "Sidebar navigation list must exist")
+        options = eval(match.group(1), {"__builtins__": {}}, {})
+        self.assertNotIn("Tissue Interaction Lab", options)
+        self.assertNotIn("Hands-on Skills Lab", options)
+        self.assertNotIn('if page == "Tissue Interaction Lab":', self.app)
 
     def test_home_dashboard_uses_registered_lightweight_navigation(self):
         self.assertIn('"Image Quiz"', self.app)
